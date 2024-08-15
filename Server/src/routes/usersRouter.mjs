@@ -6,7 +6,9 @@ import {
     addDepartments, 
     addClubs, 
     removeDepartments, 
-    removeClubs 
+    removeClubs,
+    addContributions,
+    removeContributions
 } from '../utils/userUtils.mjs';
 
 const userRouter = express.Router();
@@ -64,7 +66,6 @@ userRouter.patch('/add-clubs/:userId', async (req, res) => {
     }
 });
 
-
 userRouter.patch('/remove-departments/:userId', async (req, res) => {
     try {
         const { departments } = req.body;  
@@ -85,6 +86,34 @@ userRouter.patch('/remove-clubs/:userId', async (req, res) => {
             return res.status(400).json({ "error": "Clubs must be an array" });
         }
         const user = await removeClubs(req.params.userId, clubs);
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ "error": error.message });
+    }
+});
+
+// New routes for contributions
+
+userRouter.patch('/add-contributions/:userId', async (req, res) => {
+    try {
+        const { contributions } = req.body; 
+        if (!Array.isArray(contributions)) {
+            return res.status(400).json({ "error": "Contributions must be an array" });
+        }
+        const user = await addContributions(req.params.userId, contributions);
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(500).json({ "error": error.message });
+    }
+});
+
+userRouter.patch('/remove-contributions/:userId', async (req, res) => {
+    try {
+        const { contributions } = req.body; 
+        if (!Array.isArray(contributions)) {
+            return res.status(400).json({ "error": "Contributions must be an array" });
+        }
+        const user = await removeContributions(req.params.userId, contributions);
         res.status(200).json(user);
     } catch (error) {
         res.status(500).json({ "error": error.message });
