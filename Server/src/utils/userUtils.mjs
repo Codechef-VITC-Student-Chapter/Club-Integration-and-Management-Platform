@@ -7,16 +7,13 @@ dotenv.config();
 const username = process.env.MONGO_USERNAME;
 const password = process.env.MONGO_PASSWORD;
 
-console.log(username);
-console.log(password);
-
 const connectionString = `mongodb+srv://${username}:${password}@ciandmp.duflp.mongodb.net/?retryWrites=true&w=majority&appName=CIandMP`;
 
 mongoose.connect(connectionString)
     .then(() => { console.log('Connected to MongoDB'); })
     .catch((err) => { console.log(err); });
 
-const User = mongoose.models.User || mongoose.model('AppData', userSchema);
+const User = mongoose.models.User || mongoose.model('AppData', userSchema); 
 
 export const addUser = async (userData) => {
     try {
@@ -30,7 +27,10 @@ export const addUser = async (userData) => {
 
 export const removeUser = async (userId) => {
     try {
-        const deletedUser = await User.findByIdAndDelete(userId);
+        const deletedUser = await User.findOneAndDelete({ user_id: userId });
+        if (!deletedUser) {
+            throw new Error('User not found');
+        }
         return deletedUser;
     } catch (error) {
         throw new Error('Failed to remove user');
@@ -39,7 +39,10 @@ export const removeUser = async (userId) => {
 
 export const getUserById = async (userId) => {
     try {
-        const user = await User.findById(userId);
+        const user = await User.findOne({ user_id: userId });
+        if (!user) {
+            throw new Error('User not found');
+        }
         return user;
     } catch (error) {
         throw new Error('Failed to fetch user');
