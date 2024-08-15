@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
+            display: block;
+            margin: 10px 0;
+            padding: 8px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>User API Test Page</h1>
+
+    <!-- Add User Section -->
+    <div class="container">
+        <h2>Add User</h2>
+        <input type="text" id="userId" placeholder="User ID" required>
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="text" id="regNo" placeholder="Reg No" required>
+        <input type="password" id="passwordHash" placeholder="Password Hash" required>
+        <input type="text" id="deps" placeholder="Departments (comma separated)">
+        <input type="text" id="clubs" placeholder="Clubs (comma separated)">
+        <button onclick="addUser()">Add User</button>
+        <div id="addUserResponse"></div>
+    </div>
+
+    <!-- Delete User Section -->
+    <div class="container">
+        <h2>Delete User</h2>
+        <input type="text" id="deleteUserId" placeholder="User ID" required>
+        <button onclick="deleteUser()">Delete User</button>
+        <div id="deleteUserResponse"></div>
+    </div>
+
+    <!-- Get User Section -->
+    <div class="container">
+        <h2>Get User</h2>
+        <input type="text" id="getUserId" placeholder="User ID" required>
+        <button onclick="getUser()">Get User</button>
+        <div id="getUserResponse"></div>
+    </div>
+
+    <!-- Add Departments Section -->
+    <div class="container">
+        <h2>Add Departments</h2>
+        <input type="text" id="addDepartmentsUserId" placeholder="User ID" required>
+        <input type="text" id="departments" placeholder="Departments to Add (comma separated)">
+        <button onclick="addDepartments()">Add Departments</button>
+        <div id="addDepartmentsResponse"></div>
+    </div>
+
+    <!-- Add Clubs Section -->
+    <div class="container">
+        <h2>Add Clubs</h2>
+        <input type="text" id="addClubsUserId" placeholder="User ID" required>
+        <input type="text" id="clubsToAdd" placeholder="Clubs to Add (comma separated)">
+        <button onclick="addClubs()">Add Clubs</button>
+        <div id="addClubsResponse"></div>
+    </div>
+
+    <!-- Remove Departments Section -->
+    <div class="container">
+        <h2>Remove Departments</h2>
+        <input type="text" id="removeDepartmentsUserId" placeholder="User ID" required>
+        <input type="text" id="departmentsToRemove" placeholder="Departments to Remove (comma separated)">
+        <button onclick="removeDepartments()">Remove Departments</button>
+        <div id="removeDepartmentsResponse"></div>
+    </div>
+
+    <!-- Remove Clubs Section -->
+    <div class="container">
+        <h2>Remove Clubs</h2>
+        <input type="text" id="removeClubsUserId" placeholder="User ID" required>
+        <input type="text" id="clubsToRemove" placeholder="Clubs to Remove (comma separated)">
+        <button onclick="removeClubs()">Remove Clubs</button>
+        <div id="removeClubsResponse"></div>
+    </div>
+
+    <script>
+        const baseUrl = 'http://localhost:3000/userApi'; // Adjust if your server uses a different port
+
+        async function addUser() {
+            const data = {
+                user_id: document.getElementById('userId').value,
+                username: document.getElementById('username').value,
+                reg_no: document.getElementById('regNo').value,
+                password_hash: document.getElementById('passwordHash').value,
+                deps: document.getElementById('deps').value.split(',').map(dep => dep.trim()),
+                clubs: document.getElementById('clubs').value.split(',').map(club => club.trim())
+            };
+
+            try {
+                const response = await fetch(`${baseUrl}/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                document.getElementById('addUserResponse').innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('addUserResponse').innerText = error.message;
+            }
+        }
+
+        async function deleteUser() {
+            const userId = document.getElementById('deleteUserId').value;
+
+            try {
+                const response = await fetch(`${baseUrl}/delete/${userId}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                document.getElementById('deleteUserResponse').innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('deleteUserResponse').innerText = error.message;
+            }
+        }
+
+        async function getUser() {
+            const userId = document.getElementById('getUserId').value;
+
+            try {
+                const response = await fetch(`${baseUrl}/get/${userId}`);
+                const result = await response.json();
+                document.getElementById('getUserResponse').innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('getUserResponse').innerText = error.message;
+            }
+        }
+
+        async function addDepartments() {
+            const userId = document.getElementById('addDepartmentsUserId').value;
+            const departments = document.getElementById('departments').value.split(',').map(dep => dep.trim());
+
+            try {
+                const response = await fetch(`${baseUrl}/add-departments/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ departments })
+                });
+                const result = await response.json();
+                document.getElementById('addDepartmentsResponse').innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('addDepartmentsResponse').innerText = error.message;
+            }
+        }
+
+        async function addClubs() {
+            const userId = document.getElementById('addClubsUserId').value;
+            const clubs = document.getElementById('clubsToAdd').value.split(',').map(club => club.trim());
+
+            try {
+                const response = await fetch(`${baseUrl}/add-clubs/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ clubs })
+                });
+                const result = await response.json();
+                document.getElementById('addClubsResponse').innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('addClubsResponse').innerText = error.message;
+            }
+        }
+
+        async function removeDepartments() {
+            const userId = document.getElementById('removeDepartmentsUserId').value;
+            const departments = document.getElementById('departmentsToRemove').value.split(',').map(dep => dep.trim());
+
+            try {
+                const response = await fetch(`${baseUrl}/remove-departments/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ departments })
+                });
+                const result = await response.json();
+                document.getElementById('removeDepartmentsResponse').innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('removeDepartmentsResponse').innerText = error.message;
+            }
+        }
+
+        async function removeClubs() {
+            const userId = document.getElementById('removeClubsUserId').value;
+            const clubs = document.getElementById('clubsToRemove').value.split(',').map(club => club.trim());
+
+            try {
+                const response = await fetch(`${baseUrl}/remove-clubs/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ clubs })
+                });
+                const result = await response.json();
+                document.getElementById('removeClubsResponse').innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('removeClubsResponse').innerText = error.message;
+            }
+        }
+    </script>
+</body>
+</html>
