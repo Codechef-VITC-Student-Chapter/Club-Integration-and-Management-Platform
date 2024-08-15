@@ -60,6 +60,7 @@ function UploadDetails() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [links, setLinks] = useState(['']);
+  const [points, setPoints] = useState(''); // New state variable for points
 
   const [loadingClubs, setLoadingClubs] = useState(true);
   const [loadingDepartments, setLoadingDepartments] = useState(false);
@@ -162,6 +163,7 @@ function UploadDetails() {
       title,
       description,
       links,
+      points, // Include points in the request data
     };
     console.log('Data to be sent to API:', requestData);
   };
@@ -256,7 +258,24 @@ function UploadDetails() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">Links:</label>
+          <label className="block text-sm font-medium mb-1">
+            Points Requested:
+          </label>
+          <input
+            type="number"
+            value={points}
+            onChange={(e) => setPoints(e.target.value)}
+            className="block w-full p-2 border border-gray-300 rounded-md"
+            placeholder="Enter points"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Links to proof (upload your files to google drive and post the view
+            link to it here if required):
+          </label>
           {links.map((link, index) => (
             <div key={index} className="flex items-center space-x-2 mb-2">
               <input
