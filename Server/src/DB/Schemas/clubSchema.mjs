@@ -10,12 +10,12 @@ const clubSchema = new mongoose.Schema({
         required: true
     },
     club_leads: {
-        type: [mongoose.Schema.Types.ObjectId],
+        type: [String],
         ref: 'User',
         default: []
     },
-    club_dep: {
-        type: [mongoose.Schema.Types.ObjectId],
+    club_deps: {
+        type: [String],
         ref: 'Department',
         default: []
     }

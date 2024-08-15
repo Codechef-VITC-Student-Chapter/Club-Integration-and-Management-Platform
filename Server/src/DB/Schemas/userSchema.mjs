@@ -25,6 +25,10 @@ const userSchema = new Schema({
     clubs: {
         type: [String],
         default: []
+    },
+    contributions: {
+        type: [String],
+        default: []
     }
 });
 

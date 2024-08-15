@@ -93,6 +93,24 @@
         <div id="removeClubsResponse"></div>
     </div>
 
+    <!-- Add Contributions Section -->
+    <div class="container">
+        <h2>Add Contributions</h2>
+        <input type="text" id="addContributionsUserId" placeholder="User ID" required>
+        <input type="text" id="contributions" placeholder="Contributions to Add (comma separated)">
+        <button onclick="addContributions()">Add Contributions</button>
+        <div id="addContributionsResponse"></div>
+    </div>
+
+    <!-- Remove Contributions Section -->
+    <div class="container">
+        <h2>Remove Contributions</h2>
+        <input type="text" id="removeContributionsUserId" placeholder="User ID" required>
+        <input type="text" id="contributionsToRemove" placeholder="Contributions to Remove (comma separated)">
+        <button onclick="removeContributions()">Remove Contributions</button>
+        <div id="removeContributionsResponse"></div>
+    </div>
+
     <script>
         const baseUrl = 'http://localhost:3000/userApi'; // Adjust if your server uses a different port
 
@@ -220,6 +238,44 @@
                 document.getElementById('removeClubsResponse').innerText = JSON.stringify(result, null, 2);
             } catch (error) {
                 document.getElementById('removeClubsResponse').innerText = error.message;
+            }
+        }
+
+        async function addContributions() {
+            const userId = document.getElementById('addContributionsUserId').value;
+            const contributions = document.getElementById('contributions').value.split(',').map(contrib => contrib.trim());
+
+            try {
+                const response = await fetch(`${baseUrl}/add-contributions/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ contributions })
+                });
+                const result = await response.json();
+                document.getElementById('addContributionsResponse').innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('addContributionsResponse').innerText = error.message;
+            }
+        }
+
+        async function removeContributions() {
+            const userId = document.getElementById('removeContributionsUserId').value;
+            const contributions = document.getElementById('contributionsToRemove').value.split(',').map(contrib => contrib.trim());
+
+            try {
+                const response = await fetch(`${baseUrl}/remove-contributions/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ contributions })
+                });
+                const result = await response.json();
+                document.getElementById('removeContributionsResponse').innerText = JSON.stringify(result, null, 2);
+            } catch (error) {
+                document.getElementById('removeContributionsResponse').innerText = error.message;
             }
         }
     </script>

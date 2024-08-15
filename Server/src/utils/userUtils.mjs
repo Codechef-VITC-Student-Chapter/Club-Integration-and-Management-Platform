@@ -13,7 +13,7 @@ mongoose.connect(connectionString)
     .then(() => { console.log('Connected to MongoDB'); })
     .catch((err) => { console.log(err); });
 
-const User = mongoose.models.User || mongoose.model('Users', userSchema); 
+const User = mongoose.models.User || mongoose.model('Users', userSchema);
 
 export const addUser = async (userData) => {
     try {
@@ -105,3 +105,32 @@ export const removeClubs = async (userId, clubsToRemove) => {
     }
 };
 
+// Functions to handle contributions
+
+export const addContributions = async (userId, contributions) => {
+    try {
+        const user = await User.findOne({ user_id: userId });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        user.contributions = [...new Set([...user.contributions, ...contributions])]; // Avoid duplicate entries
+        await user.save();
+        return user;
+    } catch (error) {
+        throw new Error('Failed to add contributions');
+    }
+};
+
+export const removeContributions = async (userId, contributionsToRemove) => {
+    try {
+        const user = await User.findOne({ user_id: userId });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        user.contributions = user.contributions.filter(contribution => !contributionsToRemove.includes(contribution));
+        await user.save();
+        return user;
+    } catch (error) {
+        throw new Error('Failed to remove contributions');
+    }
+};
