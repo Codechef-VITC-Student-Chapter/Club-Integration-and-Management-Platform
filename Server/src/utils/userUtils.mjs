@@ -21,6 +21,7 @@ export const addUser = async (userData) => {
         await newUser.save();
         return newUser;
     } catch (error) {
+        console.log(error);
         throw new Error('Failed to add user');
     }
 };
@@ -48,6 +49,18 @@ export const getUserById = async (userId) => {
         throw new Error('Failed to fetch user');
     }
 };
+
+export const getUserByReg = async (regNo) => {
+    try {
+        const user = await User.findOne({ reg_no: regNo });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        return user;
+    } catch (error) {
+        throw new Error('Failed to fetch user');
+    }
+}
 
 export const addDepartments = async (userId, departments) => {
     try {
