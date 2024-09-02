@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 function UploadDetails() {
   // Simulated data
@@ -60,7 +61,7 @@ function UploadDetails() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [links, setLinks] = useState(['']);
-  const [points, setPoints] = useState(''); // New state variable for points
+  const [points, setPoints] = useState('');
 
   const [loadingClubs, setLoadingClubs] = useState(true);
   const [loadingDepartments, setLoadingDepartments] = useState(false);
@@ -156,6 +157,7 @@ function UploadDetails() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
     const requestData = {
       club,
       department,
@@ -163,9 +165,22 @@ function UploadDetails() {
       title,
       description,
       links,
-      points, // Include points in the request data
+      points,
     };
+
     console.log('Data to be sent to API:', requestData);
+
+    // Show success toast
+    toast.success('Request submitted successfully!');
+
+    // Clear all form fields
+    setClub('');
+    setDepartment('');
+    setLead('');
+    setTitle('');
+    setDescription('');
+    setLinks(['']);
+    setPoints('');
   };
 
   return (

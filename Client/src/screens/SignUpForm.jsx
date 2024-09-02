@@ -6,7 +6,7 @@ import {
   PhoneIcon,
 } from '@heroicons/react/24/outline';
 
-function SignUpForm() {
+function SignUpForm({ setToken }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -72,8 +72,8 @@ function SignUpForm() {
     if (!validate()) {
       return;
     }
-
-    // API call logic here
+    localStorage.setItem('token', formData.email + formData.password);
+    setToken(formData.email + '' + formData.password);
   };
 
   const handleChange = (e) => {

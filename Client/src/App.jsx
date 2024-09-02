@@ -18,7 +18,14 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
 
   if (!token) {
-    return <LoginForm setToken={setToken} />;
+    return (
+      <BrowserRouter>
+        <Routes>
+          <Route path="/*" element={<LoginForm setToken={setToken} />} />
+          <Route path="/signup" element={<SignUpForm setToken={setToken} />} />
+        </Routes>
+      </BrowserRouter>
+    );
   }
   return (
     <>
@@ -26,12 +33,12 @@ function App() {
       <BrowserRouter>
         <Suspense fallback={<LoadingScreen />}>
           <Routes>
-            <Route path="/login" element={<LoginForm />} />
-            <Route path="/signup" element={<SignUpForm />} />
             <Route path="/upload" element={<UploadDetails />} />
             <Route path="/requests" element={<SeeRequests />} />
             <Route path="/loading" element={<LoadingScreen />} />
             <Route path="/dashboard" element={<MemberDashboard />} />
+            <Route path="/login" element={<MemberDashboard />} />
+            <Route path="/signup" element={<MemberDashboard />} />
             <Route path="/" element={<MemberDashboard />} />
             <Route path="/*" element={<PageNotFound />} />
           </Routes>
