@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import LeadRequests from '../components/LeadRequests';
 
 const requestsData = [
   {
@@ -21,63 +22,61 @@ const requestsData = [
     links: ['http://example.com/2'],
     status: 'Pending',
   },
-  // Add more requests as needed
+  {
+    id: '3',
+    club: 'Club 3',
+    department: 'Department 2',
+    lead: 'Lead 3',
+    title: 'Request Title 3',
+    description: 'Request Description 3',
+    links: ['http://example.com/3'],
+    status: 'Pending',
+  },
+  {
+    id: '4',
+    club: 'Club 4',
+    department: 'Department 4',
+    lead: 'Lead 4',
+    title: 'Request Title 4',
+    description: 'Request Description 4',
+    links: ['http://example.com/4'],
+    status: 'Pending',
+  },
+  {
+    id: '5',
+    club: 'Club 5',
+    department: 'Department 5',
+    lead: 'Lead 2',
+    title: 'Request Title 5',
+    description: 'Request Description 5',
+    links: ['http://example.com/5'],
+    status: 'Pending',
+  },
 ];
 
 function ReviewRequests() {
   const [requests, setRequests] = useState(requestsData);
+  const [removing, setRemoving] = useState(null); // Track the removing request
 
-  const handleApproval = (id, decision) => {
-    setRequests((prevRequests) =>
-      prevRequests.map((req) =>
-        req.id === id ? { ...req, status: decision } : req
-      )
-    );
-    console.log(`Request ${id} ${decision}`);
+  const removeRequest = (index) => {
+    setRemoving(index); // Set the request to be removed
+    setTimeout(() => {
+      setRequests((prevRequests) => prevRequests.filter((_, i) => i !== index));
+      setRemoving(null); // Reset the removing state
+    }, 300); // Match this duration with the transition duration
   };
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
       <h1 className="text-2xl font-bold mb-6">Review Requests</h1>
-      {requests.map((request) => (
-        <div key={request.id} className="border-b border-gray-200 mb-4 pb-4">
-          <h2 className="text-xl font-semibold">{request.title}</h2>
-          <p className="text-gray-700 mb-2">{request.description}</p>
-          <p className="text-gray-600 mb-2">
-            <strong>Club:</strong> {request.club}
-          </p>
-          <p className="text-gray-600 mb-2">
-            <strong>Department:</strong> {request.department}
-          </p>
-          <p className="text-gray-600 mb-2">
-            <strong>Lead:</strong> {request.lead}
-          </p>
-          <p className="text-gray-600 mb-4">
-            <strong>Links:</strong>
-            <ul>
-              {request.links.map((link, index) => (
-                <li key={index}>
-                  <a href={link} className="text-blue-500 hover:underline">
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </p>
-          <div className="flex space-x-4">
-            <button
-              onClick={() => handleApproval(request.id, 'Approved')}
-              className="px-4 py-2 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600"
-            >
-              Approve
-            </button>
-            <button
-              onClick={() => handleApproval(request.id, 'Denied')}
-              className="px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600"
-            >
-              Deny
-            </button>
-          </div>
+      {requests.map((request, index) => (
+        <div
+          key={request.id}
+          className={`transition-opacity duration-300 ${
+            removing === index ? 'opacity-0' : 'opacity-100'
+          }`}
+        >
+          <LeadRequests request={request} remove={() => removeRequest(index)} />
         </div>
       ))}
     </div>

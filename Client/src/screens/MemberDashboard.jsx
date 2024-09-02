@@ -13,14 +13,14 @@ function MemberDashboard() {
     const fetchMemberData = async () => {
       setTimeout(() => {
         setClubPoints({
-          'Club 1': 45,
-          'Club 2': 30,
-          'Club 3': 60,
+          'This is an example for earning points': 45,
+          'This is another example': 30,
+          'CodeChef VITC': 60,
         });
 
         setPendingPoints({
-          'Club 1': 5,
-          'Club 2': 15,
+          'This is an example for earning points': 5,
+          'This is another example': 15,
         });
 
         setContributions([
@@ -84,7 +84,14 @@ function MemberDashboard() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold mb-6">Member Dashboard</h1>
+      <div className="flex justify-between flex-wrap">
+        <h1 className="text-3xl font-bold mb-6">Member Dashboard</h1>
+        <a href="/requests">
+          <button className="px-3 h-8 bg-blue-500 text-white rounded-lg">
+            Admin View
+          </button>
+        </a>
+      </div>
 
       <PointsWidget clubPoints={clubPoints} pendingPoints={pendingPoints} />
 
