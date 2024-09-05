@@ -1,6 +1,7 @@
 import express from 'express';
+import { verifyToken } from '../utils/jwtUtils.mjs';
+
 import { 
-    addUser, 
     removeUser, 
     getUserById, 
     addDepartments, 
@@ -13,14 +14,22 @@ import {
 
 const userRouter = express.Router();
 
-userRouter.post('/add', async (req, res) => {
+const authenticateToken = async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) return res.status(401).send('Access Denied');
+
     try {
-        const userAdded = await addUser(req.body);
-        res.status(201).json(userAdded);
-    } catch (error) {
-        res.status(500).json({ "error": error.message });
+        const decoded = await verifyToken(token);
+        req.user = decoded; 
+        next();
+    } catch (err) {
+        res.status(403).send('Invalid Token');
     }
-});
+};
+
+userRouter.use(authenticateToken); 
 
 userRouter.delete('/delete/:userId', async (req, res) => {
     try {
