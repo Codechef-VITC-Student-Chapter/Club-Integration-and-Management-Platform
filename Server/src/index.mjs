@@ -4,6 +4,7 @@ import cors from 'cors';
 import userRouter from './routes/usersRouter.mjs';
 import clubRouter from './routes/clubRouter.mjs';
 import authRouter from './routes/authRouter.mjs';
+import depsRouter from './routes/depsRouter.mjs';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(bodyParser.json());
 app.use('/userApi', userRouter);
 app.use('/clubApi', clubRouter);
 app.use('/authApi', authRouter);
+app.use('/depsApi', depsRouter);
 
 app.listen(3000, () => {
   console.log(`Server is running on port ${3000}`);
