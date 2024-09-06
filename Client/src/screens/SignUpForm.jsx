@@ -1,17 +1,44 @@
 import React, { useState } from 'react';
 import Logo from '../assets/logo.png';
 import {
-  UserCircleIcon,
-  LockClosedIcon,
-  PhoneIcon,
-} from '@heroicons/react/24/outline';
+  PiUserCircle,
+  PiLockLight,
+  PiIdentificationCardLight,
+} from 'react-icons/pi';
+import { MdOutlineMail } from 'react-icons/md';
+
+const validatePassword = (password) => {
+  const errors = [];
+
+  // Check for lowercase letters
+  if (!/(?=.*[a-z])/.test(password)) {
+    errors.push('a lowercase letter');
+  }
+
+  // Check for uppercase letters
+  if (!/(?=.*[A-Z])/.test(password)) {
+    errors.push('an uppercase letter');
+  }
+
+  // Check for numbers
+  if (!/(?=.*\d)/.test(password)) {
+    errors.push('a number');
+  }
+
+  // Check for special characters
+  if (!/(?=.*[@$!%*?&#])/.test(password)) {
+    errors.push('a special character');
+  }
+
+  return errors;
+};
 
 function SignUpForm({ setToken }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
-    phone: '',
+    reg_no: '',
     password: '',
     confirmPassword: '',
   });
@@ -20,7 +47,7 @@ function SignUpForm({ setToken }) {
     firstName: '',
     lastName: '',
     email: '',
-    phone: '',
+    reg_no: '',
     password: '',
     confirmPassword: '',
   });
@@ -47,19 +74,35 @@ function SignUpForm({ setToken }) {
       isValid = false;
     }
 
-    if (!formData.phone) {
-      newErrors.phone = 'Phone Number is required';
+    if (!formData.reg_no) {
+      newErrors.reg_no = 'Register Number is required';
+      isValid = false;
+    } else if (
+      !/^[0-9]{2}[A-Z]{3}[0-9]{4,5}$/.test(formData.reg_no.toUpperCase())
+    ) {
+      newErrors.reg_no = 'Register Number is not in the format required';
       isValid = false;
     }
+
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
 
     if (!formData.password) {
       newErrors.password = 'Password is required';
       isValid = false;
-    }
+    } else {
+      const passwordErrors = validatePassword(formData.password);
 
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
-      isValid = false;
+      if (passwordErrors.length > 0) {
+        newErrors.password =
+          'Password must include the following: \n' + passwordErrors.join('\n');
+        isValid = false;
+      }
+
+      if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'Passwords do not match';
+        isValid = false;
+      }
     }
 
     setErrors(newErrors);
@@ -79,6 +122,7 @@ function SignUpForm({ setToken }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    validate();
   };
 
   return (
@@ -104,7 +148,7 @@ function SignUpForm({ setToken }) {
                   </label>
                   <div className="flex items-center border-2 rounded-md shadow-sm mt-1">
                     <div className="p-2">
-                      <UserCircleIcon className="h-5 w-5 text-black" />
+                      <PiUserCircle className="h-5 w-5 text-black" />
                     </div>
                     <input
                       type="text"
@@ -129,7 +173,7 @@ function SignUpForm({ setToken }) {
                   </label>
                   <div className="flex items-center border-2 rounded-md shadow-sm mt-1">
                     <div className="p-2">
-                      <UserCircleIcon className="h-5 w-5 text-black" />
+                      <PiUserCircle className="h-5 w-5 text-black" />
                     </div>
                     <input
                       type="text"
@@ -155,7 +199,7 @@ function SignUpForm({ setToken }) {
                 </label>
                 <div className="flex items-center border-2 rounded-md shadow-sm mt-1">
                   <div className="p-2">
-                    <UserCircleIcon className="h-5 w-5 text-black" />
+                    <MdOutlineMail className="h-5 w-5 text-black" />
                   </div>
                   <input
                     type="email"
@@ -176,26 +220,26 @@ function SignUpForm({ setToken }) {
               </div>
               <div className="mb-4">
                 <label className="block text-xs sm:text-sm font-bold text-black">
-                  Phone Number
+                  Registration Number
                 </label>
                 <div className="flex items-center border-2 rounded-md shadow-sm mt-1">
                   <div className="p-2">
-                    <PhoneIcon className="h-5 w-5 text-black" />
+                    <PiIdentificationCardLight className="h-5 w-5 text-black" />
                   </div>
                   <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
+                    type="text"
+                    name="reg_no"
+                    value={formData.reg_no}
                     onChange={handleChange}
                     className={`appearance-none block w-full pl-2 pr-3 py-2 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                       errors.phone ? 'border-red-500' : 'border-black'
                     }`}
-                    placeholder="Phone Number"
+                    placeholder="Registration Number"
                   />
                 </div>
-                {errors.phone && (
+                {errors.reg_no && (
                   <p className="text-red-500 text-xs sm:text-sm mt-1">
-                    {errors.phone}
+                    {errors.reg_no}
                   </p>
                 )}
               </div>
@@ -205,7 +249,7 @@ function SignUpForm({ setToken }) {
                 </label>
                 <div className="flex items-center border-2 rounded-md shadow-sm mt-1">
                   <div className="p-2">
-                    <LockClosedIcon className="h-5 w-5 text-black" />
+                    <PiLockLight className="h-5 w-5 text-black" />
                   </div>
                   <input
                     type="password"
@@ -230,7 +274,7 @@ function SignUpForm({ setToken }) {
                 </label>
                 <div className="flex items-center border-2 rounded-md shadow-sm mt-1">
                   <div className="p-2">
-                    <LockClosedIcon className="h-5 w-5 text-black" />
+                    <PiLockLight className="h-5 w-5 text-black" />
                   </div>
                   <input
                     type="password"
@@ -252,7 +296,7 @@ function SignUpForm({ setToken }) {
               <div>
                 <button
                   type="submit"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-full shadow-sm text-lg sm:text-xl md:text-2xl font-medium text-white bg-[#74baec] hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-[43px] shadow-sm text-3xl font-medium text-white hover:bg-[#74baec] bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   Sign Up
                 </button>

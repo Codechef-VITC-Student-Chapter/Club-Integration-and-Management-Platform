@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Logo from '../assets/logo.png';
-import { UserCircleIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import { PiUserCircle, PiLockLight } from 'react-icons/pi';
 
 function LoginForm({ setToken }) {
   const [email, setEmail] = useState('');
@@ -34,7 +34,7 @@ function LoginForm({ setToken }) {
                 </label>
                 <div className="flex items-center border-2 border-black rounded-md shadow-sm">
                   <div className="p-2">
-                    <UserCircleIcon className="h-5 w-5 text-black" />
+                    <PiUserCircle className="h-5 w-5 text-black" />
                   </div>
                   <input
                     type="email"
@@ -52,7 +52,7 @@ function LoginForm({ setToken }) {
                 </label>
                 <div className="flex items-center border-2 border-black rounded-md shadow-sm">
                   <div className="p-2">
-                    <LockClosedIcon className="h-5 w-5 text-black" />
+                    <PiLockLight className="h-5 w-5 text-black" />
                   </div>
                   <input
                     type="password"
