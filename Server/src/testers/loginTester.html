@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        .container {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
+            display: block;
+            margin: 10px 0;
+            padding: 8px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Login API Test Page</h1>
+
+    <div class="container">
+        <h2>Login</h2>
+        <input type="text" id="loginUsername" placeholder="RegNo" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button onclick="login()">Login</button>
+        <div id="loginResponse"></div>
+    </div>
+
+    <script>
+        const baseUrl = 'http://localhost:3000/authApi'; 
+
+        async function login() {
+            const regno = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+
+            try {
+                const response = await fetch(`${baseUrl}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ regno, password })
+                });
+
+                console.log(response);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                document.getElementById('loginResponse').innerText = `Token: ${result.token}`;
+            } catch (error) {
+                document.getElementById('loginResponse').innerText = error.message;
+            }
+        }
+    </script>
+</body>
+</html>

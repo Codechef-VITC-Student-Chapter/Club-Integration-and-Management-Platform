@@ -1,6 +1,7 @@
 import express from 'express';
+import { authenticateToken } from '../middleware/authenticateToken.mjs';
+
 import { 
-    addUser, 
     removeUser, 
     getUserById, 
     addDepartments, 
@@ -13,14 +14,7 @@ import {
 
 const userRouter = express.Router();
 
-userRouter.post('/add', async (req, res) => {
-    try {
-        const userAdded = await addUser(req.body);
-        res.status(201).json(userAdded);
-    } catch (error) {
-        res.status(500).json({ "error": error.message });
-    }
-});
+userRouter.use(authenticateToken); 
 
 userRouter.delete('/delete/:userId', async (req, res) => {
     try {

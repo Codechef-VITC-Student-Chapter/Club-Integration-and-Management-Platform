@@ -6,11 +6,15 @@ const userSchema = new Schema({
         required: true,
         unique: true
     },
-    username: {
+    reg_no: {
         type: String,
         required: true
     },
-    reg_no: {
+    first_name: {
+        type: String,
+        required: true
+    },
+    last_name: {
         type: String,
         required: true
     },
@@ -24,11 +28,13 @@ const userSchema = new Schema({
     },
     clubs: {
         type: [String],
-        default: []
+        default: [],
+        required: false
     },
     contributions: {
         type: [String],
-        default: []
+        default: [],
+        required: false
     }
 });
 
