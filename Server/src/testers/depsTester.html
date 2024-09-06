@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DepTester - Department API Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #333;
+            color: white;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h2 {
+            color: #333;
+        }
+        input, button, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f4f4f9;
+            border: 1px solid #ddd;
+        }
+        .flex-container {
+            display: flex;
+            justify-content: space-between;
+        }
+        .flex-container div {
+            width: 48%;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>DepTester - Department API Tester</h1>
+    </header>
+
+    <div class="container">
+        <h2>Add Department</h2>
+        <input type="text" id="dep_id" placeholder="Department ID">
+        <input type="text" id="dep_name" placeholder="Department Name">
+        <input type="text" id="club_id" placeholder="Club ID">
+        <button onclick="addDepartment()">Add Department</button>
+
+        <h2>Delete Department</h2>
+        <input type="text" id="delete_dep_id" placeholder="Department ID to Delete">
+        <button onclick="deleteDepartment()">Delete Department</button>
+
+        <h2>Get Department</h2>
+        <input type="text" id="get_dep_id" placeholder="Department ID to Get">
+        <button onclick="getDepartment()">Get Department</button>
+
+        <div class="flex-container">
+            <div>
+                <h2>Add Sub-Department</h2>
+                <input type="text" id="main_dep_id" placeholder="Main Department ID">
+                <input type="text" id="sub_dep_id" placeholder="Sub-Department ID">
+                <button onclick="addSubDepartment()">Add Sub-Department</button>
+            </div>
+            <div>
+                <h2>Remove Sub-Department</h2>
+                <input type="text" id="main_dep_id_remove" placeholder="Main Department ID">
+                <input type="text" id="sub_dep_id_remove" placeholder="Sub-Department ID">
+                <button onclick="removeSubDepartment()">Remove Sub-Department</button>
+            </div>
+        </div>
+
+        <div class="flex-container">
+            <div>
+                <h2>Add Lead</h2>
+                <input type="text" id="lead_dep_id" placeholder="Department ID">
+                <input type="text" id="user_id" placeholder="User ID (Lead)">
+                <button onclick="addLead()">Add Lead</button>
+            </div>
+            <div>
+                <h2>Remove Lead</h2>
+                <input type="text" id="lead_dep_id_remove" placeholder="Department ID">
+                <input type="text" id="user_id_remove" placeholder="User ID (Lead)">
+                <button onclick="removeLead()">Remove Lead</button>
+            </div>
+        </div>
+
+        <div class="results" id="results">
+            <h3>Results</h3>
+            <pre id="resultData"></pre>
+        </div>
+    </div>
+
+    <script>
+        const baseURL = "http://localhost:3000/depsApi";
+
+        async function addDepartment() {
+            const dep_id = document.getElementById('dep_id').value;
+            const dep_name = document.getElementById('dep_name').value;
+            const club_id = document.getElementById('club_id').value;
+            const response = await fetch(`${baseURL}/add`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ dep_id, dep_name, club_id: club_id })
+            });
+            const data = await response.json();
+            document.getElementById('resultData').innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function deleteDepartment() {
+            const depId = document.getElementById('delete_dep_id').value;
+            const response = await fetch(`${baseURL}/delete/${depId}`, {
+                method: 'DELETE'
+            });
+            const data = await response.json();
+            document.getElementById('resultData').innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function getDepartment() {
+            const depId = document.getElementById('get_dep_id').value;
+            const response = await fetch(`${baseURL}/get/${depId}`);
+            const data = await response.json();
+            document.getElementById('resultData').innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function addSubDepartment() {
+            const depId = document.getElementById('main_dep_id').value;
+            const subDepId = document.getElementById('sub_dep_id').value;
+            const response = await fetch(`${baseURL}/add-sub-department`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ depId, subDepId })
+            });
+            const data = await response.json();
+            document.getElementById('resultData').innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function removeSubDepartment() {
+            const depId = document.getElementById('main_dep_id_remove').value;
+            const subDepId = document.getElementById('sub_dep_id_remove').value;
+            const response = await fetch(`${baseURL}/remove-sub-department`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ depId, subDepId })
+            });
+            const data = await response.json();
+            document.getElementById('resultData').innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function addLead() {
+            const depId = document.getElementById('lead_dep_id').value;
+            const userId = document.getElementById('user_id').value;
+            const response = await fetch(`${baseURL}/add-lead`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ depId, userId })
+            });
+            const data = await response.json();
+            document.getElementById('resultData').innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function removeLead() {
+            const depId = document.getElementById('lead_dep_id_remove').value;
+            const userId = document.getElementById('user_id_remove').value;
+            const response = await fetch(`${baseURL}/remove-lead`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ depId, userId })
+            });
+            const data = await response.json();
+            document.getElementById('resultData').innerText = JSON.stringify(data, null, 2);
+        }
+    </script>
+
+</body>
+</html>
