@@ -34,6 +34,16 @@ userRouter.get('/get/:userId', async (req, res) => {
     }
 });
 
+userRouter.get('/getTotalPoints/:userId', async (req, res) => {
+    try {
+        const user = await getUserById(req.params.userId);
+        const totalPoints = user.contributions.reduce((acc, contribution) => acc + contribution.points, 0);
+        res.status(200).json({ totalPoints });  
+    } catch (error) {   
+        res.status(500).json({ "error": error.message });
+    }   
+});
+
 userRouter.patch('/add-departments/:userId', async (req, res) => {
     try {
         const { departments } = req.body; 
