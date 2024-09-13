@@ -52,6 +52,8 @@ function SignUpForm({ setToken }) {
     confirmPassword: '',
   });
 
+  const baseUrl = 'http://localhost:3000/authApi';
+
   const validate = () => {
     let isValid = true;
     const newErrors = {};
@@ -115,8 +117,29 @@ function SignUpForm({ setToken }) {
     if (!validate()) {
       return;
     }
-    localStorage.setItem('token', formData.email + formData.password);
-    setToken(formData.email + '' + formData.password);
+
+    const data = {
+      regno: formData.reg_no,
+      firstname: formData.firstName,
+      lastname: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+    };
+
+    try {
+      const response = await fetch(`${baseUrl}/signUp`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      localStorage.setItem('token', result.token);
+      setToken(result.token);
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   const handleChange = (e) => {

@@ -3,13 +3,38 @@ import Logo from '../assets/logo.png';
 import { PiUserCircle, PiLockLight } from 'react-icons/pi';
 
 function LoginForm({ setToken }) {
-  const [email, setEmail] = useState('');
+  const [regno, setRegno] = useState('');
   const [password, setPassword] = useState('');
+
+  const baseUrl = 'http://localhost:3000/authApi';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    localStorage.setItem('token', email + password);
-    setToken(email + '' + password);
+    try {
+      const response = await fetch(`${baseUrl}/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ regno, password }),
+      });
+
+      console.log(response);
+
+      if (!response.ok) {
+        const result = await response.json();
+        throw new Error(
+          `HTTP error! Status: ${response.status} ${result.error}`
+        );
+      }
+
+      const result = await response.json();
+
+      localStorage.setItem('token', result.token);
+      setToken(regno + '' + password);
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -30,19 +55,19 @@ function LoginForm({ setToken }) {
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label className="block text-sm font-bold text-black mb-1">
-                  Email ID
+                  Register Number
                 </label>
                 <div className="flex items-center border-2 border-black rounded-md shadow-sm">
                   <div className="p-2">
                     <PiUserCircle className="h-5 w-5 text-black" />
                   </div>
                   <input
-                    type="email"
-                    name="email"
+                    type="regno"
+                    name="regno"
                     className="appearance-none block w-full pl-2 pr-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="some.mail@university.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="23ABC1234"
+                    value={regno}
+                    onChange={(e) => setRegno(e.target.value)}
                   />
                 </div>
               </div>
