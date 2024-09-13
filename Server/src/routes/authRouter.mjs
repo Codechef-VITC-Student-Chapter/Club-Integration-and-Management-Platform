@@ -19,6 +19,7 @@ authRouter.post('/signup', async (req, res) => {
             reg_no: regno,
             first_name: firstname,
             last_name: lastname,
+            email: email,
             password_hash: hashPassword(password), 
         };
 
