@@ -19,6 +19,16 @@ contRouter.post('/add', async (req, res) => {
     }
 });
 
+contRouter.get('/points/:id', async (req, res) => {
+    try {
+        const contId = req.params.id;
+        const contribution = await getContributionById(contId);
+        res.status(200).json(contribution.points);
+    } catch (error) {
+        res.status(404).json({ error: error.message });
+    }
+});
+
 contRouter.delete('/delete/:id', async (req, res) => {
     try {
         const contId = req.params.id;
