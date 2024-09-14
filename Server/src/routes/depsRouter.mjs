@@ -10,13 +10,18 @@ import {
 } 
 from '../utils/depsUtils.mjs'
 
+import { addDepartmentToClub } from '../utils/clubUtils.mjs';
+
 const depsRouter = express.Router();
 
 
 depsRouter.post('/add', async (req, res) => {
     try {
         const depsData = req.body;
+        const club_id = depsData.club_id;
         const newDep = await addDepartment(depsData);
+        await addDepartmentToClub(club_id, newDep.dep_id);
+        
         res.status(201).json(newDep);
     } catch (error) {
         console.log(error);
