@@ -62,6 +62,27 @@ depsRouter.post('/add-sub-department', async (req, res) => {
     }
 });
 
+depsRouter.post('/getLeads', async (req, res) => { 
+    try{
+        const { dep_id } = req.body;
+        const department = await getDepartmentById(dep_id);
+        const leads = department.leads;
+
+        const leadsWithUserData = await Promise.all(leads.map(async (lead) => {
+            const user = await getUserById(lead.user_id);
+            return {
+                user_id: user.user_id,
+                first_name: user.first_name,
+                last_name: user.last_name
+            };
+        }));
+
+        res.status(200).json(leadsWithUserData);
+    }catch(error){
+        res.status(400).json({ error: error.message });
+    }
+});
+
 
 depsRouter.post('/remove-sub-department', async (req, res) => {
     try {
