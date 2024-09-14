@@ -1,5 +1,6 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/authenticateToken.mjs';
+import { getContributionById } from '../utils/contUtils.mjs';
 
 import { 
     removeUser, 
@@ -37,7 +38,11 @@ userRouter.get('/get/:userId', async (req, res) => {
 userRouter.get('/getTotalPoints/:userId', async (req, res) => {
     try {
         const user = await getUserById(req.params.userId);
-        const totalPoints = user.contributions.reduce((acc, contribution) => acc + contribution.points, 0);
+        var totalPoints = 0;
+        for(let contribution of user.contributions) {
+            const contributionData = await getContributionById(contribution);
+            totalPoints += contributionData.points;
+        }
         res.status(200).json({ totalPoints });  
     } catch (error) {   
         res.status(500).json({ "error": error.message });
