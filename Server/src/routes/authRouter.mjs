@@ -20,12 +20,13 @@ authRouter.post('/signup', async (req, res) => {
             first_name: firstname,
             last_name: lastname,
             email: email,
+            isLead: false,
             password_hash: hashPassword(password), 
         };
 
         await addUser(newUser);
 
-        const token = await generateToken({ user_id: newUser.user_id });
+        const token = await generateToken({ user_id: newUser.user_id,  is_lead: isLead});
         res.json({ token });
     } catch (error) {
         console.error(error);
@@ -49,7 +50,7 @@ authRouter.post('/login', async (req, res) => {
             return res.status(401).send('Invalid credentials');
         }
 
-        const token = await generateToken({ user_id: user.user_id });
+        const token = await generateToken({ user_id: user.user_id, is_lead: user.isLead });
         res.json({ token });
     } catch (error) {
         console.log(error);

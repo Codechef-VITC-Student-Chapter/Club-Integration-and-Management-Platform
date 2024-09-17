@@ -26,6 +26,10 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    isLead:{
+        type: Boolean,
+        default: false
+    },
     deps: {
         type: [String],
         default: []
