@@ -1,39 +1,36 @@
 import React, { useState } from 'react';
 import Logo from '../assets/logo.png';
 import { PiUserCircle, PiLockLight } from 'react-icons/pi';
+import { useRunningContext } from '../contexts/RunningContext';
 
-function LoginForm({ setToken }) {
+function LoginForm() {
+  const { baseURL, setCurrentUser, setIsAdmin, currentUser, setToken } =
+    useRunningContext();
+
   const [regno, setRegno] = useState('');
   const [password, setPassword] = useState('');
-
-  const baseUrl = 'http://localhost:3000/authApi';
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${baseUrl}/login`, {
+      const response = await fetch(`${baseURL}/authApi/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ regno, password }),
+        body: JSON.stringify({ regno: regno, password: password }),
       });
+      const data = await response.json();
 
-      console.log(response);
-
-      if (!response.ok) {
-        const result = await response.json();
-        throw new Error(
-          `HTTP error! Status: ${response.status} ${result.error}`
-        );
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        var payload = JSON.parse(window.atob(data.token.split('.')[1]));
+        setCurrentUser(payload.user_id);
+        console.log(currentUser);
+        // setIsAdmin(payload.is_admin);
+        setToken(data.token);
       }
-
-      const result = await response.json();
-
-      localStorage.setItem('token', result.token);
-      setToken(regno + '' + password);
     } catch (error) {
-      console.log(error.message);
+      console.log('Error in logging in! ' + error);
     }
   };
 
