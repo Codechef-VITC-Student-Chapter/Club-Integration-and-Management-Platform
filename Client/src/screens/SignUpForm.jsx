@@ -6,6 +6,7 @@ import {
   PiIdentificationCardLight,
 } from 'react-icons/pi';
 import { MdOutlineMail } from 'react-icons/md';
+import { useRunningContext } from '../contexts/RunningContext';
 
 const validatePassword = (password) => {
   const errors = [];
@@ -33,7 +34,9 @@ const validatePassword = (password) => {
   return errors;
 };
 
-function SignUpForm({ setToken }) {
+function SignUpForm() {
+  const { baseURL, setCurrentUser, setIsAdmin, setToken } = useRunningContext();
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -51,8 +54,6 @@ function SignUpForm({ setToken }) {
     password: '',
     confirmPassword: '',
   });
-
-  const baseUrl = 'http://localhost:3000/authApi';
 
   const validate = () => {
     let isValid = true;
@@ -118,27 +119,32 @@ function SignUpForm({ setToken }) {
       return;
     }
 
-    const data = {
-      regno: formData.reg_no,
-      firstname: formData.firstName,
-      lastname: formData.lastName,
-      email: formData.email,
-      password: formData.password,
-    };
-
     try {
-      const response = await fetch(`${baseUrl}/signUp`, {
+      const response = await fetch(`${baseURL}/authApi/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          regno: formData.reg_no,
+          firstname: formData.firstName,
+          lastname: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+        }),
       });
-      const result = await response.json();
-      localStorage.setItem('token', result.token);
-      setToken(result.token);
+      console.log(response);
+      const data = await response.json();
+
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        var payload = JSON.parse(window.atob(data.token.split('.')[1]));
+        setCurrentUser(payload.user_id);
+        // setIsAdmin(payload.is_admin);
+        setToken(data.token);
+      }
     } catch (error) {
-      console.log(error.message);
+      console.log('Error in signup! ', error);
     }
   };
 
