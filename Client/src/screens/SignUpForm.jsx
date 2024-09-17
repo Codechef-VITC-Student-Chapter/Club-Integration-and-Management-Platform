@@ -6,6 +6,7 @@ import {
   PiIdentificationCardLight,
 } from 'react-icons/pi';
 import { MdOutlineMail } from 'react-icons/md';
+import { useRunningContext } from '../contexts/RunningContext';
 
 const validatePassword = (password) => {
   const errors = [];
@@ -33,7 +34,9 @@ const validatePassword = (password) => {
   return errors;
 };
 
-function SignUpForm({ setToken }) {
+function SignUpForm() {
+  const { baseURL, setCurrentUser, setIsAdmin, setToken } = useRunningContext();
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -115,8 +118,34 @@ function SignUpForm({ setToken }) {
     if (!validate()) {
       return;
     }
-    localStorage.setItem('token', formData.email + formData.password);
-    setToken(formData.email + '' + formData.password);
+
+    try {
+      const response = await fetch(`${baseURL}/authApi/signup`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          regno: formData.reg_no,
+          firstname: formData.firstName,
+          lastname: formData.lastName,
+          email: formData.email,
+          password: formData.password,
+        }),
+      });
+      console.log(response);
+      const data = await response.json();
+
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        var payload = JSON.parse(window.atob(data.token.split('.')[1]));
+        setCurrentUser(payload.user_id);
+        // setIsAdmin(payload.is_admin);
+        setToken(data.token);
+      }
+    } catch (error) {
+      console.log('Error in signup! ', error);
+    }
   };
 
   const handleChange = (e) => {

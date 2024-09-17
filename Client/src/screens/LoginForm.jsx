@@ -1,15 +1,37 @@
 import React, { useState } from 'react';
 import Logo from '../assets/logo.png';
 import { PiUserCircle, PiLockLight } from 'react-icons/pi';
+import { useRunningContext } from '../contexts/RunningContext';
 
-function LoginForm({ setToken }) {
-  const [email, setEmail] = useState('');
+function LoginForm() {
+  const { baseURL, setCurrentUser, setIsAdmin, currentUser, setToken } =
+    useRunningContext();
+
+  const [regno, setRegno] = useState('');
   const [password, setPassword] = useState('');
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    localStorage.setItem('token', email + password);
-    setToken(email + '' + password);
+    try {
+      const response = await fetch(`${baseURL}/authApi/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ regno: regno, password: password }),
+      });
+      const data = await response.json();
+
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        var payload = JSON.parse(window.atob(data.token.split('.')[1]));
+        setCurrentUser(payload.user_id);
+        console.log(currentUser);
+        // setIsAdmin(payload.is_admin);
+        setToken(data.token);
+      }
+    } catch (error) {
+      console.log('Error in logging in! ' + error);
+    }
   };
 
   return (
@@ -30,19 +52,19 @@ function LoginForm({ setToken }) {
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label className="block text-sm font-bold text-black mb-1">
-                  Email ID
+                  Register Number
                 </label>
                 <div className="flex items-center border-2 border-black rounded-md shadow-sm">
                   <div className="p-2">
                     <PiUserCircle className="h-5 w-5 text-black" />
                   </div>
                   <input
-                    type="email"
-                    name="email"
+                    type="regno"
+                    name="regno"
                     className="appearance-none block w-full pl-2 pr-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="some.mail@university.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="23ABC1234"
+                    value={regno}
+                    onChange={(e) => setRegno(e.target.value)}
                   />
                 </div>
               </div>

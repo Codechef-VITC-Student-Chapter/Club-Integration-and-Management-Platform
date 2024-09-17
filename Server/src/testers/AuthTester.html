@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Auth API Test</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2rem;
+        color: #333;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+        color: #4b4b4b;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+
+      .container {
+        max-width: 600px;
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+      }
+
+      label {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+        color: #555;
+      }
+
+      input {
+        padding: 12px;
+        font-size: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        transition: border 0.3s ease;
+      }
+
+      input:focus {
+        outline: none;
+        border: 1px solid #007bff;
+      }
+
+      button {
+        background-color: #007bff;
+        color: #fff;
+        padding: 12px;
+        font-size: 1rem;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      .form-container {
+        background-color: #f7f7f7;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .response {
+        padding: 20px;
+        background-color: #e9ecef;
+        border-radius: 12px;
+        word-wrap: break-word;
+      }
+
+      .response h3 {
+        font-size: 1.25rem;
+        margin-bottom: 10px;
+      }
+
+      #responseOutput {
+        background-color: #f8f9fa;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        color: #333;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Auth API Test</h1>
+
+      <!-- Signup Form -->
+      <div class="form-container">
+        <h2>Signup</h2>
+        <form id="signupForm">
+          <div class="form-group">
+            <label for="regno">Registration No:</label>
+            <input type="text" id="regno" name="regno" required />
+          </div>
+
+          <div class="form-group">
+            <label for="firstname">First Name:</label>
+            <input type="text" id="firstname" name="firstname" required />
+          </div>
+
+          <div class="form-group">
+            <label for="lastname">Last Name:</label>
+            <input type="text" id="lastname" name="lastname" required />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required />
+          </div>
+
+          <button type="submit">Signup</button>
+        </form>
+      </div>
+
+      <!-- Login Form -->
+      <div class="form-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="regnoLogin">Registration No:</label>
+            <input type="text" id="regnoLogin" name="regnoLogin" required />
+          </div>
+
+          <div class="form-group">
+            <label for="passwordLogin">Password:</label>
+            <input
+              type="password"
+              id="passwordLogin"
+              name="passwordLogin"
+              required
+            />
+          </div>
+
+          <button type="submit">Login</button>
+        </form>
+      </div>
+
+      <div class="response">
+        <h3>Response</h3>
+        <pre id="responseOutput">Response will appear here...</pre>
+      </div>
+    </div>
+
+    <script>
+      // Function to display the response
+      function displayResponse(response) {
+        document.getElementById('responseOutput').textContent = JSON.stringify(
+          response,
+          null,
+          2
+        );
+      }
+
+      // Signup form submission handler
+      document
+        .getElementById('signupForm')
+        .addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const regno = document.getElementById('regno').value;
+          const firstname = document.getElementById('firstname').value;
+          const lastname = document.getElementById('lastname').value;
+          const email = document.getElementById('email').value;
+          const password = document.getElementById('password').value;
+
+          const data = { regno, firstname, lastname, email, password };
+
+          try {
+            const response = await fetch(
+              'http://localhost:3000/authApi/signup',
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+              }
+            );
+
+            const responseData = await response.json();
+            displayResponse(responseData);
+          } catch (error) {
+            console.error('Error:', error);
+            displayResponse({ error: 'Failed to signup' });
+          }
+        });
+
+      // Login form submission handler
+      document
+        .getElementById('loginForm')
+        .addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const regno = document.getElementById('regnoLogin').value;
+          const password = document.getElementById('passwordLogin').value;
+
+          const data = { regno, password };
+
+          try {
+            const response = await fetch(
+              'http://localhost:3000/authApi/login',
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+              }
+            );
+
+            const responseData = await response.json();
+            displayResponse(responseData);
+          } catch (error) {
+            console.error('Error:', error);
+            displayResponse({ error: 'Failed to login' });
+          }
+        });
+    </script>
+  </body>
+</html>

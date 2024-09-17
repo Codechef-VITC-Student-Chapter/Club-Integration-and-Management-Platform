@@ -1,6 +1,8 @@
 import React, { startTransition, useTransition } from 'react';
+import { useRunningContext } from '../contexts/RunningContext';
 
-function Navbar({ setToken }) {
+function Navbar() {
+  const { setToken } = useRunningContext();
   function signOut() {
     localStorage.removeItem('token');
     startTransition(() => {

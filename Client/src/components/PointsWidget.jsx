@@ -26,7 +26,7 @@ function PointsWidget({ clubPoints, pendingPoints }) {
             <div
               key={club}
               className={`relative p-4 rounded-lg ${
-                isClubGreen ? 'bg-green-500' : 'bg-pink-950'
+                isClubGreen ? 'bg-green-500' : 'bg-red-800'
               } text-white`}
             >
               <h3 className="text-md font-semibold">{club}</h3>

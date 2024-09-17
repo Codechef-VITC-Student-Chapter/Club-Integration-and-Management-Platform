@@ -2,85 +2,54 @@ import React, { useState, useEffect } from 'react';
 import PointsWidget from '../components/PointsWidget'; // Assuming PointsWidget is in the same directory
 import RecentContributions from '../components/RecentContributions'; // Assuming RecentContributions is in the same directory
 import PendingContributions from '../components/PendingContributions'; // Assuming PendingContributions is in the same directory
+import { useRunningContext } from '../contexts/RunningContext';
 
 function MemberDashboard() {
-  const [clubPoints, setClubPoints] = useState({});
-  const [pendingPoints, setPendingPoints] = useState({});
+  const { baseURL, currentUser, token } = useRunningContext();
+
+  const [clubPoints, setClubPoints] = useState({ codechefvitc: 0 });
+  const [pendingPoints, setPendingPoints] = useState({ codechefvitc: 0 });
   const [contributions, setContributions] = useState([]);
   const [pendingContributions, setPendingContributions] = useState([]);
 
   useEffect(() => {
-    const fetchMemberData = async () => {
-      setTimeout(() => {
-        setClubPoints({
-          'This is an example for earning points': 45,
-          'This is another example': 30,
-          'CodeChef VITC': 60,
+    const fetchContributions = async () => {
+      try {
+        const response = await fetch(`${baseURL}/userAPI/getContributionData`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
-        setPendingPoints({
-          'This is an example for earning points': 5,
-          'This is another example': 15,
-        });
-
-        setContributions([
-          {
-            title: 'Organized Event A',
-            date: '2024-08-10',
-            description: 'Description of event A.',
-            club: 'Club 1',
-            department: 'Department 1',
-            lead: 'Lead 1',
-          },
-          {
-            title: 'Volunteered for Event B',
-            date: '2024-07-22',
-            description: 'Description of event B.',
-            club: 'Club 2',
-            department: 'Department 2',
-            lead: 'Lead 2',
-          },
-          {
-            title: 'Created Resource C',
-            date: '2024-06-15',
-            description: 'Description of resource C.',
-            club: 'Club 1',
-            department: 'Department 1',
-            lead: 'Lead 1',
-          },
-          {
-            title: 'Contributed to Project D',
-            date: '2024-05-30',
-            description: 'Description of project D.',
-            club: 'Club 3',
-            department: 'Department 3',
-            lead: 'Lead 3',
-          },
-        ]);
-
-        setPendingContributions([
-          {
-            title: 'Pending Event E',
-            date: '2024-08-14',
-            description: 'Description of pending event E.',
-            club: 'Club 1',
-            department: 'Department 1',
-            lead: 'Lead 1',
-          },
-          {
-            title: 'Pending Contribution F',
-            date: '2024-08-12',
-            description: 'Description of pending contribution F.',
-            club: 'Club 2',
-            department: 'Department 2',
-            lead: 'Lead 2',
-          },
-        ]);
-      }, 1000);
+        const data = await response.json();
+        const done = [];
+        const pending = [];
+        var donepoints = 0;
+        var pendingpoints = 0;
+        for (let i = 0; i < data.length; i++) {
+          const current = data[i];
+          if (current.status == 'pending') {
+            pendingpoints += data[i].points;
+            pending.push(current);
+          } else {
+            donepoints += data[i].points;
+            done.push(current);
+          }
+        }
+        setContributions(done);
+        setPendingContributions(pending);
+        setClubPoints({ codechefvitc: donepoints });
+        setPendingPoints({ codechefvitc: pendingpoints });
+        console.log(contributions, pendingContributions);
+      } catch (error) {
+        console.log('Error in fetching contributions: ', error);
+      }
     };
-
-    fetchMemberData();
-  }, []);
+    if (currentUser) {
+      fetchContributions();
+    }
+  }, [currentUser]);
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-6">
