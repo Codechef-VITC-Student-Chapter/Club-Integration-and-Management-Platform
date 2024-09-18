@@ -54,7 +54,7 @@ export const getRequests = async(uid) => {
     try{
         const requests = await Contribution.find({target: uid});
         if(!requests){
-            throw new Error('no contributions submitted to this user');
+           return {requests: []};
         }
         return requests;
     } catch (error) {
