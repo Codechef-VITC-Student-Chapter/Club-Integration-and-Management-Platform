@@ -42,7 +42,11 @@ userRouter.post('/getContributionData', async (req, res) => {
         const contributionData = [];
         for (let contributionId of contributions) {
             const contribution = await getContributionById(contributionId);
-            contributionData.push(contribution);
+            contributionData.push({
+                contID: contribution.cont_id, 
+                contTitle: contribution.title, 
+                club: contribution.club, 
+                dep: contribution.dep});
         }
         res.status(200).json(contributionData);
     } catch (error) {
