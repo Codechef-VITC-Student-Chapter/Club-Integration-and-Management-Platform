@@ -25,7 +25,7 @@ authRouter.post('/signup', async (req, res) => {
 
     await addUser(newUser);
 
-    const token = await generateToken({ user_id: newUser.user_id });
+    const token = await generateToken({ id: user.user_id, name: user.first_name + ' ' +user.last_name, isLead: user.isLead });
     res.json({ token });
   } catch (error) {
     console.error(error);
