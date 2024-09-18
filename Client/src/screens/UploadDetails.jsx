@@ -1,61 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { useRunningContext } from '../contexts/RunningContext';
 
 function UploadDetails() {
-  // Simulated data
-  const clubsData = {
-    club1: { id: 'club1', name: 'Club 1' },
-    club2: { id: 'club2', name: 'Club 2' },
-    club3: { id: 'club3', name: 'Club 3' },
-  };
+  const { baseURL, currentUser, handleError } = useRunningContext();
 
-  const departmentsData = {
-    club1: {
-      department1: { id: 'department1', name: 'Department 1' },
-      department2: { id: 'department2', name: 'Department 2' },
-    },
-    club2: {
-      department3: { id: 'department3', name: 'Department 3' },
-      department4: { id: 'department4', name: 'Department 4' },
-    },
-    club3: {
-      department5: { id: 'department5', name: 'Department 5' },
-      department6: { id: 'department6', name: 'Department 6' },
-    },
-  };
-
-  const leadsData = {
-    department1: [
-      { id: 'lead1', name: 'Lead 1' },
-      { id: 'lead2', name: 'Lead 2' },
-    ],
-    department2: [
-      { id: 'lead3', name: 'Lead 3' },
-      { id: 'lead4', name: 'Lead 4' },
-    ],
-    department3: [
-      { id: 'lead5', name: 'Lead 5' },
-      { id: 'lead6', name: 'Lead 6' },
-    ],
-    department4: [
-      { id: 'lead7', name: 'Lead 7' },
-      { id: 'lead8', name: 'Lead 8' },
-    ],
-    department5: [
-      { id: 'lead9', name: 'Lead 9' },
-      { id: 'lead10', name: 'Lead 10' },
-    ],
-    department6: [
-      { id: 'lead11', name: 'Lead 11' },
-      { id: 'lead12', name: 'Lead 12' },
-    ],
-  };
-
-  const [clubs, setClubs] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [leads, setLeads] = useState([]);
 
-  const [club, setClub] = useState('');
+  const [club, setClub] = useState('codechefvitc');
   const [department, setDepartment] = useState('');
   const [lead, setLead] = useState('');
   const [title, setTitle] = useState('');
@@ -63,76 +16,53 @@ function UploadDetails() {
   const [links, setLinks] = useState(['']);
   const [points, setPoints] = useState('');
 
-  const [loadingClubs, setLoadingClubs] = useState(true);
-  const [loadingDepartments, setLoadingDepartments] = useState(false);
+  const [loadingDepartments, setLoadingDepartments] = useState(true);
   const [loadingLeads, setLoadingLeads] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Simulate API call to fetch clubs
-    const fetchClubs = async () => {
-      setLoadingClubs(true);
+    const fetchDepartments = async () => {
       try {
-        setTimeout(() => {
-          setClubs(Object.values(clubsData));
-          setLoadingClubs(false);
-        }, 1000); // Simulate delay
-      } catch (err) {
-        setError('Failed to load clubs.');
-        setLoadingClubs(false);
+        const response = await fetch(`${baseURL}/clubApi/get-departments`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ club_id: 'codechefvitc' }),
+        });
+        const deps = await response.json();
+        console.log(deps[0]);
+        setDepartments(deps);
+        setLoadingDepartments(false);
+        setLoadingLeads(true);
+      } catch (error) {
+        console.log('Error in upload page: ', error);
       }
     };
-
-    fetchClubs();
+    fetchDepartments();
   }, []);
 
   useEffect(() => {
-    if (club) {
-      // Simulate API call to fetch departments based on selected club
-      const fetchDepartments = async () => {
-        setLoadingDepartments(true);
-        try {
-          setTimeout(() => {
-            setDepartments(Object.values(departmentsData[club] || {}));
-            setLoadingDepartments(false);
-          }, 1000); // Simulate delay
-        } catch (err) {
-          setError('Failed to load departments.');
-          setLoadingDepartments(false);
-        }
-      };
-
-      fetchDepartments();
-    }
-  }, [club]);
-
-  useEffect(() => {
-    if (department) {
-      // Simulate API call to fetch leads based on selected department
-      const fetchLeads = async () => {
-        setLoadingLeads(true);
-        try {
-          setTimeout(() => {
-            setLeads(leadsData[department] || []);
-            setLoadingLeads(false);
-          }, 1000); // Simulate delay
-        } catch (err) {
-          setError('Failed to load leads.');
-          setLoadingLeads(false);
-        }
-      };
-
+    const fetchLeads = async () => {
+      try {
+        const response = await fetch(`${baseURL}/depsApi/getLeads`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ dep_id: department }),
+        });
+        const decodeLeads = await response.json();
+        setLeads(decodeLeads);
+        setLoadingLeads(false);
+      } catch (error) {
+        console.log('Error while fetching leads: ', error);
+      }
+    };
+    if (department != '') {
       fetchLeads();
     }
   }, [department]);
-
-  const handleClubChange = (e) => {
-    setClub(e.target.value);
-    setDepartment('');
-    setLead('');
-    setDepartments([]);
-    setLeads([]);
-  };
 
   const handleDepartmentChange = (e) => {
     setDepartment(e.target.value);
@@ -155,25 +85,43 @@ function UploadDetails() {
     setLinks(newLinks);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const requestData = {
-      club,
-      department,
-      lead,
-      title,
-      description,
-      links,
-      points,
-    };
+    // Send API call where we create the new contribution request
 
-    console.log('Data to be sent to API:', requestData);
+    try {
+      const response = await fetch(`${baseURL}/contApi/add`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: title,
+          points: points,
+          user: currentUser,
+          desc: description,
+          proof_files: links,
+          target: lead,
+          club: club,
+          dep: department,
+          status: 'pending',
+          created_at: Date.now(),
+        }),
+      });
 
-    // Show success toast
+      const data = await response.json();
+      if (response.status == 403) {
+        handleError('Fetching contributions', data.error);
+        return;
+      }
+    } catch (error) {
+      handleError('Details uploading', error);
+      return;
+    }
+
     toast.success('Request submitted successfully!');
 
-    // Clear all form fields
     setClub('');
     setDepartment('');
     setLead('');
@@ -191,22 +139,7 @@ function UploadDetails() {
 
         <div>
           <label className="block text-sm font-medium mb-1">Club:</label>
-          {loadingClubs ? (
-            <p>Loading clubs...</p>
-          ) : (
-            <select
-              value={club}
-              onChange={handleClubChange}
-              className="block w-full p-2 border border-gray-300 rounded-md"
-            >
-              <option value="">Select Club</option>
-              {clubs.map((club) => (
-                <option key={club.id} value={club.id}>
-                  {club.name}
-                </option>
-              ))}
-            </select>
-          )}
+          <p className="font-bold">CodeChef VIT-C</p>
         </div>
 
         <div>
@@ -243,8 +176,8 @@ function UploadDetails() {
             >
               <option value="">Select Lead</option>
               {leads.map((lead) => (
-                <option key={lead.id} value={lead.id}>
-                  {lead.name}
+                <option key={lead.user_id} value={lead.user_id}>
+                  {lead.first_name} {lead.last_name}
                 </option>
               ))}
             </select>
