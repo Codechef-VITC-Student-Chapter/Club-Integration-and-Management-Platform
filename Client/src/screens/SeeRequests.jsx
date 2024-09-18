@@ -1,64 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LeadRequests from '../components/LeadRequests';
 
-const requestsData = [
-  {
-    id: '1',
-    club: 'Club 1',
-    department: 'Department 1',
-    lead: 'Lead 1',
-    title: 'Request Title 1',
-    description: 'Request Description 1',
-    links: ['http://example.com/1'],
-    status: 'Pending',
-  },
-  {
-    id: '2',
-    club: 'Club 2',
-    department: 'Department 3',
-    lead: 'Lead 5',
-    title: 'Request Title 2',
-    description: 'Request Description 2',
-    links: ['http://example.com/2'],
-    status: 'Pending',
-  },
-  {
-    id: '3',
-    club: 'Club 3',
-    department: 'Department 2',
-    lead: 'Lead 3',
-    title: 'Request Title 3',
-    description: 'Request Description 3',
-    links: ['http://example.com/3'],
-    status: 'Pending',
-  },
-  {
-    id: '4',
-    club: 'Club 4',
-    department: 'Department 4',
-    lead: 'Lead 4',
-    title: 'Request Title 4',
-    description: 'Request Description 4',
-    links: ['http://example.com/4'],
-    status: 'Pending',
-  },
-  {
-    id: '5',
-    club: 'Club 5',
-    department: 'Department 5',
-    lead: 'Lead 2',
-    title: 'Request Title 5',
-    description: 'Request Description 5',
-    links: ['http://example.com/5'],
-    status: 'Pending',
-  },
-];
-
 function ReviewRequests() {
-  const [requests, setRequests] = useState(requestsData);
-  const [removing, setRemoving] = useState(null); // Track the removing request
+  const [requests, setRequests] = useState([]);
+  const [removing, setRemoving] = useState(null);
+
+  useEffect(() => {
+    // API call, sending user ID, wanting all requests with this user as target. Set this to requests using setRequests
+  }, []);
 
   const removeRequest = (index) => {
+    // Send API call to update the request to Accepted or Denied
+
     setRemoving(index); // Set the request to be removed
     setTimeout(() => {
       setRequests((prevRequests) => prevRequests.filter((_, i) => i !== index));

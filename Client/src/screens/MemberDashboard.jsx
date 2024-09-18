@@ -5,7 +5,7 @@ import PendingContributions from '../components/PendingContributions'; // Assumi
 import { useRunningContext } from '../contexts/RunningContext';
 
 function MemberDashboard() {
-  const { baseURL, currentUser, token } = useRunningContext();
+  const { baseURL, currentUser, token, handleError } = useRunningContext();
 
   const [clubPoints, setClubPoints] = useState({ codechefvitc: 0 });
   const [pendingPoints, setPendingPoints] = useState({ codechefvitc: 0 });
@@ -19,10 +19,17 @@ function MemberDashboard() {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
+          body: JSON.stringify({ user: currentUser }),
         });
 
         const data = await response.json();
+        if (response.status == 403) {
+          handleError('Fetching contributions', data.error);
+          return;
+        }
+        console.log(data);
         const done = [];
         const pending = [];
         var donepoints = 0;

@@ -30,6 +30,13 @@ function UploadDetails() {
           },
           body: JSON.stringify({ club_id: 'codechefvitc' }),
         });
+
+        const data = await response.json();
+        if (response.status == 403) {
+          handleError('Fetching departments', data.error);
+          return;
+        }
+
         const deps = await response.json();
         console.log(deps[0]);
         setDepartments(deps);
@@ -56,7 +63,7 @@ function UploadDetails() {
         setLeads(decodeLeads);
         setLoadingLeads(false);
       } catch (error) {
-        console.log('Error while fetching leads: ', error);
+        handleError('fetching Leads', error);
       }
     };
     if (department != '') {
@@ -87,9 +94,6 @@ function UploadDetails() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
-    // Send API call where we create the new contribution request
-
     try {
       const response = await fetch(`${baseURL}/contApi/add`, {
         method: 'POST',
@@ -112,7 +116,7 @@ function UploadDetails() {
 
       const data = await response.json();
       if (response.status == 403) {
-        handleError('Fetching contributions', data.error);
+        handleError('Submitting request', data.error);
         return;
       }
     } catch (error) {

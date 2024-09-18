@@ -7,14 +7,23 @@ export const RunningProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [currentUser, setCurrentUser] = useState();
   const [isAdmin, setIsAdmin] = useState(false);
+
+  const handleError = (task, error) => {
+    if (error == 'Invalid Token') {
+      localStorage.removeItem('token');
+      setToken(null);
+    }
+    console.log(`Error in task ${task} : ${error}`);
+  };
+
   useEffect(() => {
     if (token) {
       var payload = JSON.parse(window.atob(token.split('.')[1]));
-      setCurrentUser(payload.user_id);
-      // setIsAdmin(payload.is_admin);
+      setCurrentUser(payload.id);
+      setIsAdmin(payload.isLead);
     } else {
       setCurrentUser();
-      // setIsAdmin(false);
+      setIsAdmin(false);
     }
   }, [token]);
 
@@ -28,6 +37,7 @@ export const RunningProvider = ({ children }) => {
         setIsAdmin,
         token,
         setToken,
+        handleError,
       }}
     >
       {children}
