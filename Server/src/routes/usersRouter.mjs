@@ -13,6 +13,8 @@ import {
     removeContributions
 } from '../utils/userUtils.mjs';
 
+import { getRequests } from '../utils/contUtils.mjs';
+
 const userRouter = express.Router();
 
 userRouter.use(authenticateToken); 
@@ -35,9 +37,18 @@ userRouter.get('/get/:userId', async (req, res) => {
     }
 });
 
+userRouter.get('/getRequests/:userId', async (req, res) => {
+    try{
+        const requests = await getRequests(req.params.userId);
+        res.status(200).json(requests);
+    }catch (error){
+        res.status(500).json({ "error": error.message });
+    }
+});
+
 userRouter.post('/getContributionData', async (req, res) => {
     try {
-        const user = await getUserById(req.user.user_id);
+        const user = await getUserById(req.body.user);
         const contributions = user.contributions;
         const contributionData = [];
         for (let contributionId of contributions) {
