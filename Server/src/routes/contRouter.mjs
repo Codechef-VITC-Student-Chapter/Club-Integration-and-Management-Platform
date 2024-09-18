@@ -11,6 +11,9 @@ const contRouter = express.Router();
 contRouter.post('/add', async (req, res) => {
     try {
         const contributionData = req.body;
+        const timeStamp = Date.now();
+        const contributionID = `CID${contributionData.reg_no}${timeStamp}`;
+        contributionData.Contribution_ID = contributionID;
         const newContribution = await addContribution(contributionData);
         res.status(201).json(newContribution);
     } catch (error) {
