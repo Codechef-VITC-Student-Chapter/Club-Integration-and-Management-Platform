@@ -37,7 +37,7 @@ userRouter.get('/get/:userId', async (req, res) => {
 
 userRouter.post('/getContributionData', async (req, res) => {
     try {
-        const user = await getUserById(req.user.user_id);
+        const user = await getUserById(req.body.user);
         const contributions = user.contributions;
         const contributionData = [];
         for (let contributionId of contributions) {
