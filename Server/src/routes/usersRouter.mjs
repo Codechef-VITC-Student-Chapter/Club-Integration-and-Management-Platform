@@ -39,20 +39,20 @@ userRouter.get('/get/:userId', async (req, res) => {
     }
 });
 
-userRouter.get('/getRequests/:userId', async (req, res) => {
-    try{
-        const requests = await getRequests(req.params.userId);
-        for(let request of requests){
-            const club = await getClubById(request.club);
-            const dep = await getDepartmentById(request.dep);
-            request.cname = club.cname;
-            request.dname = dep.dep_name;
+    userRouter.get('/getRequests/:userId', async (req, res) => {
+        try{
+            var requests = await getRequests(req.params.userId);
+            for(var request of requests){
+                const club = await getClubById(request.club);
+                const dep = await getDepartmentById(request.dep);
+                request.cname = club.cname;
+                request.dname = dep.dep_name;
+            }
+            res.status(200).json(requests);
+        }catch (error){
+            res.status(500).json({ "error": error.message });
         }
-        res.status(200).json(requests);
-    }catch (error){
-        res.status(500).json({ "error": error.message });
-    }
-});
+    });
 
 userRouter.post('/getContributionData', async (req, res) => {
     try {
@@ -61,8 +61,8 @@ userRouter.post('/getContributionData', async (req, res) => {
         const contributionData = [];
         for (let contributionId of contributions) {
             const contribution = await getContributionById(contributionId);
-            const club = await getClubById(contribution.club_id);
-            const dep = await getDepartmentById(contribution.dep_id);
+            const club = await getClubById(contribution.club);
+            const dep = await getDepartmentById(contribution.dep);
             contributionData.cname = club.cname;
             contributionData.dname = dep.dep_name;
             contributionData.push({contribution});

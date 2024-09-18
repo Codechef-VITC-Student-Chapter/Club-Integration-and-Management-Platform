@@ -28,7 +28,8 @@ const userSchema = new Schema({
     },
     isLead:{
         type: Boolean,
-        default: false
+        default: false,
+        required: true     
     },
     deps: {
         type: [String],
