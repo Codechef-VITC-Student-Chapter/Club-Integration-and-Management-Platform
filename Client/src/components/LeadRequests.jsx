@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import DenialReasonModal from './DenialReasonModal';
+import { useRunningContext } from '../contexts/RunningContext';
 
 const toastProps = {
   draggable: true,
@@ -10,36 +11,65 @@ const toastProps = {
 };
 
 function LeadRequests({ request, remove }) {
+  const { baseURL } = useRunningContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleApproval = () => {
-    toast.success('The request has been approved!', toastProps);
-    remove();
+  const handleApproval = async () => {
+    const res = await fetch(
+      `${baseURL}/contApi/update-status/${request.cont_id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'approved' }),
+      }
+    );
+    if (res.status == 200) {
+      toast.success('The request has been approved!', toastProps);
+      remove();
+    } else {
+      console.log('IDK WHY THINGS DIDNT WORK IN LEADREQUESTS.JSX');
+    }
   };
 
-  const handleDenial = (reason) => {
-    toast.error(`Denied request ${request.id} for "${reason}"`, toastProps);
-    setIsModalOpen(false);
-    remove();
+  const handleDenial = async (reason) => {
+    const res = await fetch(
+      `${baseURL}/contApi/update-status/${request.cont_id}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: 'rejected' }),
+      }
+    );
+    if (res.status == 200) {
+      toast.error(`Denied request ${request.id} for "${reason}"`, toastProps);
+      setIsModalOpen(false);
+      remove();
+    } else {
+      console.log('IDK WHY THINGS DIDNT WORK IN LEADREQUESTS.JSX in DENY');
+    }
   };
 
   return (
     <div key={request.id} className="border-b border-gray-200 mb-4 pb-4">
       <h2 className="text-xl font-semibold">{request.title}</h2>
-      <p className="text-gray-700 mb-2">{request.description}</p>
+      <p className="text-gray-700 mb-2">{request.desc}</p>
       <p className="text-gray-600 mb-2">
-        <strong>Club:</strong> {request.club}
+        <strong>Club:</strong> {request.cname}
       </p>
       <p className="text-gray-600 mb-2">
-        <strong>Department:</strong> {request.department}
+        <strong>Department:</strong> {request.dname}
       </p>
       <p className="text-gray-600 mb-2">
-        <strong>Lead:</strong> {request.lead}
+        <strong>User:</strong> {request.user}
       </p>
       <div className="text-gray-600 mb-4">
         <strong>Links:</strong>
         <ul>
-          {request.links.map((link, index) => (
+          {request.proof_files.map((link, index) => (
             <li key={index}>
               <a href={link} className="text-blue-500 hover:underline">
                 {link}

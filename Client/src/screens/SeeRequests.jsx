@@ -1,62 +1,39 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LeadRequests from '../components/LeadRequests';
+import { useRunningContext } from '../contexts/RunningContext';
 
-const requestsData = [
-  {
-    id: '1',
-    club: 'Club 1',
-    department: 'Department 1',
-    lead: 'Lead 1',
-    title: 'Request Title 1',
-    description: 'Request Description 1',
-    links: ['http://example.com/1'],
-    status: 'Pending',
-  },
-  {
-    id: '2',
-    club: 'Club 2',
-    department: 'Department 3',
-    lead: 'Lead 5',
-    title: 'Request Title 2',
-    description: 'Request Description 2',
-    links: ['http://example.com/2'],
-    status: 'Pending',
-  },
-  {
-    id: '3',
-    club: 'Club 3',
-    department: 'Department 2',
-    lead: 'Lead 3',
-    title: 'Request Title 3',
-    description: 'Request Description 3',
-    links: ['http://example.com/3'],
-    status: 'Pending',
-  },
-  {
-    id: '4',
-    club: 'Club 4',
-    department: 'Department 4',
-    lead: 'Lead 4',
-    title: 'Request Title 4',
-    description: 'Request Description 4',
-    links: ['http://example.com/4'],
-    status: 'Pending',
-  },
-  {
-    id: '5',
-    club: 'Club 5',
-    department: 'Department 5',
-    lead: 'Lead 2',
-    title: 'Request Title 5',
-    description: 'Request Description 5',
-    links: ['http://example.com/5'],
-    status: 'Pending',
-  },
-];
+function SeeRequests() {
+  const { baseURL, currentUser, token } = useRunningContext();
+  const [requests, setRequests] = useState([]);
+  const [removing, setRemoving] = useState(null);
 
-function ReviewRequests() {
-  const [requests, setRequests] = useState(requestsData);
-  const [removing, setRemoving] = useState(null); // Track the removing request
+  useEffect(() => {
+    const getMyRequests = async () => {
+      const response = await fetch(
+        `${baseURL}/userApi/getRequests/${currentUser}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.status == 403) {
+        handleError('Fetching requests to me', data.error);
+        return;
+      }
+
+      const whatToPut = [];
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].status == 'pending') {
+          whatToPut.push(data[i]);
+        }
+      }
+      setRequests(whatToPut);
+    };
+    getMyRequests();
+  }, []);
 
   const removeRequest = (index) => {
     setRemoving(index); // Set the request to be removed
@@ -71,7 +48,7 @@ function ReviewRequests() {
       <h1 className="text-2xl font-bold mb-6">Review Requests</h1>
       {requests.map((request, index) => (
         <div
-          key={request.id}
+          key={request.cont_id}
           className={`transition-opacity duration-300 ${
             removing === index ? 'opacity-0' : 'opacity-100'
           }`}
@@ -83,4 +60,4 @@ function ReviewRequests() {
   );
 }
 
-export default ReviewRequests;
+export default SeeRequests;
