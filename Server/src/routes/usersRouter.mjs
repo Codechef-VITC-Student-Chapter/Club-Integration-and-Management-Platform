@@ -39,6 +39,7 @@ userRouter.get('/get/:userId', async (req, res) => {
   }
 });
 
+
 userRouter.get('/getRequests/:userId', async (req, res) => {
   try {
     var requests = await getRequests(req.params.userId);
@@ -94,6 +95,7 @@ userRouter.post('/getContributionData', async (req, res) => {
         dname: dep.dep_name,
       };
       contributionData.push(temp);
+
     }
     res.status(200).json(contributionData);
   } catch (error) {
