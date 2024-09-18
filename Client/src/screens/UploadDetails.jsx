@@ -31,13 +31,12 @@ function UploadDetails() {
           body: JSON.stringify({ club_id: 'codechefvitc' }),
         });
 
-        const data = await response.json();
+        const deps = await response.json();
         if (response.status == 403) {
-          handleError('Fetching departments', data.error);
+          handleError('Fetching departments', deps.error);
           return;
         }
 
-        const deps = await response.json();
         console.log(deps[0]);
         setDepartments(deps);
         setLoadingDepartments(false);
