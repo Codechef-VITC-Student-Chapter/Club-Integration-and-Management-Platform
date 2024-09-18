@@ -42,6 +42,12 @@ userRouter.get('/get/:userId', async (req, res) => {
 userRouter.get('/getRequests/:userId', async (req, res) => {
     try{
         const requests = await getRequests(req.params.userId);
+        for(let request of requests){
+            const club = await getClubById(request.club);
+            const dep = await getDepartmentById(request.dep);
+            request.cname = club.cname;
+            request.dname = dep.dep_name;
+        }
         res.status(200).json(requests);
     }catch (error){
         res.status(500).json({ "error": error.message });
