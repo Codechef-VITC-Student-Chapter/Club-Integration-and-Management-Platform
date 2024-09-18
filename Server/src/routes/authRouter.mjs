@@ -49,7 +49,7 @@ authRouter.post('/login', async (req, res) => {
       return res.status(401).send('Invalid credentials');
     }
 
-    const token = await generateToken({ user_id: user.user_id });
+    const token = await generateToken({ id: user.user_id, name: user.first_name + ' ' +user.last_name, isLead: user.isLead });
     res.json({ token });
   } catch (error) {
     console.log(error);
