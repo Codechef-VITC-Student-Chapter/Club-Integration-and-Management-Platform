@@ -9,6 +9,8 @@ import {
     removeUserFromClub
 } from '../utils/clubUtils.mjs'; 
 
+import { getDepartmentById } from '../utils/depsUtils.mjs';
+
 const clubRouter = express.Router();
 
 
@@ -62,6 +64,21 @@ clubRouter.post('/remove-department', async (req, res) => {
         const { clubId, departmentId } = req.body;
         const updatedClub = await removeDepartmentFromClub(clubId, departmentId);
         res.status(200).json(updatedClub);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
+clubRouter.post('/get-departments', async (req, res) => {
+    try {
+        const { club_id } = req.body;
+        const club = await getClubById(club_id);
+        const departments = [];
+        for (let dep_id of club.club_deps) {
+            const department = await getDepartmentById(dep_id);
+            departments.push({id : dep_id, name: department});
+        }
+        res.status(200).json(departments);
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
