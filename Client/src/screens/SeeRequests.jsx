@@ -1,17 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import LeadRequests from '../components/LeadRequests';
+import { useRunningContext } from '../contexts/RunningContext';
 
-function ReviewRequests() {
+function SeeRequests() {
+  const { baseURL, currentUser, token } = useRunningContext();
   const [requests, setRequests] = useState([]);
   const [removing, setRemoving] = useState(null);
 
   useEffect(() => {
-    // API call, sending user ID, wanting all requests with this user as target. Set this to requests using setRequests
+    const getMyRequests = async () => {
+      const response = await fetch(
+        `${baseURL}/userApi/getRequests/${currentUser}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.status == 403) {
+        handleError('Fetching requests to me', data.error);
+        return;
+      }
+      setRequests(data);
+    };
+    getMyRequests();
   }, []);
 
   const removeRequest = (index) => {
-    // Send API call to update the request to Accepted or Denied
-
     setRemoving(index); // Set the request to be removed
     setTimeout(() => {
       setRequests((prevRequests) => prevRequests.filter((_, i) => i !== index));
@@ -24,7 +41,7 @@ function ReviewRequests() {
       <h1 className="text-2xl font-bold mb-6">Review Requests</h1>
       {requests.map((request, index) => (
         <div
-          key={request.id}
+          key={request.cont_id}
           className={`transition-opacity duration-300 ${
             removing === index ? 'opacity-0' : 'opacity-100'
           }`}
@@ -36,4 +53,4 @@ function ReviewRequests() {
   );
 }
 
-export default ReviewRequests;
+export default SeeRequests;
