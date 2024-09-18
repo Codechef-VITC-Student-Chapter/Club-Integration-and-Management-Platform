@@ -50,6 +50,18 @@ export const getContributionById = async (contId) => {
     }
 };
 
+export const getRequests = async(uid) => {
+    try{
+        const requests = await Contribution.find({target: uid});
+        if(!requests){
+            throw new Error('no contributions submitted to this user');
+        }
+        return requests;
+    } catch (error) {
+        throw new Error('Failed to fetch requests' + error.message);
+    }
+}
+
 export const updateContributionStatus = async (contId, newStatus) => {
     try {
         const validStatuses = ['pending', 'approved', 'rejected'];
