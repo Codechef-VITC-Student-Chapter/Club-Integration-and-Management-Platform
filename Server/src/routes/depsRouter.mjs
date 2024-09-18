@@ -71,7 +71,7 @@ depsRouter.post('/getLeads', async (req, res) => {
         const leads = department.leads;
 
         const leadsWithUserData = await Promise.all(leads.map(async (lead) => {
-            const user = await getUserById(lead.user_id);
+            const user = await getUserById(lead);
             return {
                 user_id: user.user_id,
                 first_name: user.first_name,
