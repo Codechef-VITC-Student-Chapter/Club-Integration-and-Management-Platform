@@ -8,7 +8,9 @@ import {
     addLeadToDepartment,
     removeLeadFromDepartment
 } 
-from '../utils/depsUtils.mjs'
+from '../utils/depsUtils.mjs';
+
+import { getUserById } from '../utils/userUtils.mjs';
 
 import { addDepartmentToClub } from '../utils/clubUtils.mjs';
 
