@@ -1,6 +1,8 @@
 import express from 'express';
 import { authenticateToken } from '../middleware/authenticateToken.mjs';
 import { getContributionById } from '../utils/contUtils.mjs';
+import { getClubById } from '../utils/clubUtils.mjs';
+import { getDepartmentById } from '../utils/depsUtils.mjs';
 
 import { 
     removeUser, 
@@ -53,11 +55,11 @@ userRouter.post('/getContributionData', async (req, res) => {
         const contributionData = [];
         for (let contributionId of contributions) {
             const contribution = await getContributionById(contributionId);
-            contributionData.push({
-                contID: contribution.cont_id, 
-                contTitle: contribution.title, 
-                club: contribution.club, 
-                dep: contribution.dep});
+            const club = await getClubById(contribution.club_id);
+            const dep = await getDepartmentById(contribution.dep_id);
+            contributionData.cname = club.cname;
+            contributionData.dname = dep.dep_name;
+            contributionData.push({contribution});
         }
         res.status(200).json(contributionData);
     } catch (error) {
