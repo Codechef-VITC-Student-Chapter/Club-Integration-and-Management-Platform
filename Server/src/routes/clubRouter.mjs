@@ -76,7 +76,7 @@ clubRouter.post('/get-departments', async (req, res) => {
         const departments = [];
         for (let dep_id of club.club_deps) {
             const department = await getDepartmentById(dep_id);
-            departments.push({id : dep_id, name: department});
+            departments.push({id : dep_id, name: department.dep_name});
         }
         res.status(200).json(departments);
     } catch (error) {
