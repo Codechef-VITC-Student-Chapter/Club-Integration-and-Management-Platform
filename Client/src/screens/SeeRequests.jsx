@@ -23,7 +23,14 @@ function SeeRequests() {
         handleError('Fetching requests to me', data.error);
         return;
       }
-      setRequests(data);
+
+      const whatToPut = [];
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].status == 'pending') {
+          whatToPut.push(data[i]);
+        }
+      }
+      setRequests(whatToPut);
     };
     getMyRequests();
   }, []);

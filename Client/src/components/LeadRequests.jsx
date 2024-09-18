@@ -14,7 +14,6 @@ function LeadRequests({ request, remove }) {
   const { baseURL } = useRunningContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  console.log(request);
   const handleApproval = async () => {
     const res = await fetch(
       `${baseURL}/contApi/update-status/${request.cont_id}`,
@@ -57,15 +56,15 @@ function LeadRequests({ request, remove }) {
   return (
     <div key={request.id} className="border-b border-gray-200 mb-4 pb-4">
       <h2 className="text-xl font-semibold">{request.title}</h2>
-      <p className="text-gray-700 mb-2">{request.description}</p>
+      <p className="text-gray-700 mb-2">{request.desc}</p>
       <p className="text-gray-600 mb-2">
-        <strong>Club:</strong> {request.club}
+        <strong>Club:</strong> {request.cname}
       </p>
       <p className="text-gray-600 mb-2">
-        <strong>Department:</strong> {request.department}
+        <strong>Department:</strong> {request.dname}
       </p>
       <p className="text-gray-600 mb-2">
-        <strong>User:</strong> {request.lead}
+        <strong>User:</strong> {request.user}
       </p>
       <div className="text-gray-600 mb-4">
         <strong>Links:</strong>
