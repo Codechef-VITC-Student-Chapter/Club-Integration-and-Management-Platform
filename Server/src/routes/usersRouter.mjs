@@ -56,6 +56,7 @@ userRouter.get('/getRequests/:userId', async (req, res) => {
         target: request.target,
         club: request.club,
         dep: request.dep,
+        created_at: request.created_at,
         status: request.status,
         cname: club.cname,
         dname: dep.dep_name,
@@ -77,9 +78,22 @@ userRouter.post('/getContributionData', async (req, res) => {
       const contribution = await getContributionById(contributionId);
       const club = await getClubById(contribution.club);
       const dep = await getDepartmentById(contribution.dep);
-      contributionData.cname = club.cname;
-      contributionData.dname = dep.dep_name;
-      contributionData.push({ contribution });
+      var temp = {
+        cont_id: contribution.cont_id,
+        title: contribution.title,
+        points: contribution.points,
+        user: contribution.user,
+        desc: contribution.desc,
+        proof_files: contribution.proof_files,
+        target: contribution.target,
+        club: contribution.club,
+        dep: contribution.dep,
+        status: contribution.status,
+        created_at: contribution.created_at,
+        cname: club.cname,
+        dname: dep.dep_name,
+      };
+      contributionData.push(temp);
     }
     res.status(200).json(contributionData);
   } catch (error) {

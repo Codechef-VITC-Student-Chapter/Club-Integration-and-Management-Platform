@@ -1,6 +1,7 @@
 import React from 'react';
 
 function TaskCard({ title, description, club, department, lead, date }) {
+  const dateObj = new Date(date);
   return (
     <div className="p-4 bg-gray-200 rounded-lg shadow-sm">
       <h3 className="font-semibold text-lg mb-1">{title}</h3>
@@ -9,7 +10,7 @@ function TaskCard({ title, description, club, department, lead, date }) {
         Club: {club} <br />
         Department: {department} <br />
         Lead: {lead} <br />
-        Date: {date}
+        Date: {dateObj.toDateString()}
       </p>
     </div>
   );
