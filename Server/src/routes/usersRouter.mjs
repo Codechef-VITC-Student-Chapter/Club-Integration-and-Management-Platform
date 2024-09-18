@@ -35,20 +35,6 @@ userRouter.get('/get/:userId', async (req, res) => {
     }
 });
 
-userRouter.get('/getTotalPoints/:userId', async (req, res) => {
-    try {
-        const user = await getUserById(req.params.userId);
-        var totalPoints = 0;
-        for(let contribution of user.contributions) {
-            const contributionData = await getContributionById(contribution);
-            totalPoints += contributionData.points;
-        }
-        res.status(200).json({ totalPoints });  
-    } catch (error) {   
-        res.status(500).json({ "error": error.message });
-    }   
-});
-
 userRouter.post('/getContributionData', async (req, res) => {
     try {
         const user = await getUserById(req.user.user_id);
