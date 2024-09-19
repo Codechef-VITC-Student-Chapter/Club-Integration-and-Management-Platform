@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import userSchema from '../DB/schemas/userSchema.mjs';
+import userSchema from '../DB/Schemas/userSchema.mjs';
 
 dotenv.config();
 

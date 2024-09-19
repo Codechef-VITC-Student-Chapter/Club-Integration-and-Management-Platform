@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import contributionSchema from '../DB/schemas/contSchema.mjs';
+import contributionSchema from '../DB/Schemas/contSchema.mjs';
 
 dotenv.config();
 

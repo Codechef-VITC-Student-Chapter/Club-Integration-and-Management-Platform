@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import depsSchema from '../DB/schemas/depsSchema.mjs';
+import depsSchema from '../DB/Schemas/depsSchema.mjs';
 
 dotenv.config();
 
