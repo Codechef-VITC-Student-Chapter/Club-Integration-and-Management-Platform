@@ -9,11 +9,14 @@ import {
   getUserById,
   addDepartments,
   addClubs,
+  updateLead,
   removeDepartments,
   removeClubs,
   addContributions,
   removeContributions,
 } from '../utils/userUtils.mjs';
+
+import { addUserToClub } from '../utils/clubUtils.mjs';
 
 import { getRequests } from '../utils/contUtils.mjs';
 
@@ -99,6 +102,21 @@ userRouter.post('/getContributionData', async (req, res) => {
     }
     res.status(200).json(contributionData);
   } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+userRouter.patch('/make-lead/:userId', async (req, res) => {
+  try{
+    const { club_id } = req.body;
+
+    const club = await addUserToClub(club_id, req.params.userId);
+    console.log(club);
+    const user = await updateLead(req.params.userId, true); 
+    console.log(user);
+    
+    res.status(200).json({user, club});
+  }catch (error){
     res.status(500).json({ error: error.message });
   }
 });

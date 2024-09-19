@@ -134,6 +134,20 @@ export const addContributions = async (userId, contributions) => {
     }
 };
 
+export const updateLead = async (userId, leadType) => {
+    try {
+        const user = await User.findOne({ user_id: userId });
+        if (!user) {
+            throw new Error('User not found');
+        }
+        user.isLead = leadType;
+        await user.save();
+        return user;
+    } catch (error) {
+        throw new Error('Failed to update lead');
+    }
+};
+
 export const removeContributions = async (userId, contributionsToRemove) => {
     try {
         const user = await User.findOne({ user_id: userId });
