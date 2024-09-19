@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import clubSchema from '../DB/schemas/clubSchema.mjs';
+import clubSchema from '../DB/Schemas/clubSchema.mjs';
 
 dotenv.config();
 
