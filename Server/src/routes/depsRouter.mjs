@@ -12,7 +12,7 @@ from '../utils/depsUtils.mjs';
 
 import { getUserById } from '../utils/userUtils.mjs';
 
-import { addDepartmentToClub } from '../utils/clubUtils.mjs';
+import { addDepartmentToClub, removeDepartmentFromClub } from '../utils/clubUtils.mjs';
 
 const depsRouter = express.Router();
 
@@ -36,6 +36,7 @@ depsRouter.delete('/delete/:id', async (req, res) => {
     try {
         const depId = req.params.id;
         const deletedDepartment = await removeDepartment(depId);
+        await removeDepartmentFromClub(deletedDepartment.club_id, depId);
         res.status(200).json(deletedDepartment);
     } catch (error) {
         res.status(404).json({ error: error.message });
