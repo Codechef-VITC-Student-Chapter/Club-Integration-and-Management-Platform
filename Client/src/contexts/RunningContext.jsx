@@ -3,7 +3,7 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 const RunningContext = createContext();
 
 export const RunningProvider = ({ children }) => {
-  const baseURL = 'http://localhost:3000';
+  const baseURL = 'https://azaken.rrex.cc';
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [currentUser, setCurrentUser] = useState();
   const [isAdmin, setIsAdmin] = useState(false);
