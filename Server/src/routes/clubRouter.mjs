@@ -84,7 +84,7 @@ clubRouter.post('/get-departments', async (req, res) => {
     }
 });
 
-clubRouter.post('/add-user', async (req, res) => {
+clubRouter.post('/add-lead', async (req, res) => {
     try {
         const { clubId, userId } = req.body;
         const updatedClub = await addUserToClub(clubId, userId);
@@ -94,7 +94,7 @@ clubRouter.post('/add-user', async (req, res) => {
     }
 });
 
-clubRouter.post('/remove-user', async (req, res) => {
+clubRouter.post('/remove-lead', async (req, res) => {
     try {
         const { clubId, userId } = req.body;
         const updatedClub = await removeUserFromClub(clubId, userId);
