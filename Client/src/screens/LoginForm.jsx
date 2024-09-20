@@ -3,6 +3,11 @@ import Logo from '../assets/logo.png';
 import { PiUserCircle, PiLockLight } from 'react-icons/pi';
 import { useRunningContext } from '../contexts/RunningContext';
 
+import SHA256 from 'crypto-js/sha256';
+function hashPassword(password) {
+  return SHA256(password).toString();
+}
+
 function LoginForm() {
   const { baseURL, setCurrentUser, setIsAdmin, currentUser, setToken } =
     useRunningContext();
@@ -17,7 +22,10 @@ function LoginForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ regno: regno, password: password }),
+        body: JSON.stringify({
+          regno: regno,
+          password: hashPassword(password),
+        }),
       });
       const data = await response.json();
 

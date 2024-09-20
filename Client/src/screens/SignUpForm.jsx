@@ -8,6 +8,11 @@ import {
 import { MdOutlineMail } from 'react-icons/md';
 import { useRunningContext } from '../contexts/RunningContext';
 
+import SHA256 from 'crypto-js/sha256';
+function hashPassword(password) {
+  return SHA256(password).toString();
+}
+
 const validatePassword = (password) => {
   const errors = [];
 
@@ -130,7 +135,7 @@ function SignUpForm() {
           firstname: formData.firstName,
           lastname: formData.lastName,
           email: formData.email,
-          password: formData.password,
+          password: hashPassword(formData.password),
         }),
       });
       console.log(response);
