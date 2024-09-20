@@ -5,7 +5,8 @@ import PendingContributions from '../components/PendingContributions'; // Assumi
 import { useRunningContext } from '../contexts/RunningContext';
 
 function MemberDashboard() {
-  const { baseURL, currentUser, token, handleError } = useRunningContext();
+  const { baseURL, currentUser, token, handleError, isAdmin } =
+    useRunningContext();
 
   const [clubPoints, setClubPoints] = useState({ codechefvitc: 0 });
   const [pendingPoints, setPendingPoints] = useState({ codechefvitc: 0 });
@@ -62,11 +63,13 @@ function MemberDashboard() {
     <div className="max-w-6xl mx-auto p-6 space-y-6">
       <div className="flex justify-between flex-wrap">
         <h1 className="text-3xl font-bold mb-6">Member Dashboard</h1>
-        <a href="/requests">
-          <button className="px-3 h-8 bg-blue-500 text-white rounded-lg">
-            Admin View
-          </button>
-        </a>
+        {isAdmin && (
+          <a href="/requests">
+            <button className="px-3 h-8 bg-blue-500 text-white rounded-lg">
+              Admin View
+            </button>
+          </a>
+        )}
       </div>
 
       <PointsWidget clubPoints={clubPoints} pendingPoints={pendingPoints} />
