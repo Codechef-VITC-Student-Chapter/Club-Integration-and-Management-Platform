@@ -37,10 +37,11 @@ function UploadDetails() {
           return;
         }
 
-        console.log(deps[0]);
-        setDepartments(deps);
-        setLoadingDepartments(false);
-        setLoadingLeads(true);
+        if (response.status == 200) {
+          setDepartments(deps);
+          setLoadingDepartments(false);
+          setLoadingLeads(true);
+        }
       } catch (error) {
         console.log('Error in upload page: ', error);
       }
