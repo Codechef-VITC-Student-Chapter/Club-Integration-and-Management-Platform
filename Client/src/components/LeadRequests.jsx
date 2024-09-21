@@ -59,7 +59,7 @@ function LeadRequests({ request, remove }) {
       <h2 className="text-xl font-semibold">{request.title}</h2>
       <p className="text-gray-700 mb-2">{request.desc}</p>
       <p className="text-gray-600 mb-2">
-        <strong>Club:</strong> {request.cname}
+        <strong>Points Requested:</strong> {request.points}
       </p>
       <p className="text-gray-600 mb-2">
         <strong>Department:</strong> {request.dname}
