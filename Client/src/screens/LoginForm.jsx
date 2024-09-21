@@ -9,7 +9,7 @@ function hashPassword(password) {
 }
 
 function LoginForm() {
-  const { baseURL, setCurrentUser, setIsAdmin, currentUser, setToken } =
+  const { baseURL, setCurrentUser, currentUser, setToken } =
     useRunningContext();
 
   const [regno, setRegno] = useState('');
@@ -33,8 +33,6 @@ function LoginForm() {
         localStorage.setItem('token', data.token);
         var payload = JSON.parse(window.atob(data.token.split('.')[1]));
         setCurrentUser(payload.user_id);
-        console.log(currentUser);
-        // setIsAdmin(payload.is_admin);
         setToken(data.token);
       }
     } catch (error) {

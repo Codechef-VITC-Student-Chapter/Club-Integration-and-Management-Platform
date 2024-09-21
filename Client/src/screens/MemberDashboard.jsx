@@ -30,7 +30,6 @@ function MemberDashboard() {
           handleError('Fetching contributions', data.error);
           return;
         }
-        console.log(data);
         const done = [];
         const pending = [];
         var donepoints = 0;
@@ -49,7 +48,6 @@ function MemberDashboard() {
         setPendingContributions(pending);
         setClubPoints({ codechefvitc: donepoints });
         setPendingPoints({ codechefvitc: pendingpoints });
-        console.log(contributions, pendingContributions);
       } catch (error) {
         console.log('Error in fetching contributions: ', error);
       }
