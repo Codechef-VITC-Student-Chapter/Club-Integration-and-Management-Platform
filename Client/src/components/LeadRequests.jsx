@@ -45,7 +45,7 @@ function LeadRequests({ request, remove }) {
       }
     );
     if (res.status == 200) {
-      toast.error(`Denied request ${request.id} for "${reason}"`, toastProps);
+      toast.error(`Denied request ${request.cont_id}`, toastProps);
       setIsModalOpen(false);
       remove();
     } else {
@@ -54,7 +54,8 @@ function LeadRequests({ request, remove }) {
   };
 
   return (
-    <div key={request.id} className="border-b border-gray-200 mb-4 pb-4">
+    <div key={request.cont_id} className="border-b border-gray-200 mb-4 pb-4">
+      <p className="text-gray-500 text-xs">{request.cont_id}</p>
       <h2 className="text-xl font-semibold">{request.title}</h2>
       <p className="text-gray-700 mb-2">{request.desc}</p>
       <p className="text-gray-600 mb-2">

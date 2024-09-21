@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import contributionSchema from '../DB/Schemas/contSchema.mjs';
+import userSchema from '../DB/Schemas/userSchema.mjs';
 
 dotenv.config();
 
@@ -19,10 +20,17 @@ const Contribution =
   mongoose.models.Contribution ||
   mongoose.model('Contributions', contributionSchema);
 
+const User = mongoose.models.User || mongoose.model('Users', userSchema);
+
 export const addContribution = async (contributionData) => {
   try {
     const newContribution = new Contribution(contributionData);
     await newContribution.save();
+    await User.findOneAndUpdate(
+      { user_id: contributionData.user },
+      { $push: { contributions: contributionData.cont_id } },
+      { new: true }
+    );
     return newContribution;
   } catch (error) {
     console.log(error);
