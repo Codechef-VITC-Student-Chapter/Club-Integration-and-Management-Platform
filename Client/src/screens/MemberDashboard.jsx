@@ -40,7 +40,9 @@ function MemberDashboard() {
             pendingpoints += data[i].points;
             pending.push(current);
           } else {
-            donepoints += data[i].points;
+            if (current.status == 'approved') {
+              donepoints += data[i].points;
+            }
             done.push(current);
           }
         }
