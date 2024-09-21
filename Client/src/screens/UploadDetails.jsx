@@ -24,7 +24,7 @@ function UploadDetails() {
   const [error, setError] = useState('');
 
   const departmentPoints = {
-    sm: [
+    smandc: [
       {
         label: 'Technical Writing for CodeChef Newsletter - 3 Points/Publish',
         value: 3,
@@ -71,7 +71,7 @@ function UploadDetails() {
         value: 2,
       },
     ],
-    eventmanagement: [
+    em: [
       { label: 'Registration Desk - 10 Points', value: 10 },
       { label: 'Disciplinary Committee - 10 Points', value: 10 },
       { label: 'Backstage duty -10 Points', value: 10 },
