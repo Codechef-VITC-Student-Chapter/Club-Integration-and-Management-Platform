@@ -16,6 +16,8 @@ function PendingContributions({ pendingContributions }) {
             department={contribution.dep}
             lead={contribution.target}
             date={contribution.created_at}
+            status={contribution.status}
+            points={contribution.points}
           />
         ))
       )}
