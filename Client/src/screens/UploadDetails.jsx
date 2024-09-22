@@ -164,6 +164,18 @@ function UploadDetails() {
       toast.error('Please select the points requested!');
       return;
     }
+
+    if (department === '') {
+      toast.error('Please select the department!');
+      return;
+    }
+
+    if (lead === '') {
+      console.log('here');
+      toast.error('Please select the lead!');
+      return;
+    }
+
     const pointsToSubmit = points === 'custom' ? customPoints : points;
     const totalPoints = pointsToSubmit * multiplier;
 
