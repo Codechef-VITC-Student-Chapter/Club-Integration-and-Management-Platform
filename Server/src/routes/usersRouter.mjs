@@ -24,14 +24,14 @@ const userRouter = express.Router();
 
 userRouter.use(authenticateToken);
 
-userRouter.delete('/delete/:userId', async (req, res) => {
-  try {
-    const userDeleted = await removeUser(req.params.userId);
-    res.status(200).json(userDeleted);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// userRouter.delete('/delete/:userId', async (req, res) => {
+//   try {
+//     const userDeleted = await removeUser(req.params.userId);
+//     res.status(200).json(userDeleted);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 userRouter.get('/get/:userId', async (req, res) => {
   try {
@@ -41,7 +41,6 @@ userRouter.get('/get/:userId', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 userRouter.get('/getRequests/:userId', async (req, res) => {
   try {
@@ -98,7 +97,6 @@ userRouter.post('/getContributionData', async (req, res) => {
         dname: dep.dep_name,
       };
       contributionData.push(temp);
-
     }
     res.status(200).json(contributionData);
   } catch (error) {
@@ -106,99 +104,99 @@ userRouter.post('/getContributionData', async (req, res) => {
   }
 });
 
-userRouter.patch('/make-lead/:userId', async (req, res) => {
-  try{
-    const { club_id } = req.body;
+// userRouter.patch('/make-lead/:userId', async (req, res) => {
+//   try{
+//     const { club_id } = req.body;
 
-    const club = await addUserToClub(club_id, req.params.userId);
-    console.log(club);
-    const user = await updateLead(req.params.userId, true); 
-    console.log(user);
-    
-    res.status(200).json({user, club});
-  }catch (error){
-    res.status(500).json({ error: error.message });
-  }
-});
+//     const club = await addUserToClub(club_id, req.params.userId);
+//     console.log(club);
+//     const user = await updateLead(req.params.userId, true);
+//     console.log(user);
 
-userRouter.patch('/add-departments/:userId', async (req, res) => {
-  try {
-    const { departments } = req.body;
-    if (!Array.isArray(departments)) {
-      return res.status(400).json({ error: 'Departments must be an array' });
-    }
-    const user = await addDepartments(req.params.userId, departments);
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+//     res.status(200).json({user, club});
+//   }catch (error){
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
-userRouter.patch('/add-clubs/:userId', async (req, res) => {
-  try {
-    const { clubs } = req.body;
-    if (!Array.isArray(clubs)) {
-      return res.status(400).json({ error: 'Clubs must be an array' });
-    }
-    const user = await addClubs(req.params.userId, clubs);
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// userRouter.patch('/add-departments/:userId', async (req, res) => {
+//   try {
+//     const { departments } = req.body;
+//     if (!Array.isArray(departments)) {
+//       return res.status(400).json({ error: 'Departments must be an array' });
+//     }
+//     const user = await addDepartments(req.params.userId, departments);
+//     res.status(200).json(user);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
-userRouter.patch('/remove-departments/:userId', async (req, res) => {
-  try {
-    const { departments } = req.body;
-    if (!Array.isArray(departments)) {
-      return res.status(400).json({ error: 'Departments must be an array' });
-    }
-    const user = await removeDepartments(req.params.userId, departments);
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// userRouter.patch('/add-clubs/:userId', async (req, res) => {
+//   try {
+//     const { clubs } = req.body;
+//     if (!Array.isArray(clubs)) {
+//       return res.status(400).json({ error: 'Clubs must be an array' });
+//     }
+//     const user = await addClubs(req.params.userId, clubs);
+//     res.status(200).json(user);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
-userRouter.patch('/remove-clubs/:userId', async (req, res) => {
-  try {
-    const { clubs } = req.body; // Expecting an array of clubs to remove
-    if (!Array.isArray(clubs)) {
-      return res.status(400).json({ error: 'Clubs must be an array' });
-    }
-    const user = await removeClubs(req.params.userId, clubs);
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// userRouter.patch('/remove-departments/:userId', async (req, res) => {
+//   try {
+//     const { departments } = req.body;
+//     if (!Array.isArray(departments)) {
+//       return res.status(400).json({ error: 'Departments must be an array' });
+//     }
+//     const user = await removeDepartments(req.params.userId, departments);
+//     res.status(200).json(user);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
+// userRouter.patch('/remove-clubs/:userId', async (req, res) => {
+//   try {
+//     const { clubs } = req.body; // Expecting an array of clubs to remove
+//     if (!Array.isArray(clubs)) {
+//       return res.status(400).json({ error: 'Clubs must be an array' });
+//     }
+//     const user = await removeClubs(req.params.userId, clubs);
+//     res.status(200).json(user);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 // New routes for contributions
 
-userRouter.patch('/add-contributions/:userId', async (req, res) => {
-  try {
-    const { contributions } = req.body;
-    if (!Array.isArray(contributions)) {
-      return res.status(400).json({ error: 'Contributions must be an array' });
-    }
-    const user = await addContributions(req.params.userId, contributions);
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// userRouter.patch('/add-contributions/:userId', async (req, res) => {
+//   try {
+//     const { contributions } = req.body;
+//     if (!Array.isArray(contributions)) {
+//       return res.status(400).json({ error: 'Contributions must be an array' });
+//     }
+//     const user = await addContributions(req.params.userId, contributions);
+//     res.status(200).json(user);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
-userRouter.patch('/remove-contributions/:userId', async (req, res) => {
-  try {
-    const { contributions } = req.body;
-    if (!Array.isArray(contributions)) {
-      return res.status(400).json({ error: 'Contributions must be an array' });
-    }
-    const user = await removeContributions(req.params.userId, contributions);
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+// userRouter.patch('/remove-contributions/:userId', async (req, res) => {
+//   try {
+//     const { contributions } = req.body;
+//     if (!Array.isArray(contributions)) {
+//       return res.status(400).json({ error: 'Contributions must be an array' });
+//     }
+//     const user = await removeContributions(req.params.userId, contributions);
+//     res.status(200).json(user);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 export default userRouter;
