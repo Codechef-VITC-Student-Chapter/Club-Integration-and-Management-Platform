@@ -12,6 +12,7 @@ const toastProps = {
 
 function LeadRequests({ request, remove }) {
   const { baseURL, token } = useRunningContext();
+  const [status, setStatus] = useState(request.status); // Added state for status
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleApproval = async () => {
@@ -26,15 +27,16 @@ function LeadRequests({ request, remove }) {
         body: JSON.stringify({ status: 'approved' }),
       }
     );
-    if (res.status == 200) {
+    if (res.status === 200) {
+      setStatus('approved'); // Update status to approved
       toast.success('The request has been approved!', toastProps);
-      remove();
+      remove(request.cont_id, 'approved');
     } else {
-      console.log('IDK WHY THINGS DIDNT WORK IN LEADREQUESTS.JSX');
+      console.log('Error occurred while approving in LeadRequests.jsx');
     }
   };
 
-  const handleDenial = async (reason) => {
+  const handleDenial = async () => {
     const res = await fetch(
       `${baseURL}/contApi/update-status/${request.cont_id}`,
       {
@@ -46,17 +48,32 @@ function LeadRequests({ request, remove }) {
         body: JSON.stringify({ status: 'rejected' }),
       }
     );
-    if (res.status == 200) {
+    if (res.status === 200) {
+      setStatus('rejected'); // Update status to rejected
       toast.error(`Denied request ${request.cont_id}`, toastProps);
       setIsModalOpen(false);
-      remove();
+      remove(request.cont_id, 'rejected');
     } else {
-      console.log('IDK WHY THINGS DIDNT WORK IN LEADREQUESTS.JSX in DENY');
+      console.log('Error occurred while denying in LeadRequests.jsx');
+    }
+  };
+
+  const getStatusClass = () => {
+    switch (status) {
+      case 'approved':
+        return 'bg-green-100 border-green-500';
+      case 'rejected':
+        return 'bg-red-100 border-red-500';
+      default:
+        return 'bg-white border-gray-200';
     }
   };
 
   return (
-    <div key={request.cont_id} className="border-b border-gray-200 mb-4 pb-4">
+    <div
+      key={request.cont_id}
+      className={`border mb-4 p-4 rounded-md ${getStatusClass()}`} // Applied conditional class
+    >
       <p className="text-gray-500 text-xs">{request.cont_id}</p>
       <h2 className="text-xl font-semibold">{request.title}</h2>
       <p className="text-gray-700 mb-2">{request.desc}</p>
@@ -89,19 +106,12 @@ function LeadRequests({ request, remove }) {
           Approve
         </button>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={handleDenial}
           className="px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600"
         >
           Deny
         </button>
       </div>
-
-      {/* Render the DenialReasonModal */}
-      <DenialReasonModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleDenial}
-      />
     </div>
   );
 }
