@@ -15,6 +15,7 @@ function PendingContributions({ pendingContributions }) {
             club={contribution.club}
             department={contribution.dep}
             lead={contribution.target}
+            links = {contribution.proof_files}
             date={contribution.created_at}
             status={contribution.status}
             points={contribution.points}

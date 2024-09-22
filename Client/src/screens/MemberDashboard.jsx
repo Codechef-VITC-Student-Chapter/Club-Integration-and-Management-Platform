@@ -46,6 +46,8 @@ function MemberDashboard() {
             done.push(current);
           }
         }
+
+
         setContributions(done);
         setPendingContributions(pending);
         setClubPoints({ codechefvitc: donepoints });
