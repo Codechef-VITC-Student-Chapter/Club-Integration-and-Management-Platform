@@ -3,7 +3,7 @@ import LeadRequests from '../components/LeadRequests';
 import { useRunningContext } from '../contexts/RunningContext';
 
 function SeeRequests() {
-  const { baseURL, currentUser, token } = useRunningContext();
+  const { baseURL, currentUser, token, handleError } = useRunningContext();
   const [requests, setRequests] = useState([]);
   const [done, setDone] = useState([]);
   const [removing, setRemoving] = useState(null);
