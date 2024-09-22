@@ -1,3 +1,4 @@
+import { decode } from 'jsonwebtoken';
 import { verifyToken } from '../utils/jwtUtils.mjs';
 
 export const authenticateToken = async (req, res, next) => {
@@ -8,6 +9,8 @@ export const authenticateToken = async (req, res, next) => {
 
   try {
     const decoded = await verifyToken(token);
+    req.user = decoded.id;
+    req.isLead = decoded.isLead;
     next();
   } catch (err) {
     res.status(403).json({ error: 'Invalid Token' });

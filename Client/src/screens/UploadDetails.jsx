@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { useRunningContext } from '../contexts/RunningContext';
 
 function UploadDetails() {
-  const { baseURL, currentUser, handleError } = useRunningContext();
+  const { baseURL, currentUser, handleError, token } = useRunningContext();
 
   const [departments, setDepartments] = useState([]);
   const [leads, setLeads] = useState([]);
@@ -172,6 +172,7 @@ function UploadDetails() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           title: title,

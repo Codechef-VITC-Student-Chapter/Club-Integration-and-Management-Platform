@@ -5,8 +5,10 @@ import {
   getContributionById,
   updateContributionStatus,
 } from '../utils/contUtils.mjs';
+import { authenticateToken } from '../middleware/authenticateToken.mjs';
 
 const contRouter = express.Router();
+contRouter.use(authenticateToken);
 
 contRouter.post('/add', async (req, res) => {
   try {
@@ -54,6 +56,9 @@ contRouter.get('/get/:id', async (req, res) => {
 
 contRouter.patch('/update-status/:id', async (req, res) => {
   try {
+    if (req.isLead == false) {
+      return res.status(401).json({ error: 'User is not a lead' });
+    }
     const contId = req.params.id;
     const { status } = req.body;
     const updatedContribution = await updateContributionStatus(contId, status);

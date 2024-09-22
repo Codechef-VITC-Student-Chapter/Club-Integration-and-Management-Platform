@@ -11,7 +11,7 @@ const toastProps = {
 };
 
 function LeadRequests({ request, remove }) {
-  const { baseURL } = useRunningContext();
+  const { baseURL, token } = useRunningContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleApproval = async () => {
@@ -21,6 +21,7 @@ function LeadRequests({ request, remove }) {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ status: 'approved' }),
       }
@@ -40,6 +41,7 @@ function LeadRequests({ request, remove }) {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ status: 'rejected' }),
       }
