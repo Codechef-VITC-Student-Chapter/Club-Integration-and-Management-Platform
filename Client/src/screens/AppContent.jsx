@@ -14,7 +14,7 @@ const SeeRequests = React.lazy(() => import('./SeeRequests'));
 const MemberDashboard = React.lazy(() => import('./MemberDashboard'));
 
 function AppContent() {
-  const { token } = useRunningContext();
+  const { token, isAdmin } = useRunningContext();
 
   if (!token) {
     return (
@@ -30,7 +30,7 @@ function AppContent() {
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path="/upload" element={<UploadDetails />} />
-          <Route path="/requests" element={<SeeRequests />} />
+          {isAdmin && <Route path="/requests" element={<SeeRequests />} />}
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/dashboard" element={<MemberDashboard />} />
           <Route path="/login" element={<MemberDashboard />} />

@@ -74,8 +74,8 @@ function MemberDashboard() {
 
       <PointsWidget clubPoints={clubPoints} pendingPoints={pendingPoints} />
 
-      <div className="flex space-x-6">
-        <div className="flex-1 flex flex-col">
+      <div className="flex flex-wrap ">
+        <div className="flex-1 flex flex-col mx-3">
           <div className="bg-white p-4 shadow-md rounded-lg mb-2">
             <h2 className="text-xl font-bold mb-2">Recent Contributions</h2>
             <div className="h-96 overflow-y-auto">
@@ -83,7 +83,7 @@ function MemberDashboard() {
             </div>
           </div>
         </div>
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col mx-3">
           <div className="bg-white p-4 shadow-md rounded-lg mb-2">
             <h2 className="text-xl font-bold mb-2">Pending Contributions</h2>
             <div className="h-96 overflow-y-auto">
