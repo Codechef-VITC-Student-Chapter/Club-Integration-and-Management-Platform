@@ -40,11 +40,7 @@ function Navbar() {
             </svg>
           </button>
         </div>
-        <div
-          className={`${
-            isMenuOpen ? 'block' : 'hidden'
-          } w-full lg:flex lg:items-center lg:w-auto`}
-        >
+        <div className="hidden lg:flex lg:items-center lg:w-auto">
           <ul className="flex flex-col lg:flex-row lg:space-x-4">
             <li>
               <a href="/dashboard" className="block py-2 px-4 hover:underline">
@@ -73,6 +69,36 @@ function Navbar() {
           </button>
         </div>
       </div>
+      {isMenuOpen && (
+        <div className="lg:hidden bg-gray-800 text-white p-4">
+          <ul className="flex flex-col space-y-2">
+            <li>
+              <a href="/dashboard" className="block py-2 px-4 hover:underline">
+                Dashboard
+              </a>
+            </li>
+            <li>
+              <a
+                href="/leaderboard"
+                className="block py-2 px-4 hover:underline"
+              >
+                Leaderboard
+              </a>
+            </li>
+            <li>
+              <a href="/upload" className="block py-2 px-4 hover:underline">
+                Requests
+              </a>
+            </li>
+          </ul>
+          <button
+            onClick={signOut}
+            className="mt-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          >
+            Sign out
+          </button>
+        </div>
+      )}
     </nav>
   );
 }
