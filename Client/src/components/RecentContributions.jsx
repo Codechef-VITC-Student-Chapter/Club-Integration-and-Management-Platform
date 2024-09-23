@@ -16,9 +16,12 @@ function RecentContributions({ contributions }) {
             department={contribution.dep}
             lead={contribution.target}
             date={contribution.created_at}
+            links={contribution.proof_files}
             status={contribution.status}
             points={contribution.points}
           />
+
+          
         ))
       )}
     </div>

@@ -7,6 +7,7 @@ function TaskCard({
   department,
   lead,
   date,
+  links,
   status,
   points,
 }) {
@@ -27,6 +28,13 @@ function TaskCard({
       <h3 className="font-semibold text-lg mb-1">{title}</h3>
       <p className="text-sm mb-2">{description}</p>
       <p className="text-sm text-gray-600 mb-2">{points}</p>
+      <div className='flex flex-col'>
+        {links.map((link, index) => (
+          <a key={index} href={link} className="text-blue-500 underline mb-2">
+            {link}
+          </a>
+        ))}
+      </div> 
       <p className="text-xs text-gray-600">
         Club: {club} <br />
         Department: {department} <br />
