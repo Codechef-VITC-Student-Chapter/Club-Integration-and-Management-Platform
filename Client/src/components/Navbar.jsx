@@ -70,8 +70,8 @@ function Navbar() {
         </div>
       </div>
       {isMenuOpen && (
-        <div className="lg:hidden bg-gray-800 text-white p-4">
-          <ul className="flex flex-col space-y-2">
+        <div className="flex flex-col items-end lg:hidden bg-gray-800 text-white p-4">
+          <ul className="flex flex-col items-end space-y-2">
             <li>
               <a href="/dashboard" className="block py-2 px-4 hover:underline">
                 Dashboard
@@ -93,7 +93,7 @@ function Navbar() {
           </ul>
           <button
             onClick={signOut}
-            className="mt-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+            className="mt-2 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700" 
           >
             Sign out
           </button>
