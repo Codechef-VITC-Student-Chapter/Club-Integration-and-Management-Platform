@@ -12,15 +12,15 @@ function PointsWidget({ clubPoints, pendingPoints }) {
           const pendingPointsForClub = pendingPoints[club] || 0;
           const totalPointsWithPending = Math.min(
             totalPoints + pendingPointsForClub,
-            50
+            100
           );
-          const progress = Math.min((totalPoints / 50) * 100, 100);
+          const progress = Math.min((totalPoints / 100) * 100, 100);
           const totalProgress = Math.min(
-            (totalPointsWithPending / 50) * 100,
+            (totalPointsWithPending / 100) * 100,
             100
           );
 
-          const isClubGreen = totalPoints >= 50;
+          const isClubGreen = totalPoints >= 100;
 
           return (
             <div
@@ -45,14 +45,14 @@ function PointsWidget({ clubPoints, pendingPoints }) {
                 ></div>
               </div>
               <p className="text-sm">
-                Total Points (Earned): {totalPoints} / 50
+                Total Points (Earned): {totalPoints} / 100
               </p>
               <p className="text-sm text-gray-200">
                 Pending Points: {pendingPointsForClub}
               </p>
-              {totalPoints >= 50 && (
+              {totalPoints >= 100 && (
                 <div className="text-center mt-2 animate-bounce">
-                  🎉 Congrats! You reached 50 points in {club}! 🎉
+                  🎉 Congrats! You reached 100 points in {club}! 🎉
                 </div>
               )}
             </div>
