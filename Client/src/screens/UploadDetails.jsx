@@ -335,14 +335,20 @@ function UploadDetails() {
           </label>
 
           <select
-            value={points}
-            onChange={(e) => setPoints(e.target.value)}
+            // value={points}
+            onChange={(e) => {
+              if (e.target.value != '' && e.target.value != 'custom') {
+                setPoints(availablePoints[e.target.value].value);
+              } else {
+                setPoints(e.target.value);
+              }
+            }}
             className="block w-full p-2 border border-gray-300 rounded-md"
             required
           >
             <option value="">Select Points</option>
             {availablePoints.map((pointOption, index) => (
-              <option key={index} value={pointOption.value}>
+              <option key={index} value={index}>
                 {pointOption.label}
               </option>
             ))}
