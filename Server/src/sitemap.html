@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Sitemap</title>
+  <style>
+    /* Base Styles */
+    body {
+      background-color: #1e1e2e;
+      color: #d4d4d8;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Container for all content */
+    .container {
+      padding: 30px;
+      max-width: 1200px;
+      margin: auto;
+      text-align: center;
+    }
+
+    /* Title Styles */
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: #e2e8f0;
+    }
+
+    /* Subheading */
+    p {
+      font-size: 1.1rem;
+      margin-bottom: 40px;
+      color: #94a3b8;
+    }
+
+    /* API Section Title */
+    h2 {
+      font-size: 2rem;
+      margin: 40px 0 20px;
+      color: #f0abfc;
+    }
+
+    /* Endpoint List Styles */
+    .endpoint-list {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .endpoint {
+      background-color: #29293e;
+      padding: 15px;
+      margin: 10px;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .endpoint:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .endpoint h3 {
+      font-size: 1.5rem;
+      color: #fff;
+      margin: 0;
+    }
+
+    .endpoint p {
+      font-size: 1rem;
+      color: #9ca3af;
+      margin: 5px 0 10px;
+    }
+
+    .endpoint a {
+      font-size: 1.1rem;
+      color: #9d86ef;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .endpoint a:hover {
+      color: #b4a5ff;
+      text-decoration: underline;
+    }
+
+    /* Scroll Animation */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .fade {
+      animation: fadeIn 1s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>API Sitemap</h1>
+    <p>Welcome! Here are the endpoints of the API. Click any to visit (where applicable).</p>
+
+    <!-- clubApi -->
+    <h2>Club API</h2>
+    <div class="endpoint-list">
+      <div class="endpoint fade">
+        <h3>POST /clubs/add</h3>
+        <p>Add a new club to the system.</p>
+        <a href="/clubs/add">Try it</a>
+      </div>
+      <div class="endpoint fade">
+        <h3>DELETE /clubs/delete/:id</h3>
+        <p>Delete a club by its ID.</p>
+        <a href="/clubs/delete/:id">Try it</a>
+      </div>
+      <div class="endpoint fade">
+        <h3>GET /clubs/get/:id</h3>
+        <p>Get a club's information by its ID.</p>
+        <a href="/clubs/get/:id">Try it</a>
+      </div>
+    </div>
+
+    <!-- userApi -->
+    <h2>User API</h2>
+    <div class="endpoint-list">
+      <div class="endpoint fade">
+        <h3>GET /users/get/:userId</h3>
+        <p>Get user information by ID.</p>
+        <a href="/users/get/:userId">Try it</a>
+      </div>
+      <div class="endpoint fade">
+        <h3>PATCH /users/make-lead/:userId</h3>
+        <p>Make the user a lead of a club.</p>
+        <a href="/users/make-lead/:userId">Try it</a>
+      </div>
+      <div class="endpoint fade">
+        <h3>DELETE /users/delete/:userId</h3>
+        <p>Delete a user by their ID.</p>
+        <a href="/users/delete/:userId">Try it</a>
+      </div>
+    </div>
+
+    <!-- authApi -->
+    <h2>Auth API</h2>
+    <div class="endpoint-list">
+      <div class="endpoint fade">
+        <h3>POST /auth/login</h3>
+        <p>Log in and receive a JWT token.</p>
+        <a href="/auth/login">Try it</a>
+      </div>
+      <div class="endpoint fade">
+        <h3>POST /auth/register</h3>
+        <p>Register a new user.</p>
+        <a href="/auth/register">Try it</a>
+      </div>
+    </div>
+
+    <!-- depsApi -->
+    <h2>Department API</h2>
+    <div class="endpoint-list">
+      <div class="endpoint fade">
+        <h3>POST /departments/add</h3>
+        <p>Add a new department to the system.</p>
+        <a href="/departments/add">Try it</a>
+      </div>
+      <div class="endpoint fade">
+        <h3>DELETE /departments/delete/:id</h3>
+        <p>Delete a department by its ID.</p>
+        <a href="/departments/delete/:id">Try it</a>
+      </div>
+    </div>
+
+    <!-- contApi -->
+    <h2>Contributions API</h2>
+    <div class="endpoint-list">
+      <div class="endpoint fade">
+        <h3>GET /contributions/get/:id</h3>
+        <p>Get contribution details by its ID.</p>
+        <a href="/contributions/get/:id">Try it</a>
+      </div>
+      <div class="endpoint fade">
+        <h3>PATCH /contributions/update-status/:id</h3>
+        <p>Update the status of a contribution by its ID.</p>
+        <a href="/contributions/update-status/:id">Try it</a>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>
