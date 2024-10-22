@@ -1,142 +1,146 @@
 import React, { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import { useRunningContext } from '../contexts/RunningContext';
 
 function UploadDetails() {
-  // Simulated data
-  const clubsData = {
-    club1: { id: 'club1', name: 'Club 1' },
-    club2: { id: 'club2', name: 'Club 2' },
-    club3: { id: 'club3', name: 'Club 3' },
-  };
+  const { baseURL, currentUser, handleError, token } = useRunningContext();
 
-  const departmentsData = {
-    club1: {
-      department1: { id: 'department1', name: 'Department 1' },
-      department2: { id: 'department2', name: 'Department 2' },
-    },
-    club2: {
-      department3: { id: 'department3', name: 'Department 3' },
-      department4: { id: 'department4', name: 'Department 4' },
-    },
-    club3: {
-      department5: { id: 'department5', name: 'Department 5' },
-      department6: { id: 'department6', name: 'Department 6' },
-    },
-  };
-
-  const leadsData = {
-    department1: [
-      { id: 'lead1', name: 'Lead 1' },
-      { id: 'lead2', name: 'Lead 2' },
-    ],
-    department2: [
-      { id: 'lead3', name: 'Lead 3' },
-      { id: 'lead4', name: 'Lead 4' },
-    ],
-    department3: [
-      { id: 'lead5', name: 'Lead 5' },
-      { id: 'lead6', name: 'Lead 6' },
-    ],
-    department4: [
-      { id: 'lead7', name: 'Lead 7' },
-      { id: 'lead8', name: 'Lead 8' },
-    ],
-    department5: [
-      { id: 'lead9', name: 'Lead 9' },
-      { id: 'lead10', name: 'Lead 10' },
-    ],
-    department6: [
-      { id: 'lead11', name: 'Lead 11' },
-      { id: 'lead12', name: 'Lead 12' },
-    ],
-  };
-
-  const [clubs, setClubs] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [leads, setLeads] = useState([]);
 
-  const [club, setClub] = useState('');
+  const [club, setClub] = useState('codechefvitc');
   const [department, setDepartment] = useState('');
   const [lead, setLead] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [links, setLinks] = useState(['']);
-  const [points, setPoints] = useState(''); // New state variable for points
+  const [points, setPoints] = useState(0);
+  const [customPoints, setCustomPoints] = useState('');
+  const [multiplier, setMultiplier] = useState(1);
 
-  const [loadingClubs, setLoadingClubs] = useState(true);
-  const [loadingDepartments, setLoadingDepartments] = useState(false);
+  const [loadingDepartments, setLoadingDepartments] = useState(true);
   const [loadingLeads, setLoadingLeads] = useState(false);
+  const [availablePoints, setAvailablePoints] = useState([]);
   const [error, setError] = useState('');
 
+  const departmentPoints = {
+    smandc: [
+      {
+        label: 'Technical Writing for CodeChef Newsletter - 3 Points/Publish',
+        value: 3,
+      },
+      {
+        label: 'Providing Reel Script that gets implemented - 4 Points/Reel',
+        value: 4,
+      },
+      { label: 'Acting in Reels - 5 Points/Reel', value: 5 },
+      {
+        label: 'Resharing Reels (claim within 24 hours) - 1 Point/Reel',
+        value: 1,
+      },
+    ],
+    design: [
+      { label: 'Poster Design - 7 Points/Accepted Poster', value: 7 },
+      { label: 'Story Design - 7 points/Accepted Story', value: 7 },
+    ],
+    mands: [
+      {
+        label:
+          'Offline Event Registrations (Referral) - 2 Points/Reg (max 20 Points/event)',
+        value: 2,
+      },
+      {
+        label:
+          'Online Event Registrations (Referral) - 1 Point/Reg (max 5 Points/event)',
+        value: 1,
+      },
+      {
+        label: 'Participation in Physical/ Hostel Marketing - 8 Points/session',
+        value: 8,
+      },
+      { label: 'Cold Mails to Sponsors - 1 Point/2 Mails', value: 1 },
+    ],
+    cp: [
+      { label: 'Attending Weekly Online Discussions - 1 Point/Meet', value: 1 },
+      {
+        label: 'Attempting Online CodeChef Contest - 3 Points/Contest',
+        value: 3,
+      },
+      {
+        label: 'Attempting Weekly Tasks/ Questions - 2 Points/Que Solved',
+        value: 2,
+      },
+    ],
+    em: [
+      { label: 'Registration Desk - 10 Points', value: 10 },
+      { label: 'Disciplinary Committee - 10 Points', value: 10 },
+      { label: 'Backstage duty -10 Points', value: 10 },
+      { label: 'Entry/Exit duty -10 Points', value: 10 },
+      { label: 'Miscellaneous Management Tasks (Will be notified)', value: 0 }, // value 0 means to be notified
+    ],
+    clubleads: [
+      { label: 'Attending events - 4 Points/Event (min 4 events)', value: 4 },
+      { label: 'Attending FFCS meets - 1 Point/meet (mandatory)', value: 1 },
+    ],
+  };
+
   useEffect(() => {
-    // Simulate API call to fetch clubs
-    const fetchClubs = async () => {
-      setLoadingClubs(true);
+    const fetchDepartments = async () => {
       try {
-        setTimeout(() => {
-          setClubs(Object.values(clubsData));
-          setLoadingClubs(false);
-        }, 1000); // Simulate delay
-      } catch (err) {
-        setError('Failed to load clubs.');
-        setLoadingClubs(false);
+        const response = await fetch(`${baseURL}/clubApi/get-departments`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ club_id: 'codechefvitc' }),
+        });
+
+        const deps = await response.json();
+        if (response.status === 403) {
+          handleError('Fetching departments', deps.error);
+          return;
+        }
+
+        if (response.status === 200) {
+          setDepartments(deps);
+          setLoadingDepartments(false);
+          setLoadingLeads(true);
+        }
+      } catch (error) {
+        console.log('Error in upload page: ', error);
       }
     };
-
-    fetchClubs();
-  }, []);
-
-  useEffect(() => {
-    if (club) {
-      // Simulate API call to fetch departments based on selected club
-      const fetchDepartments = async () => {
-        setLoadingDepartments(true);
-        try {
-          setTimeout(() => {
-            setDepartments(Object.values(departmentsData[club] || {}));
-            setLoadingDepartments(false);
-          }, 1000); // Simulate delay
-        } catch (err) {
-          setError('Failed to load departments.');
-          setLoadingDepartments(false);
-        }
-      };
-
-      fetchDepartments();
-    }
-  }, [club]);
+    fetchDepartments();
+  }, [baseURL, handleError]);
 
   useEffect(() => {
+    const fetchLeads = async () => {
+      try {
+        const response = await fetch(`${baseURL}/depsApi/getLeads`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ dep_id: department }),
+        });
+        const decodeLeads = await response.json();
+        setLeads(decodeLeads);
+        setLoadingLeads(false);
+      } catch (error) {
+        handleError('fetching Leads', error);
+      }
+    };
     if (department) {
-      // Simulate API call to fetch leads based on selected department
-      const fetchLeads = async () => {
-        setLoadingLeads(true);
-        try {
-          setTimeout(() => {
-            setLeads(leadsData[department] || []);
-            setLoadingLeads(false);
-          }, 1000); // Simulate delay
-        } catch (err) {
-          setError('Failed to load leads.');
-          setLoadingLeads(false);
-        }
-      };
-
       fetchLeads();
     }
-  }, [department]);
-
-  const handleClubChange = (e) => {
-    setClub(e.target.value);
-    setDepartment('');
-    setLead('');
-    setDepartments([]);
-    setLeads([]);
-  };
+  }, [department, baseURL, handleError]);
 
   const handleDepartmentChange = (e) => {
     setDepartment(e.target.value);
     setLead('');
     setLeads([]);
+    setPoints('');
+    setAvailablePoints(departmentPoints[e.target.value] || []);
   };
 
   const handleLinkChange = (index, event) => {
@@ -154,18 +158,68 @@ function UploadDetails() {
     setLinks(newLinks);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const requestData = {
-      club,
-      department,
-      lead,
-      title,
-      description,
-      links,
-      points, // Include points in the request data
-    };
-    console.log('Data to be sent to API:', requestData);
+    if (points === '') {
+      toast.error('Please select the points requested!');
+      return;
+    }
+
+    if (department === '') {
+      toast.error('Please select the department!');
+      return;
+    }
+
+    if (lead === '') {
+      console.log('here');
+      toast.error('Please select the lead!');
+      return;
+    }
+
+    const pointsToSubmit = points === 'custom' ? customPoints : points;
+    const totalPoints = pointsToSubmit * multiplier;
+
+    try {
+      const response = await fetch(`${baseURL}/contApi/add`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: title,
+          points: totalPoints,
+          user: currentUser,
+          desc: description,
+          proof_files: links,
+          target: lead,
+          club: club,
+          dep: department,
+          status: 'pending',
+          created_at: Date.now(),
+        }),
+      });
+
+      const data = await response.json();
+      if (response.status === 403) {
+        handleError('Submitting request', data.error);
+        return;
+      }
+    } catch (error) {
+      handleError('Details uploading', error);
+      return;
+    }
+
+    toast.success('Request submitted successfully!');
+
+    setDepartment('');
+    setLead('');
+    setTitle('');
+    setDescription('');
+    setLinks(['']);
+    setPoints('');
+    setCustomPoints('');
+    setMultiplier(1);
   };
 
   return (
@@ -176,22 +230,7 @@ function UploadDetails() {
 
         <div>
           <label className="block text-sm font-medium mb-1">Club:</label>
-          {loadingClubs ? (
-            <p>Loading clubs...</p>
-          ) : (
-            <select
-              value={club}
-              onChange={handleClubChange}
-              className="block w-full p-2 border border-gray-300 rounded-md"
-            >
-              <option value="">Select Club</option>
-              {clubs.map((club) => (
-                <option key={club.id} value={club.id}>
-                  {club.name}
-                </option>
-              ))}
-            </select>
-          )}
+          <p className="font-bold">CodeChef VIT-C</p>
         </div>
 
         <div>
@@ -228,8 +267,8 @@ function UploadDetails() {
             >
               <option value="">Select Lead</option>
               {leads.map((lead) => (
-                <option key={lead.id} value={lead.id}>
-                  {lead.name}
+                <option key={lead.user_id} value={lead.user_id}>
+                  {lead.first_name} {lead.last_name}
                 </option>
               ))}
             </select>
@@ -259,37 +298,22 @@ function UploadDetails() {
 
         <div>
           <label className="block text-sm font-medium mb-1">
-            Points Requested:
-          </label>
-          <input
-            type="number"
-            value={points}
-            onChange={(e) => setPoints(e.target.value)}
-            className="block w-full p-2 border border-gray-300 rounded-md"
-            placeholder="Enter points"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Links to proof (upload your files to google drive and post the view
-            link to it here if required):
+            Proof Files (Upload files to your google drive and paste link to the
+            file here):
           </label>
           {links.map((link, index) => (
-            <div key={index} className="flex items-center space-x-2 mb-2">
+            <div key={index} className="flex items-center mb-2">
               <input
-                type="text"
+                type="url"
                 value={link}
                 onChange={(e) => handleLinkChange(index, e)}
                 className="block w-full p-2 border border-gray-300 rounded-md"
-                placeholder="Enter link"
               />
-              {index > 0 && (
+              {links.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeLink(index)}
-                  className="text-red-500 hover:text-red-700"
+                  className="ml-2 text-red-500 hover:text-red-700"
                 >
                   Remove
                 </button>
@@ -301,16 +325,74 @@ function UploadDetails() {
             onClick={addLink}
             className="text-blue-500 hover:text-blue-700"
           >
-            Add Another Link
+            + Add Another Link
           </button>
         </div>
 
-        <button
-          type="submit"
-          className="block w-full py-2 px-4 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
-        >
-          Submit Request
-        </button>
+        <div>
+          <label className="block text-sm font-medium mb-1">
+            Points Requested:
+          </label>
+
+          <select
+            // value={points}
+            onChange={(e) => {
+              if (e.target.value != '' && e.target.value != 'custom') {
+                setPoints(availablePoints[e.target.value].value);
+              } else {
+                setPoints(e.target.value);
+              }
+            }}
+            className="block w-full p-2 border border-gray-300 rounded-md"
+            required
+          >
+            <option value="">Select Points</option>
+            {availablePoints.map((pointOption, index) => (
+              <option key={index} value={index}>
+                {pointOption.label}
+              </option>
+            ))}
+            <option value="custom">Custom Points</option>
+          </select>
+          {points == 'custom' ? (
+            <div className="mt-2">
+              <label className="block text-sm font-medium mb-1">
+                Points Requested:
+              </label>
+              <input
+                type="number"
+                value={customPoints}
+                onChange={(e) => setCustomPoints(Number(e.target.value))}
+                className="block w-full p-2 border border-gray-300 rounded-md"
+                min="1"
+                required
+              />
+            </div>
+          ) : (
+            <div className="mt-2">
+              <label className="block text-sm font-medium mb-1">
+                How many times did you complete this task?
+              </label>
+              <input
+                type="number"
+                value={multiplier}
+                onChange={(e) => setMultiplier(Number(e.target.value))}
+                className="block w-full p-2 border border-gray-300 rounded-md"
+                min="1"
+                required
+              />
+            </div>
+          )}
+        </div>
+
+        <div>
+          <button
+            type="submit"
+            className="block w-full p-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600"
+          >
+            Submit Request
+          </button>
+        </div>
       </form>
     </div>
   );

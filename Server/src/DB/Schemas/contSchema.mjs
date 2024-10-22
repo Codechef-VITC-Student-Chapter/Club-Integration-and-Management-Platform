@@ -10,6 +10,10 @@ const contSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    points: {
+        type: Number,
+        required: true
+    },
     user: {
         type: String,
         ref: 'User',

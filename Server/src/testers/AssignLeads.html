@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Leads</title>
+</head>
+<style>
+    body {
+        background-color: #1e1e2f;
+        color: #ffffff;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0;
+        padding: 20px;
+    }
+    h1 {
+        color: #00bfff;
+    }
+    .card {
+        background-color: #2b2b3c;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        width: 300px;
+        overflow-x: scroll;
+    }
+    .card:hover {
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    }
+    input, button {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+        border: none;
+    }
+    input {
+        max-width: 90%;
+    }
+    button {
+        background-color: #00bfff;
+        color: white;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #0099cc;
+    }
+    .result {
+        margin-top: 10px;
+        color: #00ffcc;
+        white-space: pre-wrap;
+    }
+</style>
+<body>
+    <div class="card">
+        <h2>Login</h2>
+        <div class="form-group">
+            <input type="text" id="username" placeholder="Enter username" required>
+            <input type="password" id="password" placeholder="Enter password" required>
+        </div>
+        <button onclick="login()">Login</button>
+        <div id="loginResult" class="result"></div>
+    </div>
+
+    <div class="card">
+        <h2>Assign Club Lead</h2>
+        <div class="form-group">
+            <input type="text" id="userId" placeholder="Enter user ID" required>
+            <input type="text" id="clubId" placeholder="Enter club ID" required>
+        </div>
+        <button onclick="assignLead()">Make Club Lead</button>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        let token = null; // Will store the JWT token
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const response = await fetch('http://localhost:3000/authApi/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        regno: username,
+                        password: password
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    token = data.token; // Store the JWT token
+                    document.getElementById('loginResult').innerText = 'Login successful!';
+                } else {
+                    const errorData = await response.json();
+                    document.getElementById('loginResult').innerText = 'Login failed: ' + errorData.message;
+                }
+            } catch (error) {
+                document.getElementById('loginResult').innerText = 'Login error: ' + error.message;
+            }
+        }
+
+        async function assignLead() {
+            const userId = document.getElementById('userId').value;
+            const clubId = document.getElementById('clubId').value;
+
+            if (!token) {
+                document.getElementById('result').innerText = 'Please login first!';
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3000/userApi/make-lead/${userId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` 
+                    },
+                    body: JSON.stringify({
+                        userId: userId,
+                        club_id: clubId
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    document.getElementById('result').innerText = JSON.stringify(result, null, 2);
+                } else {
+                    const errorData = await response.json();
+                    document.getElementById('result').innerText = 'Error: ' + errorData.message;
+                }
+            } catch (error) {
+                document.getElementById('result').innerText = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

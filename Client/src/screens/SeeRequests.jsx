@@ -1,87 +1,91 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import LeadRequests from '../components/LeadRequests';
+import { useRunningContext } from '../contexts/RunningContext';
 
-const requestsData = [
-  {
-    id: '1',
-    club: 'Club 1',
-    department: 'Department 1',
-    lead: 'Lead 1',
-    title: 'Request Title 1',
-    description: 'Request Description 1',
-    links: ['http://example.com/1'],
-    status: 'Pending',
-  },
-  {
-    id: '2',
-    club: 'Club 2',
-    department: 'Department 3',
-    lead: 'Lead 5',
-    title: 'Request Title 2',
-    description: 'Request Description 2',
-    links: ['http://example.com/2'],
-    status: 'Pending',
-  },
-  // Add more requests as needed
-];
+function SeeRequests() {
+  const { baseURL, currentUser, token, handleError } = useRunningContext();
+  const [requests, setRequests] = useState([]);
+  const [done, setDone] = useState([]);
+  const [removing, setRemoving] = useState(null);
 
-function ReviewRequests() {
-  const [requests, setRequests] = useState(requestsData);
+  useEffect(() => {
+    const getMyRequests = async () => {
+      const response = await fetch(
+        `${baseURL}/userApi/getRequests/${currentUser}`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+      if (response.status === 403) {
+        handleError('Fetching requests to me', data.error);
+        return;
+      }
 
-  const handleApproval = (id, decision) => {
-    setRequests((prevRequests) =>
-      prevRequests.map((req) =>
-        req.id === id ? { ...req, status: decision } : req
-      )
-    );
-    console.log(`Request ${id} ${decision}`);
+      const pendingRequests = [];
+      const completedRequests = [];
+      for (let i = 0; i < data.length; i++) {
+        if (data[i].status === 'pending') {
+          pendingRequests.push(data[i]);
+        } else {
+          completedRequests.push(data[i]);
+        }
+      }
+      setRequests(pendingRequests);
+      setDone(completedRequests);
+    };
+    getMyRequests();
+  }, [baseURL, currentUser, token]);
+
+  const removeRequest = (id, value) => {
+    for (let index = 0; index < requests.length; index++) {
+      if (requests[index].cont_id === id) {
+        const updatedRequest = { ...requests[index], status: value }; // Update status
+        setRemoving(index); // Set the request to be removed
+
+        // Update state
+        setDone((prevDone) => [...prevDone, updatedRequest]);
+        setTimeout(() => {
+          setRequests((prevRequests) =>
+            prevRequests.filter((_, i) => i !== index)
+          );
+          setRemoving(null); // Reset the removing state
+        }, 300); // Match this duration with the transition duration
+      }
+    }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-2xl font-bold mb-6">Review Requests</h1>
-      {requests.map((request) => (
-        <div key={request.id} className="border-b border-gray-200 mb-4 pb-4">
-          <h2 className="text-xl font-semibold">{request.title}</h2>
-          <p className="text-gray-700 mb-2">{request.description}</p>
-          <p className="text-gray-600 mb-2">
-            <strong>Club:</strong> {request.club}
-          </p>
-          <p className="text-gray-600 mb-2">
-            <strong>Department:</strong> {request.department}
-          </p>
-          <p className="text-gray-600 mb-2">
-            <strong>Lead:</strong> {request.lead}
-          </p>
-          <p className="text-gray-600 mb-4">
-            <strong>Links:</strong>
-            <ul>
-              {request.links.map((link, index) => (
-                <li key={index}>
-                  <a href={link} className="text-blue-500 hover:underline">
-                    {link}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </p>
-          <div className="flex space-x-4">
-            <button
-              onClick={() => handleApproval(request.id, 'Approved')}
-              className="px-4 py-2 bg-green-500 text-white font-semibold rounded-md hover:bg-green-600"
-            >
-              Approve
-            </button>
-            <button
-              onClick={() => handleApproval(request.id, 'Denied')}
-              className="px-4 py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-600"
-            >
-              Deny
-            </button>
+    <>
+      <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
+        <h1 className="text-2xl font-bold mb-6">Review Requests</h1>
+        {requests.map((request, index) => (
+          <div
+            key={request.cont_id}
+            className={`transition-opacity duration-300 ${
+              removing === index ? 'opacity-0' : 'opacity-100'
+            }`}
+          >
+            <LeadRequests request={request} remove={removeRequest} />
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+      <div className="max-w-4xl mt-10 mx-auto p-6 bg-white shadow-md rounded-lg">
+        <h1 className="text-2xl font-bold mb-6">Completed Requests</h1>
+        {done.map((request, index) => (
+          <div
+            key={request.cont_id}
+            className="transition-opacity duration-300 opacity-100"
+          >
+            <LeadRequests request={request} remove={() => {}} />
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 
-export default ReviewRequests;
+export default SeeRequests;

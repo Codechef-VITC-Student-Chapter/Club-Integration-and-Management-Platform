@@ -9,13 +9,16 @@ function PendingContributions({ pendingContributions }) {
       ) : (
         pendingContributions.map((contribution) => (
           <TaskCard
-            key={contribution.title}
+            key={contribution.cont_id}
             title={contribution.title}
-            description={contribution.description}
+            description={contribution.desc}
             club={contribution.club}
-            department={contribution.department}
-            lead={contribution.lead}
-            date={contribution.date}
+            department={contribution.dep}
+            lead={contribution.target}
+            links = {contribution.proof_files}
+            date={contribution.created_at}
+            status={contribution.status}
+            points={contribution.points}
           />
         ))
       )}

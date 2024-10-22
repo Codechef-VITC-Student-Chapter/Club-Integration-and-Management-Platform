@@ -1,13 +1,43 @@
 import React, { useState } from 'react';
 import Logo from '../assets/logo.png';
-import { UserCircleIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import { PiUserCircle, PiLockLight } from 'react-icons/pi';
+import { useRunningContext } from '../contexts/RunningContext';
+
+import SHA256 from 'crypto-js/sha256';
+function hashPassword(password) {
+  return SHA256(password).toString();
+}
 
 function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { baseURL, setCurrentUser, currentUser, setToken } =
+    useRunningContext();
 
+  const [regno, setRegno] = useState('');
+  const [password, setPassword] = useState('');
   const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const response = await fetch(`${baseURL}/authApi/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          regno: regno,
+          password: hashPassword(password),
+        }),
+      });
+      const data = await response.json();
+
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        var payload = JSON.parse(window.atob(data.token.split('.')[1]));
+        setCurrentUser(payload.user_id);
+        setToken(data.token);
+      }
+    } catch (error) {
+      console.log('Error in logging in! ' + error);
+    }
   };
 
   return (
@@ -28,19 +58,19 @@ function LoginForm() {
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <label className="block text-sm font-bold text-black mb-1">
-                  Email ID
+                  Register Number
                 </label>
                 <div className="flex items-center border-2 border-black rounded-md shadow-sm">
                   <div className="p-2">
-                    <UserCircleIcon className="h-5 w-5 text-black" />
+                    <PiUserCircle className="h-5 w-5 text-black" />
                   </div>
                   <input
-                    type="email"
-                    name="email"
+                    type="regno"
+                    name="regno"
                     className="appearance-none block w-full pl-2 pr-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                    placeholder="some.mail@university.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="23ABC1234"
+                    value={regno}
+                    onChange={(e) => setRegno(e.target.value)}
                   />
                 </div>
               </div>
@@ -50,7 +80,7 @@ function LoginForm() {
                 </label>
                 <div className="flex items-center border-2 border-black rounded-md shadow-sm">
                   <div className="p-2">
-                    <LockClosedIcon className="h-5 w-5 text-black" />
+                    <PiLockLight className="h-5 w-5 text-black" />
                   </div>
                   <input
                     type="password"
@@ -85,7 +115,7 @@ function LoginForm() {
               <div>
                 <button
                   type="submit"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-[43px] shadow-sm text-3xl font-medium text-white bg-[#74baec] hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-[43px] shadow-sm text-3xl font-medium text-white hover:bg-[#74baec] bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   Log in
                 </button>
