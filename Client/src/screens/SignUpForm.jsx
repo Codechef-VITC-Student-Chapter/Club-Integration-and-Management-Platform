@@ -7,6 +7,8 @@ import {
 } from 'react-icons/pi';
 import { MdOutlineMail } from 'react-icons/md';
 import { useRunningContext } from '../contexts/RunningContext';
+import loginImage from "../assets/loginScreen_Background.png";
+import mobileLoginImage from "../assets/mobileLoginScreen_Background.png";
 
 import SHA256 from 'crypto-js/sha256';
 function hashPassword(password) {
@@ -160,27 +162,44 @@ function SignUpForm() {
   };
 
   return (
-    <div className="bg-cover bg-center bg-mobile-login md:bg-desktop-login">
-      <div className="min-h-screen flex items-center justify-center backdrop-blur-sm">
-        <div className="bg-white rounded-tl-[100px] md:rounded-[67px] shadow-lg p-4 sm:p-8 w-full md:max-w-md lg:max-w-lg mx-auto md:mx-4 my-5 relative flex flex-col justify-center">
-          <div className="max-w-md m-auto">
-            <div className="flex justify-center mb-6">
+    <div className="bg-[#E9F1FE] relative h-screen overflow-hidden">
+      <img
+        src={mobileLoginImage}
+        alt="LoginImage"
+        className="absolute top-0 left-0 md:hidden"
+      />
+      <img
+        src={mobileLoginImage}
+        alt="LoginImage"
+        className="absolute -bottom-16 -right-32 md:hidden"
+      />
+      <div className="w-full absolute h-screen flex justify-center items-center">
+        <img
+          src={loginImage}
+          alt="LoginImage"
+          className="p-24 max-w-full max-h-full object-contain hidden md:inline-block"
+        />
+      </div>
+      <div className="min-h-screen flex items-center justify-center md:justify-end">
+        <div className="bg-white rounded-[40px] md:rounded-[67px] w-[90%] shadow-lg p-6 md:p-12 md:max-w-md md:w-[561px] mx-4 md:relative absolute md:bottom-auto flex flex-col justify-center border md:mr-16 px-8">
+          <div className="w-full md:max-w-96 m-auto">
+            <div className="flex justify-center mb-1 md:mb-2">
               <img
                 src={Logo}
                 alt="CodeChef VIT Chennai Chapter"
                 className="h-24 md:h-32"
               />
             </div>
-            <h2 className="text-xl sm:text-2xl lg:text-3xl text-custom-blue font-bold text-center mb-6">
+            <h2 className="text-[16px] md:text-2xl text-custom-blue text-center mb-6">
               SIGN UP
             </h2>
             <form onSubmit={handleSubmit}>
-              <div className="flex flex-col sm:flex-row sm:space-x-4 mb-4">
-                <div className="w-full sm:w-1/2 mb-4 sm:mb-0">
-                  <label className="block text-xs sm:text-sm font-bold text-black">
-                    First Name
+              <div className="flex flex-col sm:flex-row sm:space-x-4 mb-2">
+                <div className="w-full sm:w-1/2 mb-2 sm:mb-0">
+                  <label className="block text-sm text-black mb-1">
+                    FIRST NAME
                   </label>
-                  <div className="flex items-center border-2 rounded-md shadow-sm mt-1">
+                  <div className="flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm">
                     <div className="p-2">
                       <PiUserCircle className="h-5 w-5 text-black" />
                     </div>
@@ -189,8 +208,8 @@ function SignUpForm() {
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleChange}
-                      className={`appearance-none block w-full pl-2 pr-3 py-2 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
-                        errors.firstName ? 'border-red-500' : 'border-black'
+                      className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md ${
+                        errors.firstName ? "border-red-500" : "border-black"
                       }`}
                       placeholder="First Name"
                     />
@@ -202,10 +221,10 @@ function SignUpForm() {
                   )}
                 </div>
                 <div className="w-full sm:w-1/2">
-                  <label className="block text-xs sm:text-sm font-bold text-black">
-                    Last Name
+                  <label className="block text-sm text-black mb-1">
+                    LAST NAME
                   </label>
-                  <div className="flex items-center border-2 rounded-md shadow-sm mt-1">
+                  <div className="flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm">
                     <div className="p-2">
                       <PiUserCircle className="h-5 w-5 text-black" />
                     </div>
@@ -214,8 +233,8 @@ function SignUpForm() {
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleChange}
-                      className={`appearance-none block w-full pl-2 pr-3 py-2 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
-                        errors.lastName ? 'border-red-500' : 'border-black'
+                      className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md ${
+                        errors.lastName ? "border-red-500" : "border-black"
                       }`}
                       placeholder="Last Name"
                     />
@@ -227,11 +246,11 @@ function SignUpForm() {
                   )}
                 </div>
               </div>
-              <div className="mb-4">
-                <label className="block text-xs sm:text-sm font-bold text-black">
-                  Email ID
+              <div className="mb-2">
+                <label className="block text-sm text-black mb-1">
+                  EMAIL ID
                 </label>
-                <div className="flex items-center border-2 rounded-md shadow-sm mt-1">
+                <div className="flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm">
                   <div className="p-2">
                     <MdOutlineMail className="h-5 w-5 text-black" />
                   </div>
@@ -240,8 +259,8 @@ function SignUpForm() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`appearance-none block w-full pl-2 pr-3 py-2 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
-                      errors.email ? 'border-red-500' : 'border-black'
+                    className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md ${
+                      errors.email ? "border-red-500" : "border-black"
                     }`}
                     placeholder="some.mail@university.com"
                   />
@@ -252,11 +271,11 @@ function SignUpForm() {
                   </p>
                 )}
               </div>
-              <div className="mb-4">
-                <label className="block text-xs sm:text-sm font-bold text-black">
-                  Registration Number
+              <div className="mb-2">
+                <label className="block text-sm text-black mb-1">
+                  REGISTRATION NUMBER
                 </label>
-                <div className="flex items-center border-2 rounded-md shadow-sm mt-1">
+                <div className="flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm">
                   <div className="p-2">
                     <PiIdentificationCardLight className="h-5 w-5 text-black" />
                   </div>
@@ -265,8 +284,8 @@ function SignUpForm() {
                     name="reg_no"
                     value={formData.reg_no}
                     onChange={handleChange}
-                    className={`appearance-none block w-full pl-2 pr-3 py-2 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
-                      errors.phone ? 'border-red-500' : 'border-black'
+                    className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md ${
+                      errors.phone ? "border-red-500" : "border-black"
                     }`}
                     placeholder="Registration Number"
                   />
@@ -277,11 +296,11 @@ function SignUpForm() {
                   </p>
                 )}
               </div>
-              <div className="mb-4">
-                <label className="block text-xs sm:text-sm font-bold text-black">
-                  Password
+              <div className="mb-2">
+                <label className="block text-sm text-black mb-1">
+                  PASSWORD
                 </label>
-                <div className="flex items-center border-2 rounded-md shadow-sm mt-1">
+                <div className="flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm">
                   <div className="p-2">
                     <PiLockLight className="h-5 w-5 text-black" />
                   </div>
@@ -290,8 +309,8 @@ function SignUpForm() {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    className={`appearance-none block w-full pl-2 pr-3 py-2 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
-                      errors.password ? 'border-red-500' : 'border-black'
+                    className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md ${
+                      errors.password ? "border-red-500" : "border-black"
                     }`}
                     placeholder="Password"
                   />
@@ -303,10 +322,10 @@ function SignUpForm() {
                 )}
               </div>
               <div className="mb-4">
-                <label className="block text-xs sm:text-sm font-bold text-black">
-                  Confirm Password
+                <label className="block text-sm text-black mb-1">
+                  CONFIRM PASSWORD
                 </label>
-                <div className="flex items-center border-2 rounded-md shadow-sm mt-1">
+                <div className="flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm">
                   <div className="p-2">
                     <PiLockLight className="h-5 w-5 text-black" />
                   </div>
@@ -315,8 +334,8 @@ function SignUpForm() {
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className={`appearance-none block w-full pl-2 pr-3 py-2 rounded-md placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
-                      errors.confirmPassword ? 'border-red-500' : 'border-black'
+                    className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md ${
+                      errors.confirmPassword ? "border-red-500" : "border-black"
                     }`}
                     placeholder="Confirm Password"
                   />
@@ -330,21 +349,18 @@ function SignUpForm() {
               <div>
                 <button
                   type="submit"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-[43px] shadow-sm text-3xl font-medium text-white hover:bg-[#74baec] bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="w-full flex justify-center py-1 md:py-2 border border-transparent rounded-md shadow-sm  text-white hover:bg-[#74baec] bg-[#4079DA] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   Sign Up
                 </button>
               </div>
-              <div className="flex justify-between items-center mt-4">
-                <p className="text-xs sm:text-sm text-black">
+              <div className="flex font-semibold justify-end items-center mt-3">
+                <p className="text-[12px] md:text-sm text-black">
                   Already have an account?
+                  <a href="/login" className=" ml-1 text-[#4079DA]">
+                    Log In
+                  </a>
                 </p>
-                <a
-                  href="/login"
-                  className="font-medium text-custom-blue-darker hover:text-blue-500 text-xs sm:text-sm"
-                >
-                  Log In
-                </a>
               </div>
             </form>
           </div>
