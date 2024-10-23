@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { startTransition } from 'react';
 import { useRunningContext } from '../contexts/RunningContext';
+
+//Importing the images
 import logo from '../assets/logo.png';
 import defPic from '../assets/NavbarVectors/user.png';
-import userP from '../assets/NavbarVectors/ph_user-circle.png'; 
+import userP from '../assets/NavbarVectors/ph_user-circle.png';
+import dash from '../assets/NavbarVectors/Dashboard.png';
+import lead from '../assets/NavbarVectors/Leaderboard.png';
+import req from '../assets/NavbarVectors/Request.png';
+import set from '../assets/NavbarVectors/Setting.png';
+import signout from '../assets/NavbarVectors/Signout.png';
 
 function Navbar() {
   const { setToken } = useRunningContext();
@@ -28,10 +35,10 @@ function Navbar() {
   };
 
   const menuItems = [
-    { name: 'Dashboard', path: '/dashboard' },
-    { name: 'Leaderboard', path: '/leaderboard' },
-    { name: 'Requests', path: '/upload' },
-    { name: 'Settings', path: '/settings' }, // Added Settings for consistency
+    { name: 'Dashboard', path: '/dashboard', logo: dash },
+    { name: 'Leaderboard', path: '/leaderboard', logo: lead },
+    { name: 'Requests', path: '/upload', logo: req },
+    { name: 'Settings', path: '/settings', logo: set }, // Added Settings for consistency
   ];
 
   return (
@@ -79,7 +86,7 @@ function Navbar() {
               </button>
             </li>
             <li>
-              <img src={userP} alt="Profile" className="w-10 h-10 rounded-full mb-3" />
+              <img src={userP} alt="Profile" className="w-8 h-8 rounded-full mb-3 flex items-center justify-start -translate-x-4 translate-y-2" />
             </li>
           </ul>
         </div>
@@ -100,13 +107,14 @@ function Navbar() {
             <div className="flex flex-col items-center mb-6">
               <img src={defPic} alt="Profile" className="w-28 h-28 rounded-full mb-2" />
               <span className="text-xl font-medium font-lato">22BCE1111</span>
-              <hr className="w-4/5 border-t border-gray-600 mt-4 mb-4" />
+              <hr className="w-11/12 border-t-2 border-white mt-4 mb-4" />
             </div>
 
             {/* Navigation Links */}
-            <ul className="flex flex-col items-start space-y-4">
+            <ul className="flex flex-col items-start space-y-4 font-lato font-medium mx-5">
               {menuItems.map(item => (
-                <li key={item.name}>
+                <li key={item.name} className='flex flex-row items-center justify-center'>
+                  <img src={item.logo} alt={item.name + " logo"} className="w-6 h-6 mr-2"></img>
                   <a
                     href={item.path}
                     className="block py-2 px-4 hover:underline"
@@ -119,7 +127,8 @@ function Navbar() {
                   </a>
                 </li>
               ))}
-              <li>
+              <li className='flex flex-row items-center justify-center'>
+              <img src={signout} alt={"SignOut logo"} className="w-6 h-6 mr-2"></img>
                 <button
                   onClick={() => {
                     signOut();
