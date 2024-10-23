@@ -42,21 +42,25 @@ function LoginForm() {
   };
 
   return (
-    <div className="bg-cover bg-center bg-[#E9F1FE] relative">
+    <div className="bg-[#E9F1FE] relative">
       <div className="w-full absolute h-screen flex justify-center">
-        <img src={loginImage} alt="LoginImage" className="p-24 h-screen" />
+        <img
+          src={loginImage}
+          alt="LoginImage"
+          className="p-24 h-screen hidden md:inline-block"
+        />
       </div>
-      <div className="min-h-screen flex items-center md:justify-end">
-        <div className="bg-white rounded-tl-[180px] md:rounded-[67px] shadow-lg p-8 w-full md:max-w-md md:w-[561px] md:h-[555px] mx-0 md:mx-4 md:relative absolute bottom-0 left-0 right-0 md:bottom-auto flex flex-col justify-center h-[85vh] border md:mr-16 px-12">
-          <div className="w-full max-w-96 m-auto">
-            <div className="flex justify-center mb-2">
+      <div className="min-h-screen flex items-center justify-center md:justify-end">
+        <div className="bg-white rounded-[40px] md:rounded-[67px] w-[90%] shadow-lg p-6 md:p-12 md:max-w-md md:w-[561px] md:h-[555px] mx-4 md:relative absolute md:bottom-auto flex flex-col justify-center border md:mr-16 px-8">
+          <div className="w-full md:max-w-96 m-auto">
+            <div className="flex justify-center mb-1 md:mb-2">
               <img
                 src={Logo}
                 alt="CodeChef VIT Chennai Chapter"
-                className="h-32"
+                className="h-24 md:h-32"
               />
             </div>
-            <h2 className="text-2xl text-custom-blue text-center mb-8">
+            <h2 className="text-[16px] md:text-2xl text-custom-blue text-center mb-6">
               LOGIN
             </h2>
             <form onSubmit={handleSubmit}>
@@ -64,32 +68,32 @@ function LoginForm() {
                 <label className="block text-sm text-black mb-1">
                   REGISTRATION NUMBER
                 </label>
-                <div className="flex items-center border-2 border-black rounded-md shadow-sm">
+                <div className="flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm">
                   <div className="p-2">
                     <PiUserCircle className="h-5 w-5 text-black" />
                   </div>
                   <input
                     type="regno"
                     name="regno"
-                    className="appearance-none block w-full pl-2 pr-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                    className="appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                     placeholder="23ABC1234"
                     value={regno}
                     onChange={(e) => setRegno(e.target.value)}
                   />
                 </div>
               </div>
-              <div className="mb-4">
+              <div className="mb-2 md:mb-4">
                 <label className="block text-sm text-black mb-1">
                   PASSWORD
                 </label>
-                <div className="flex items-center border-2 border-black rounded-md shadow-sm">
+                <div className="flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm">
                   <div className="p-2">
                     <PiLockLight className="h-5 w-5 text-black" />
                   </div>
                   <input
                     type="password"
                     name="password"
-                    className="appearance-none block w-full pl-2 pr-3 py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                    className="appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                     placeholder="********"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -101,16 +105,16 @@ function LoginForm() {
                   <input
                     type="checkbox"
                     name="remember"
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 md:w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <label className="ml-2 block text-sm text-custom-blue-darker">
+                  <label className="ml-1 block text-[10px] md:text-sm text-custom-blue-darker">
                     Remember Me
                   </label>
                 </div>
                 <div className="text-sm">
                   <a
                     href="#"
-                    className="font-medium text-custom-blue-darker hover:text-blue-500"
+                    className="font-medium  text-[10px] md:text-sm text-custom-blue-darker hover:text-blue-500"
                   >
                     Forgot Password?
                   </a>
@@ -119,16 +123,18 @@ function LoginForm() {
               <div>
                 <button
                   type="submit"
-                  className="w-full flex justify-center p-1 border border-transparent rounded-md shadow-sm  text-white hover:bg-[#74baec] bg-[#4079DA] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="w-full flex justify-center py-1 md:py-2 border border-transparent rounded-md shadow-sm  text-white hover:bg-[#74baec] bg-[#4079DA] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
                   Log in
                 </button>
               </div>
               <div className="flex font-semibold justify-end items-center mt-3">
-                <p className="text-sm text-black">Don’t have an account?</p>
-                <a href="/signup" className=" ml-1 text-sm text-[#4079DA]">
-                  Sign Up
-                </a>
+                <p className="text-[12px] md:text-sm text-black">
+                  Don’t have an account?
+                  <a href="/signup" className=" ml-1 text-[#4079DA]">
+                    Sign Up
+                  </a>
+                </p>
               </div>
             </form>
           </div>
