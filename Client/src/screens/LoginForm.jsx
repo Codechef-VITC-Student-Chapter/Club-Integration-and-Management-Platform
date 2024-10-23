@@ -3,6 +3,7 @@ import Logo from "../assets/logo.png";
 import { PiUserCircle, PiLockLight } from "react-icons/pi";
 import { useRunningContext } from "../contexts/RunningContext";
 import loginImage from "../assets/loginScreen_Background.png";
+import mobileLoginImage from "../assets/mobileLoginScreen_Background.png";
 
 import SHA256 from "crypto-js/sha256";
 function hashPassword(password) {
@@ -41,13 +42,25 @@ function LoginForm() {
     }
   };
 
+  
+  
   return (
-    <div className="bg-[#E9F1FE] relative">
-      <div className="w-full absolute h-screen flex justify-center">
+    <div className="bg-[#E9F1FE] relative h-screen overflow-hidden">
+      <img
+        src={mobileLoginImage}
+        alt="LoginImage"
+        className="absolute top-0 left-0 md:hidden"
+      />
+      <img
+        src={mobileLoginImage}
+        alt="LoginImage"
+        className="absolute -bottom-16 -right-32 md:hidden"
+      />
+      <div className="w-full absolute h-screen flex justify-center items-center">
         <img
           src={loginImage}
           alt="LoginImage"
-          className="p-24 h-screen hidden md:inline-block"
+          className="p-24 max-w-full max-h-full object-contain hidden md:inline-block"
         />
       </div>
       <div className="min-h-screen flex items-center justify-center md:justify-end">
