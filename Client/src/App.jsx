@@ -18,6 +18,7 @@ function App() {
         <ToastContainer />
       </BrowserRouter>
       <Analytics />
+      
     </>
   );
 }
