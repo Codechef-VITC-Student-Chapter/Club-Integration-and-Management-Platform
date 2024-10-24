@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import Logo from '../assets/logo.png';
-import { PiUserCircle, PiLockLight } from 'react-icons/pi';
-import { useRunningContext } from '../contexts/RunningContext';
+import React, { useState } from "react";
+import Logo from "../assets/logo.png";
+import { PiUserCircle, PiLockLight } from "react-icons/pi";
+import { useRunningContext } from "../contexts/RunningContext";
 
-import SHA256 from 'crypto-js/sha256';
+import SHA256 from "crypto-js/sha256";
 function hashPassword(password) {
   return SHA256(password).toString();
 }
@@ -12,15 +12,15 @@ function LoginForm() {
   const { baseURL, setCurrentUser, currentUser, setToken } =
     useRunningContext();
 
-  const [regno, setRegno] = useState('');
-  const [password, setPassword] = useState('');
+  const [regno, setRegno] = useState("");
+  const [password, setPassword] = useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch(`${baseURL}/authApi/login`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           regno: regno,
@@ -30,13 +30,13 @@ function LoginForm() {
       const data = await response.json();
 
       if (data.token) {
-        localStorage.setItem('token', data.token);
-        var payload = JSON.parse(window.atob(data.token.split('.')[1]));
+        localStorage.setItem("token", data.token);
+        var payload = JSON.parse(window.atob(data.token.split(".")[1]));
         setCurrentUser(payload.user_id);
         setToken(data.token);
       }
     } catch (error) {
-      console.log('Error in logging in! ' + error);
+      console.log("Error in logging in! " + error);
     }
   };
 

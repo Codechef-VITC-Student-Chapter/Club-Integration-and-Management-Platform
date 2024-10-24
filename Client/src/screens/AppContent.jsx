@@ -1,17 +1,17 @@
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useState } from "react";
 
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route } from "react-router-dom";
 
-import LoadingScreen from './LoadingScreen';
-import Navbar from '../components/Navbar';
-import { useRunningContext } from '../contexts/RunningContext';
+import LoadingScreen from "./LoadingScreen";
+import Navbar from "../components/Navbar";
+import { useRunningContext } from "../contexts/RunningContext";
 
-const PageNotFound = React.lazy(() => import('./PageNotFound'));
-const LoginForm = React.lazy(() => import('./LoginForm'));
-const SignUpForm = React.lazy(() => import('./SignUpForm'));
-const UploadDetails = React.lazy(() => import('./UploadDetails'));
-const SeeRequests = React.lazy(() => import('./SeeRequests'));
-const MemberDashboard = React.lazy(() => import('./MemberDashboard'));
+const PageNotFound = React.lazy(() => import("./PageNotFound"));
+const LoginForm = React.lazy(() => import("./LoginForm"));
+const SignUpForm = React.lazy(() => import("./SignUpForm"));
+const UploadDetails = React.lazy(() => import("./UploadDetails"));
+const SeeRequests = React.lazy(() => import("./SeeRequests"));
+const MemberDashboard = React.lazy(() => import("./MemberDashboard"));
 
 function AppContent() {
   const { token, isAdmin } = useRunningContext();
@@ -19,8 +19,9 @@ function AppContent() {
   if (!token) {
     return (
       <Routes>
-        <Route path="/*" element={<LoginForm />} />
+        <Route path="/loginform" element={<LoginForm />} />
         <Route path="/signup" element={<SignUpForm />} />
+        <Route path="/*" element={<MemberDashboard />} />
       </Routes>
     );
   }
