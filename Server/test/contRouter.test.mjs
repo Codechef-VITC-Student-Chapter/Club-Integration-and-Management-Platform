@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import supertest from 'supertest';
 import express from 'express';
-import contRouter from '../src/routes/contRouter.mjs'; // Path to your router
+import contRouter from '../src/routes/contRouter.mjs'; 
 import * as contUtils from '../src/utils/contUtils.mjs';
 import { authenticateToken } from '../src/middleware/authenticateToken.mjs';
 

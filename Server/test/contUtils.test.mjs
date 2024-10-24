@@ -1,4 +1,4 @@
-import { expect } from 'chai'; // Corrected import
+import { expect } from 'chai'; 
 import { addContribution, getContributionById, updateContributionStatus } from '../src/utils/contUtils.mjs';
 import mongoose from 'mongoose';
 import sinon from 'sinon';

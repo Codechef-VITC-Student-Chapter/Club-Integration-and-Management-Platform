@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --loader esm",
+    "test": "mocha 'test/**/*.mjs' --exit",
     "start": "set DEBUG=express:* & node src/index.mjs"
   },
   "type": "module",

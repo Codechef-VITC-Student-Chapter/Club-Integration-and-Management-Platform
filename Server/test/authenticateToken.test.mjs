@@ -1,8 +1,8 @@
-// test/authenticateToken.test.mjs
+
 import { expect } from 'chai';
-import { authenticateToken } from '../src/middleware/authenticateToken.mjs'; // Adjust the path accordingly
+import { authenticateToken } from '../src/middleware/authenticateToken.mjs'; 
 import sinon from 'sinon';
-import { verifyToken } from '../src/utils/jwtUtils.mjs'; // Adjust the path accordingly
+import { verifyToken } from '../src/utils/jwtUtils.mjs'; 
 
 describe('authenticateToken Middleware', () => {
   let req, res, next;
