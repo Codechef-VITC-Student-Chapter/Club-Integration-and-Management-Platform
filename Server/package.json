@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "set DEBUG=express:* & node index.mjs"
+    "test": "mocha --loader esm",
+    "start": "set DEBUG=express:* & node src/index.mjs"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -16,7 +17,13 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.5.2",
-    "path": "^0.12.7"
+    "mongoose": "^8.7.2",
+    "path": "^0.12.7",
+    "sinon": "^19.0.2",
+    "supertest": "^7.0.0"
+  },
+  "devDependencies": {
+    "chai": "^5.1.2",
+    "mocha": "^10.7.3"
   }
 }
