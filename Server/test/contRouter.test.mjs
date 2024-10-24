@@ -4,19 +4,18 @@ import supertest from 'supertest';
 import express from 'express';
 import contRouter from '../src/routes/contRouter.mjs'; 
 import * as contUtils from '../src/utils/contUtils.mjs';
-import { authenticateToken } from '../src/middleware/authenticateToken.mjs';
 
+// Create an Express app for testing
 const app = express();
-
-// Mocking the middleware directly by replacing it in the test environment
 app.use(express.json());
 
-// Replace authenticateToken with a mock function in tests
+// Middleware to mock user permissions
 app.use((req, res, next) => {
   req.isLead = true; // Mock lead permission for testing
   next();
 });
 
+// Use the contRouter
 app.use('/api/cont', contRouter);
 
 describe('Cont Router', () => {
@@ -31,9 +30,7 @@ describe('Cont Router', () => {
 
   after(() => {
     // Restore all stubs
-    addContributionStub.restore();
-    getContributionByIdStub.restore();
-    updateContributionStatusStub.restore();
+    sinon.restore(); // Restore all stubs in one call
   });
 
   describe('POST /add', () => {
@@ -70,7 +67,7 @@ describe('Cont Router', () => {
         .get('/api/cont/points/CID123')
         .expect(200);
 
-      expect(res.body).to.equal(50);
+      expect(res.body).to.have.property('points', 50);
       expect(getContributionByIdStub.calledOnce).to.be.true;
     });
 
