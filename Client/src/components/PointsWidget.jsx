@@ -61,7 +61,7 @@ function PointsWidget({ clubPoints, pendingPoints }) {
           })}
         </div>
       </div>
-      <div className="rounded-3xl w-full max-w-[409px] h-auto flex flex-col border border-black border-solid">
+      <div className="rounded-3xl  w-full max-w-[409px] h-auto flex flex-col border border-black border-solid">
         {clubNames.map((club) => {
           const totalPoints = 50;
           const pendingPointsForClub = 10;
