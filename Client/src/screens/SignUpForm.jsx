@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import Logo from '../assets/logo.png';
+import React, { useState } from "react";
+import Logo from "../assets/logo.png";
 import {
   PiUserCircle,
   PiLockLight,
   PiIdentificationCardLight,
-} from 'react-icons/pi';
-import { MdOutlineMail } from 'react-icons/md';
-import { useRunningContext } from '../contexts/RunningContext';
+} from "react-icons/pi";
+import { MdOutlineMail } from "react-icons/md";
+import { useRunningContext } from "../contexts/RunningContext";
 import loginImage from "../assets/loginScreen_Background.png";
 import mobileLoginImage from "../assets/mobileLoginScreen_Background.png";
 
-import SHA256 from 'crypto-js/sha256';
+import SHA256 from "crypto-js/sha256";
 function hashPassword(password) {
   return SHA256(password).toString();
 }
@@ -20,22 +20,22 @@ const validatePassword = (password) => {
 
   // Check for lowercase letters
   if (!/(?=.*[a-z])/.test(password)) {
-    errors.push('a lowercase letter');
+    errors.push("a lowercase letter");
   }
 
   // Check for uppercase letters
   if (!/(?=.*[A-Z])/.test(password)) {
-    errors.push('an uppercase letter');
+    errors.push("an uppercase letter");
   }
 
   // Check for numbers
   if (!/(?=.*\d)/.test(password)) {
-    errors.push('a number');
+    errors.push("a number");
   }
 
   // Check for special characters
   if (!/(?=.*[@$!%*?&#])/.test(password)) {
-    errors.push('a special character');
+    errors.push("a special character");
   }
 
   return errors;
@@ -45,21 +45,21 @@ function SignUpForm() {
   const { baseURL, setCurrentUser, setIsAdmin, setToken } = useRunningContext();
 
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    reg_no: '',
-    password: '',
-    confirmPassword: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    reg_no: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    reg_no: '',
-    password: '',
-    confirmPassword: '',
+    firstName: "",
+    lastName: "",
+    email: "",
+    reg_no: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const validate = () => {
@@ -67,30 +67,30 @@ function SignUpForm() {
     const newErrors = {};
 
     if (!formData.firstName) {
-      newErrors.firstName = 'First Name is required';
+      newErrors.firstName = "First Name is required";
       isValid = false;
     }
 
     if (!formData.lastName) {
-      newErrors.lastName = 'Last Name is required';
+      newErrors.lastName = "Last Name is required";
       isValid = false;
     }
 
     if (!formData.email) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
       isValid = false;
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+      newErrors.email = "Email is invalid";
       isValid = false;
     }
 
     if (!formData.reg_no) {
-      newErrors.reg_no = 'Register Number is required';
+      newErrors.reg_no = "Register Number is required";
       isValid = false;
     } else if (
       !/^[0-9]{2}[A-Z]{3}[0-9]{4,5}$/.test(formData.reg_no.toUpperCase())
     ) {
-      newErrors.reg_no = 'Register Number is not in the format required';
+      newErrors.reg_no = "Register Number is not in the format required";
       isValid = false;
     }
 
@@ -98,19 +98,19 @@ function SignUpForm() {
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
       isValid = false;
     } else {
       const passwordErrors = validatePassword(formData.password);
 
       if (passwordErrors.length > 0) {
         newErrors.password =
-          'Password must include the following: \n' + passwordErrors.join('\n');
+          "Password must include the following: \n" + passwordErrors.join("\n");
         isValid = false;
       }
 
       if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = 'Passwords do not match';
+        newErrors.confirmPassword = "Passwords do not match";
         isValid = false;
       }
     }
@@ -128,9 +128,9 @@ function SignUpForm() {
 
     try {
       const response = await fetch(`${baseURL}/authApi/signup`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           regno: formData.reg_no,
@@ -144,14 +144,14 @@ function SignUpForm() {
       const data = await response.json();
 
       if (data.token) {
-        localStorage.setItem('token', data.token);
-        var payload = JSON.parse(window.atob(data.token.split('.')[1]));
+        localStorage.setItem("token", data.token);
+        var payload = JSON.parse(window.atob(data.token.split(".")[1]));
         setCurrentUser(payload.user_id);
         // setIsAdmin(payload.is_admin);
         setToken(data.token);
       }
     } catch (error) {
-      console.log('Error in signup! ', error);
+      console.log("Error in signup! ", error);
     }
   };
 
@@ -199,7 +199,11 @@ function SignUpForm() {
                   <label className="block text-sm text-black mb-1">
                     FIRST NAME
                   </label>
-                  <div className="flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm">
+                  <div
+                    className={`flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm ${
+                      errors.firstName ? "border-red-500" : "border-black"
+                    }`}
+                  >
                     <div className="p-2">
                       <PiUserCircle className="h-5 w-5 text-black" />
                     </div>
@@ -208,9 +212,7 @@ function SignUpForm() {
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleChange}
-                      className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md ${
-                        errors.firstName ? "border-red-500" : "border-black"
-                      }`}
+                      className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md`}
                       placeholder="First Name"
                     />
                   </div>
@@ -224,7 +226,11 @@ function SignUpForm() {
                   <label className="block text-sm text-black mb-1">
                     LAST NAME
                   </label>
-                  <div className="flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm">
+                  <div
+                    className={`flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm ${
+                      errors.lastName ? "border-red-500" : "border-black"
+                    }`}
+                  >
                     <div className="p-2">
                       <PiUserCircle className="h-5 w-5 text-black" />
                     </div>
@@ -233,9 +239,7 @@ function SignUpForm() {
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleChange}
-                      className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md ${
-                        errors.lastName ? "border-red-500" : "border-black"
-                      }`}
+                      className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md`}
                       placeholder="Last Name"
                     />
                   </div>
@@ -250,7 +254,11 @@ function SignUpForm() {
                 <label className="block text-sm text-black mb-1">
                   EMAIL ID
                 </label>
-                <div className="flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm">
+                <div
+                  className={`flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm  ${
+                    errors.email ? "border-red-500" : "border-black"
+                  }`}
+                >
                   <div className="p-2">
                     <MdOutlineMail className="h-5 w-5 text-black" />
                   </div>
@@ -259,9 +267,7 @@ function SignUpForm() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md ${
-                      errors.email ? "border-red-500" : "border-black"
-                    }`}
+                    className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md`}
                     placeholder="some.mail@university.com"
                   />
                 </div>
@@ -275,7 +281,11 @@ function SignUpForm() {
                 <label className="block text-sm text-black mb-1">
                   REGISTRATION NUMBER
                 </label>
-                <div className="flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm">
+                <div
+                  className={`flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm ${
+                    errors.reg_no ? "border-red-500" : "border-black"
+                  }`}
+                >
                   <div className="p-2">
                     <PiIdentificationCardLight className="h-5 w-5 text-black" />
                   </div>
@@ -284,9 +294,7 @@ function SignUpForm() {
                     name="reg_no"
                     value={formData.reg_no}
                     onChange={handleChange}
-                    className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md ${
-                      errors.phone ? "border-red-500" : "border-black"
-                    }`}
+                    className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md `}
                     placeholder="Registration Number"
                   />
                 </div>
@@ -300,7 +308,11 @@ function SignUpForm() {
                 <label className="block text-sm text-black mb-1">
                   PASSWORD
                 </label>
-                <div className="flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm">
+                <div
+                  className={`flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm ${
+                    errors.password ? "border-red-500" : "border-black"
+                  }`}
+                >
                   <div className="p-2">
                     <PiLockLight className="h-5 w-5 text-black" />
                   </div>
@@ -309,9 +321,7 @@ function SignUpForm() {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md ${
-                      errors.password ? "border-red-500" : "border-black"
-                    }`}
+                    className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md `}
                     placeholder="Password"
                   />
                 </div>
@@ -325,7 +335,9 @@ function SignUpForm() {
                 <label className="block text-sm text-black mb-1">
                   CONFIRM PASSWORD
                 </label>
-                <div className="flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm">
+                <div className={`flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm ${
+                      errors.confirmPassword ? "border-red-500" : "border-black"
+                    }`}>
                   <div className="p-2">
                     <PiLockLight className="h-5 w-5 text-black" />
                   </div>
@@ -334,9 +346,7 @@ function SignUpForm() {
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md ${
-                      errors.confirmPassword ? "border-red-500" : "border-black"
-                    }`}
+                    className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md `}
                     placeholder="Confirm Password"
                   />
                 </div>
