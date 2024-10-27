@@ -7,12 +7,27 @@ import authRouter from '../src/routes/authRouter.mjs';
 
 dotenv.config();
 chai.use(chaiHttp);
-const { expect } = chai; 
-chai.should(); 
+const { expect } = chai;
+chai.should();
 const app = express();
 app.use(express.json());
 app.use('/auth', authRouter);
 const request = chai.request(app).keepOpen();
+
+const STATUS_CODES = {
+  OK: 200,
+  BAD_REQUEST: 400,
+  UNAUTHORIZED: 401,
+  NOT_FOUND: 404,
+};
+
+const testUser = {
+  regno: '12345',
+  firstname: 'Test',
+  lastname: 'User',
+  email: 'test@example.com',
+  password: 'password123'
+};
 
 before(async function() {
   this.timeout(10000);
@@ -41,13 +56,6 @@ after(async () => {
 beforeEach(async function() {
   this.timeout(5000);
   try {
-    if (mongoose.connection.readyState !== 1) {
-      await mongoose.connect(process.env.CONNECTION_STRING, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-      });
-    }
-    
     await mongoose.connection.collection('users').deleteMany({});
     console.log('Test database cleared');
   } catch (error) {
@@ -58,27 +66,18 @@ beforeEach(async function() {
 
 describe('Authentication API Tests', () => {
   describe('POST /auth/signup', () => {
-    it('should sign up a new user and return a JWT token', (done) => {
+    it('should sign up a new user and return a JWT token', async () => {
       const newUser = {
-        regno: '12345',
-        firstname: 'fgh',
-        lastname: 'asd',
+        ...testUser,
         email: 'asdfgh@example.com',
-        password: 'password123'
       };
 
-      request
-        .post('/auth/signup')
-        .send(newUser)
-        .end((err, res) => {
-          if (err) return done(err);
-          res.should.have.status(200);
-          res.body.should.have.property('token');
-          done();
-        });
+      const res = await request.post('/auth/signup').send(newUser);
+      res.should.have.status(STATUS_CODES.OK);
+      res.body.should.have.property('token');
     });
 
-    it('should return an error if required fields are missing', (done) => {
+    it('should return an error if required fields are missing', async () => {
       const newUser = {
         regno: '12345',
         firstname: 'qwerty',
@@ -86,82 +85,45 @@ describe('Authentication API Tests', () => {
         lastname: 'asdfgh',
       };
 
-      request
-        .post('/auth/signup')
-        .send(newUser)
-        .end((err, res) => {
-          res.should.have.status(400);
-          done();
-        });
+      const res = await request.post('/auth/signup').send(newUser);
+      res.should.have.status(STATUS_CODES.BAD_REQUEST);
     });
   });
 
   describe('POST /auth/login', () => {
     beforeEach(async () => {
-      const newUser = {
-        regno: '12345',
-        firstname: 'Test',
-        lastname: 'User',
-        email: 'test@example.com',
-        password: 'password123'
-      };
-
-      return new Promise((resolve, reject) => {
-        request
-          .post('/auth/signup')
-          .send(newUser)
-          .end((err, res) => {
-            if (err) reject(err);
-            else resolve(res);
-          });
-      });
+      await request.post('/auth/signup').send(testUser);
     });
 
-    it('should log in an existing user and return a JWT token', (done) => {
+    it('should log in an existing user and return a JWT token', async () => {
       const userCredentials = {
-        regno: '12345',
-        password: 'password123'
+        regno: testUser.regno,
+        password: testUser.password
       };
 
-      request
-        .post('/auth/login')
-        .send(userCredentials)
-        .end((err, res) => {
-          if (err) return done(err);
-          res.should.have.status(200);
-          res.body.should.have.property('token');
-          done();
-        });
+      const res = await request.post('/auth/login').send(userCredentials);
+      res.should.have.status(STATUS_CODES.OK);
+      res.body.should.have.property('token');
     });
 
-    it('should return an error for invalid credentials', (done) => {
+    it('should return an error for invalid credentials', async () => {
       const userCredentials = {
-        regno: '12345',
+        regno: testUser.regno,
         password: 'wrongpassword'
       };
 
-      request
-        .post('/auth/login')
-        .send(userCredentials)
-        .end((err, res) => {
-          res.should.have.status(401);
-          done();
-        });
+      const res = await request.post('/auth/login').send(userCredentials);
+      res.should.have.status(STATUS_CODES.UNAUTHORIZED);
     });
 
-    it('should return an error for non-existent user', (done) => {
+    it('should return an error for non-existent user', async () => {
       const userCredentials = {
         regno: '99999',
-        password: 'password123'
+        password: testUser.password
       };
 
-      request
-        .post('/auth/login')
-        .send(userCredentials)
-        .end((err, res) => {
-          res.should.have.status(404);
-          done();
-        });
+      const res = await request.post('/auth/login').send(userCredentials);
+      res.should.have.status(STATUS_CODES.NOT_FOUND);
     });
   });
 });
