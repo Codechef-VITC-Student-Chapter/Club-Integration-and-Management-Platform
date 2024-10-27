@@ -22,9 +22,9 @@ const STATUS_CODES = {
 };
 
 const testUser = {
-  regno: '12345',
-  firstname: 'Test',
-  lastname: 'User',
+  regNo: '12345',
+  firstName: 'Test',
+  lastName: 'User',
   email: 'test@example.com',
   password: 'password123'
 };
@@ -79,10 +79,10 @@ describe('Authentication API Tests', () => {
 
     it('should return an error if required fields are missing', async () => {
       const newUser = {
-        regno: '12345',
-        firstname: 'qwerty',
+        regNo: '12345',
+        firstName: 'qwerty',
         email: 'qwerty@example.com',
-        lastname: 'asdfgh',
+        lastName: 'asdfgh',
       };
 
       const res = await request.post('/auth/signup').send(newUser);
@@ -97,7 +97,7 @@ describe('Authentication API Tests', () => {
 
     it('should log in an existing user and return a JWT token', async () => {
       const userCredentials = {
-        regno: testUser.regno,
+        regNo: testUser.regNo,
         password: testUser.password
       };
 
@@ -108,7 +108,7 @@ describe('Authentication API Tests', () => {
 
     it('should return an error for invalid credentials', async () => {
       const userCredentials = {
-        regno: testUser.regno,
+        regNo: testUser.regNo,
         password: 'wrongpassword'
       };
 
@@ -118,7 +118,7 @@ describe('Authentication API Tests', () => {
 
     it('should return an error for non-existent user', async () => {
       const userCredentials = {
-        regno: '99999',
+        regNo: '99999',
         password: testUser.password
       };
 

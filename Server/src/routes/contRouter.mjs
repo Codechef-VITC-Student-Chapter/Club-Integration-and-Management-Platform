@@ -14,8 +14,8 @@ contRouter.post('/add', async (req, res) => {
   try {
     const contributionData = req.body;
     const timeStamp = Date.now();
-    const contributionID = `CID${contributionData.user.slice(3)}${timeStamp}`;
-    contributionData.cont_id = contributionID;
+    const contributionId = `CID${contributionData.user.slice(3)}${timeStamp}`;
+    contributionData.contId = contributionId;
     const newContribution = await addContribution(contributionData);
     res.status(201).json(newContribution);
   } catch (error) {
@@ -59,7 +59,7 @@ contRouter.get('/get/:id', async (req, res) => {
 
 contRouter.patch('/update-status/:id', async (req, res) => {
   try {
-    if (req.isLead == false) {
+    if (!req.isLead) {
       return res.status(401).json({ error: 'User is not a lead' });
     }
     const contId = req.params.id;
