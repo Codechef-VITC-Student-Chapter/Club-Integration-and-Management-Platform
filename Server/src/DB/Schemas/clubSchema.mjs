@@ -3,7 +3,8 @@ import mongoose from 'mongoose';
 const clubSchema = new mongoose.Schema({
     clubId: {
         type: String,
-        required: true
+        required: true,
+        unique: true,
     },
     clubName: {
         type: String,
