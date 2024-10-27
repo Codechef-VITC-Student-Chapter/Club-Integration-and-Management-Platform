@@ -30,7 +30,7 @@ export const addUser = async (userData) => {
 
 export const removeUser = async (userId) => {
   try {
-    const deletedUser = await User.findOneAndDelete({ user_id: userId });
+    const deletedUser = await User.findOneAndDelete({ userId: userId });
     if (!deletedUser) {
       throw new Error('User not found');
     }
@@ -42,7 +42,7 @@ export const removeUser = async (userId) => {
 
 export const getUserById = async (userId) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ userId: userId });
     if (!user) {
       throw new Error('User not found');
     }
@@ -54,7 +54,7 @@ export const getUserById = async (userId) => {
 
 export const getUserByReg = async (regNo) => {
   try {
-    const user = await User.findOne({ reg_no: regNo });
+    const user = await User.findOne({ regNo: regNo });
     if (!user) {
       throw new Error('User not found');
     }
@@ -66,7 +66,7 @@ export const getUserByReg = async (regNo) => {
 
 export const addDepartments = async (userId, departments) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ userId: userId });
     if (!user) {
       throw new Error('User not found');
     }
@@ -80,7 +80,7 @@ export const addDepartments = async (userId, departments) => {
 
 export const addClubs = async (userId, clubs) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ userId: userId });
     if (!user) {
       throw new Error('User not found');
     }
@@ -94,7 +94,7 @@ export const addClubs = async (userId, clubs) => {
 
 export const removeDepartments = async (userId, departmentsToRemove) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ userId: userId });
     if (!user) {
       throw new Error('User not found');
     }
@@ -110,7 +110,7 @@ export const removeDepartments = async (userId, departmentsToRemove) => {
 
 export const removeClubs = async (userId, clubsToRemove) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ userId: userId });
     if (!user) {
       throw new Error('User not found');
     }
@@ -126,7 +126,7 @@ export const removeClubs = async (userId, clubsToRemove) => {
 
 export const addContributions = async (userId, contributions) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ userId: userId });
     if (!user) {
       throw new Error('User not found');
     }
@@ -142,7 +142,7 @@ export const addContributions = async (userId, contributions) => {
 
 export const updateLead = async (userId, leadType) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ userId: userId });
     if (!user) {
       throw new Error('User not found');
     }
@@ -156,7 +156,7 @@ export const updateLead = async (userId, leadType) => {
 
 export const removeContributions = async (userId, contributionsToRemove) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ userId: userId });
     if (!user) {
       throw new Error('User not found');
     }

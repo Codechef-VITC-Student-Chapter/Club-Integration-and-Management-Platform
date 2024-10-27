@@ -1,20 +1,20 @@
 import { Schema } from 'mongoose';
 
 const userSchema = new Schema({
-    user_id: {
+    userId: {
         type: String,
         required: true,
         unique: true
     },
-    reg_no: {
+    regNo: {
         type: String,
         required: true
     },
-    first_name: {
+    firstName: {
         type: String,
         required: true
     },
-    last_name: {
+    lastName: {
         type: String,
         required: true
     },
@@ -22,11 +22,11 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    password_hash: {
+    passwordHash: {
         type: String,
         required: true
     },
-    isLead:{
+    isLead: {
         type: Boolean,
         default: false,
         required: true     
@@ -46,6 +46,5 @@ const userSchema = new Schema({
         required: false
     }
 });
-
 
 export default userSchema;

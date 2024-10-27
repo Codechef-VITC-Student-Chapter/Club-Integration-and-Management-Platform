@@ -1,24 +1,25 @@
 import mongoose from 'mongoose';
 
 const clubSchema = new mongoose.Schema({
-    club_id: {
+    clubId: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    clubName: {
         type: String,
         required: true
     },
-    cname: {
-        type: String,
-        required: true
-    },
-    club_leads: {
-        type: [String],
+    clubLeads: [{
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         default: []
-    },
-    club_deps: {
-        type: [String],
+    }],
+    clubDeps: [{
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Department',
         default: []
-    }
+    }]
 });
 
 export default mongoose.model('Club', clubSchema);
