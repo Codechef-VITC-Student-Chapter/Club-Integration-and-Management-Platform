@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
 
 const depsSchema = new mongoose.Schema({
-    dep_id: {
+    depId: {
         type: String,
         required: true
     },
-    dep_name: {
+    depName: {
         type: String,
         required: true
     },
-    club_id: {
+    clubId: {
         type: String,
         ref: 'Club',
         required: true
@@ -20,7 +20,7 @@ const depsSchema = new mongoose.Schema({
         required: false,
         default: []
     },
-    subdeps: {
+    subDeps: {
         type: [String],
         ref: 'Department',
         required: false,
