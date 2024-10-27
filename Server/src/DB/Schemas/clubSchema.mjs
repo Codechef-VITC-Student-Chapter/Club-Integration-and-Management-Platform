@@ -10,16 +10,16 @@ const clubSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    clubLeads: [{
-        type: mongoose.Schema.Types.ObjectId,
+    clubLeads: {
+        type: [String],
         ref: 'User',
         default: []
-    }],
-    clubDeps: [{
-        type: mongoose.Schema.Types.ObjectId,
+    },
+    clubDeps: {
+        type: [String],
         ref: 'Department',
         default: []
-    }]
+    }
 });
 
 export default mongoose.model('Club', clubSchema);
