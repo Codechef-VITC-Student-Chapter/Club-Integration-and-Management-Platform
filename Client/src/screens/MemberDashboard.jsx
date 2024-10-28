@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import PointsWidget from '../components/PointsWidget'; // Assuming PointsWidget is in the same directory
-import RecentContributions from '../components/RecentContributions'; // Assuming RecentContributions is in the same directory
-import PendingContributions from '../components/PendingContributions'; // Assuming PendingContributions is in the same directory
-import { useRunningContext } from '../contexts/RunningContext';
+import React, { useState, useEffect } from "react";
+import PointsWidget from "../components/PointsWidget"; // Assuming PointsWidget is in the same directory
+import RecentContributions from "../components/RecentContributions"; // Assuming RecentContributions is in the same directory
+import PendingContributions from "../components/PendingContributions"; // Assuming PendingContributions is in the same directory
+import { useRunningContext } from "../contexts/RunningContext";
 
 function MemberDashboard() {
   const { baseURL, currentUser, token, handleError, isAdmin } =
@@ -17,17 +17,17 @@ function MemberDashboard() {
     const fetchContributions = async () => {
       try {
         const response = await fetch(`${baseURL}/userAPI/getContributionData`, {
-          method: 'POST',
+          method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({ user: currentUser }),
         });
 
         const data = await response.json();
         if (response.status == 403) {
-          handleError('Fetching contributions', data.error);
+          handleError("Fetching contributions", data.error);
           return;
         }
         const done = [];
@@ -36,24 +36,23 @@ function MemberDashboard() {
         var pendingpoints = 0;
         for (let i = 0; i < data.length; i++) {
           const current = data[i];
-          if (current.status == 'pending') {
+          if (current.status == "pending") {
             pendingpoints += data[i].points;
             pending.push(current);
           } else {
-            if (current.status == 'approved') {
+            if (current.status == "approved") {
               donepoints += data[i].points;
             }
             done.push(current);
           }
         }
 
-
         setContributions(done);
         setPendingContributions(pending);
         setClubPoints({ codechefvitc: donepoints });
         setPendingPoints({ codechefvitc: pendingpoints });
       } catch (error) {
-        console.log('Error in fetching contributions: ', error);
+        console.log("Error in fetching contributions: ", error);
       }
     };
     if (currentUser) {
