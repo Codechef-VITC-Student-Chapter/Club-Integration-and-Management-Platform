@@ -19,7 +19,7 @@ const CardComponent = () => {
     status === "approved" ? "bg-[#9FEFA8]" : status === "denied" ? "bg-[#F4AAAA]" : "bg-white";
 
   return (
-    <div className="flex items-center justify-center h-screen bg-[#E0E7FF]">
+    <div className="flex items-center justify-center  bg-[#E0E7FF] m-5">
       <div
         className={`w-[95%] max-w-full mx-4 p-6 rounded-xl shadow-md border-[1px] border-black transition-colors duration-300 ${backgroundColor}`}
       >

@@ -69,8 +69,8 @@ const RequestScreen = () => {
   const [links, setLinks] = useState(['']);
 
   return (
-    <div className="min-h-screen">
-      <Navbar />
+    <div className="min-h-screen p-5">
+      
       <div className="bg-[#E9F1FE] min-h-screen pt-4">
         <h1 className="text-center text-2xl py-4">SUBMIT A REQUEST</h1>
 

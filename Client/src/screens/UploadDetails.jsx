@@ -223,7 +223,7 @@ function UploadDetails() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
+    <div className="max-w-4xl m-5 mx-auto  p-6 bg-white shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-lg">
       <h1 className="text-2xl font-bold mb-6">Submit a Request</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && <p className="text-red-500 mb-4">{error}</p>}
