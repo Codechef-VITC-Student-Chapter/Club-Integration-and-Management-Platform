@@ -27,8 +27,8 @@ export const addContribution = async (contributionData) => {
     const newContribution = new Contribution(contributionData);
     await newContribution.save();
     await User.findOneAndUpdate(
-      { user_id: contributionData.user },
-      { $push: { contributions: contributionData.cont_id } },
+      { userId: contributionData.user },
+      { $push: { contributions: contributionData.contId } },
       { new: true }
     );
     return newContribution;
@@ -41,7 +41,7 @@ export const addContribution = async (contributionData) => {
 export const removeContribution = async (contId) => {
   try {
     const deletedContribution = await Contribution.findOneAndDelete({
-      cont_id: contId,
+      contId: contId,
     });
     if (!deletedContribution) {
       throw new Error('Contribution not found');
@@ -54,7 +54,7 @@ export const removeContribution = async (contId) => {
 
 export const getContributionById = async (contId) => {
   try {
-    const contribution = await Contribution.findOne({ cont_id: contId });
+    const contribution = await Contribution.findOne({ contId: contId });
     if (!contribution) {
       throw new Error('Contribution not found');
     }
@@ -72,7 +72,7 @@ export const getRequests = async (uid) => {
     }
     return requests;
   } catch (error) {
-    throw new Error('Failed to fetch requests' + error.message);
+    throw new Error('Failed to fetch requests: ' + error.message);
   }
 };
 
@@ -83,7 +83,7 @@ export const updateContributionStatus = async (contId, newStatus) => {
       throw new Error('Invalid status');
     }
     const updatedContribution = await Contribution.findOneAndUpdate(
-      { cont_id: contId },
+      { contId: contId },
       { status: newStatus },
       { new: true }
     );

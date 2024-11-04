@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "set DEBUG=express:* & node index.mjs"
+    "test": "cross-env NODE_ENV=test mocha --experimental-modules --exit --timeout 10000 test/**/*.test.mjs",
+    "start": "cross-env DEBUG=express:* node index.mjs"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -13,10 +14,18 @@
   "dependencies": {
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
+    "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.5.2",
     "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "@babel/register": "^7.25.9",
+    "@types/chai-http": "^4.2.4",
+    "chai": "^5.1.2",
+    "chai-http": "^5.1.1",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
+    "mocha": "^10.7.3",
+    "mongoose": "^8.7.2"
   }
 }

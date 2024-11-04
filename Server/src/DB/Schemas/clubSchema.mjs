@@ -1,20 +1,21 @@
 import mongoose from 'mongoose';
 
 const clubSchema = new mongoose.Schema({
-    club_id: {
+    clubId: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    clubName: {
         type: String,
         required: true
     },
-    cname: {
-        type: String,
-        required: true
-    },
-    club_leads: {
+    clubLeads: {
         type: [String],
         ref: 'User',
         default: []
     },
-    club_deps: {
+    clubDeps: {
         type: [String],
         ref: 'Department',
         default: []
