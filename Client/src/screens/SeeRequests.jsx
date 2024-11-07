@@ -11,7 +11,7 @@ function SeeRequests() {
   useEffect(() => {
     const getMyRequests = async () => {
       const response = await fetch(
-        `${baseURL}/userApi/getRequests/${currentUser}`,
+        `${baseURL}/userApi/get-requests/${currentUser}`,
         {
           method: 'GET',
           headers: {

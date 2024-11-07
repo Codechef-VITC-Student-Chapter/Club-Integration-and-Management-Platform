@@ -18,30 +18,30 @@ import {
 
 const depsRouter = express.Router();
 
-// depsRouter.post('/add', async (req, res) => {
-//     try {
-//         const depsData = req.body;
-//         const clubId = depsData.clubId;
-//         const newDep = await addDepartment(depsData);
-//         await addDepartmentToClub(clubId, newDep.depId);
+depsRouter.post('/add', async (req, res) => {
+    try {
+        const depsData = req.body;
+        const clubId = depsData.clubId;
+        const newDep = await addDepartment(depsData);
+        await addDepartmentToClub(clubId, newDep.depId);
 
-//         res.status(201).json(newDep);
-//     } catch (error) {
-//         console.log(error);
-//         res.status(400).json({ error: error.message });
-//     }
-// });
+        res.status(201).json(newDep);
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({ error: error.message });
+    }
+});
 
-// depsRouter.delete('/delete/:id', async (req, res) => {
-//     try {
-//         const depId = req.params.id;
-//         const deletedDepartment = await removeDepartment(depId);
-//         await removeDepartmentFromClub(deletedDepartment.clubId, depId);
-//         res.status(200).json(deletedDepartment);
-//     } catch (error) {
-//         res.status(404).json({ error: error.message });
-//     }
-// });
+depsRouter.delete('/delete/:id', async (req, res) => {
+    try {
+        const depId = req.params.id;
+        const deletedDepartment = await removeDepartment(depId);
+        await removeDepartmentFromClub(deletedDepartment.clubId, depId);
+        res.status(200).json(deletedDepartment);
+    } catch (error) {
+        res.status(404).json({ error: error.message });
+    }
+});
 
 depsRouter.get('/get/:id', async (req, res) => {
   try {
@@ -53,17 +53,17 @@ depsRouter.get('/get/:id', async (req, res) => {
   }
 });
 
-// depsRouter.post('/add-sub-department', async (req, res) => {
-//     try {
-//         const { depId, subDepId } = req.body;
-//         const updatedDepartment = await addSubDepartment(depId, subDepId);
-//         res.status(200).json(updatedDepartment);
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-// });
+depsRouter.post('/add-sub-department', async (req, res) => {
+    try {
+        const { depId, subDepId } = req.body;
+        const updatedDepartment = await addSubDepartment(depId, subDepId);
+        res.status(200).json(updatedDepartment);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
 
-depsRouter.post('/getLeads', async (req, res) => {
+depsRouter.post('/get-leads', async (req, res) => {
   try {
     const { depId } = req.body;
     const department = await getDepartmentById(depId);
@@ -86,34 +86,34 @@ depsRouter.post('/getLeads', async (req, res) => {
   }
 });
 
-// depsRouter.post('/remove-sub-department', async (req, res) => {
-//     try {
-//         const { depId, subDepId } = req.body;
-//         const updatedDepartment = await removeSubDepartment(depId, subDepId);
-//         res.status(200).json(updatedDepartment);
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-// });
+depsRouter.post('/remove-sub-department', async (req, res) => {
+    try {
+        const { depId, subDepId } = req.body;
+        const updatedDepartment = await removeSubDepartment(depId, subDepId);
+        res.status(200).json(updatedDepartment);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
 
-// depsRouter.post('/add-lead', async (req, res) => {
-//     try {
-//         const { depId, userId } = req.body;
-//         const updatedDepartment = await addLeadToDepartment(depId, userId);
-//         res.status(200).json(updatedDepartment);
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-// });
+depsRouter.post('/add-lead', async (req, res) => {
+    try {
+        const { depId, userId } = req.body;
+        const updatedDepartment = await addLeadToDepartment(depId, userId);
+        res.status(200).json(updatedDepartment);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
 
-// depsRouter.post('/remove-lead', async (req, res) => {
-//     try {
-//         const { depId, userId } = req.body;
-//         const updatedDepartment = await removeLeadFromDepartment(depId, userId);
-//         res.status(200).json(updatedDepartment);
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-// });
+depsRouter.post('/remove-lead', async (req, res) => {
+    try {
+        const { depId, userId } = req.body;
+        const updatedDepartment = await removeLeadFromDepartment(depId, userId);
+        res.status(200).json(updatedDepartment);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
 
 export default depsRouter;

@@ -23,6 +23,7 @@ export const addClub = async (clubData) => {
     return newClub;
   } catch (error) {
     console.log(error);
+    console.log(clubData);
     throw new Error('Failed to add club');
   }
 };

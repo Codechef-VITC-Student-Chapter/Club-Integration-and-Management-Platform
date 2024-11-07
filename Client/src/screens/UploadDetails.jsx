@@ -116,7 +116,7 @@ function UploadDetails() {
   useEffect(() => {
     const fetchLeads = async () => {
       try {
-        const response = await fetch(`${baseURL}/depsApi/getLeads`, {
+        const response = await fetch(`${baseURL}/depsApi/get-leads`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

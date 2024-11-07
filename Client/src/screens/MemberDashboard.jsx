@@ -11,76 +11,16 @@ function MemberDashboard() {
     useRunningContext();
   const isAdmin = true
   const navigate = useNavigate()
-  const [clubPoints, setClubPoints] = useState({ codechefvitc: 0 });
-  const [pendingPoints, setPendingPoints] = useState({ codechefvitc: 0 });
-  const [contributions, setContributions] = useState([
-    {
-      cont_id: "1",
-      title: "Task 1",
-      target: "User A",
-      dep: "Web Dev",
-      created_at: "2024-10-01",
-      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
-      points: 10,
-      status: "accepted"
-    },
-    {
-      cont_id: "2",
-      title: "Task 2",
-      target: "User B",
-      dep: "Web Dev",
-      created_at: "2024-10-01",
-      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
-      points: 10,
-      status: "rejected"
-    },{
-      cont_id: "1",
-      title: "Task 3",
-      target: "User C",
-      dep: "Web Dev",
-      created_at: "2024-10-01",
-      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
-      points: 10,
-      status: "accepted"
-    },]);
+  const [clubPoints, setClubPoints] = useState({});
+  const [pendingPoints, setPendingPoints] = useState({});
+  const [contributions, setContributions] = useState([]);
 
-
-  const [pendingContributions, setPendingContributions] = useState([
-    {
-      cont_id: "1",
-      title: "Task 1",
-      target: "User A",
-      dep: "Web Dev",
-      created_at: "2024-10-01",
-      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
-      points: 10,
-      status: "pending"
-    },
-    {
-      cont_id: "2",
-      title: "Task 2",
-      target: "User B",
-      dep: "Web Dev",
-      created_at: "2024-10-01",
-      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
-      points: 10,
-      status: "pending"
-    },{
-      cont_id: "1",
-      title: "Task 3",
-      target: "User C",
-      dep: "Web Dev",
-      created_at: "2024-10-01",
-      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
-      points: 10,
-      status: "pending"
-    },
-  ]);
+  const [pendingContributions, setPendingContributions] = useState([]);
 
   useEffect(() => {
     const fetchContributions = async () => {
       try {
-        const response = await fetch(`${baseURL}/userAPI/getContributionData`, {
+        const response = await fetch(`${baseURL}/userAPI/get-contribution-data`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -156,8 +96,6 @@ function MemberDashboard() {
 
         </div>
         <div className='md:w-[70%] w-full md:h-[100vh] '>
-          
-
           <div className="flex flex-wrap gap-8 bg-white py-9 rounded-[45px] border-2 border-zinc-800">
             <div className="flex-1 flex flex-col mx-3">
               <div className=" bg-[#e8f1fe] shadow-md rounded-[30px] mb-2 border-2 border-[#1a8755] md:w-[64vw] md:h-[400px]">
