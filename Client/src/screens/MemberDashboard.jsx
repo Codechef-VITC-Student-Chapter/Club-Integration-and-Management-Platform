@@ -14,6 +14,7 @@ function MemberDashboard() {
   const [clubPoints, setClubPoints] = useState({});
   const [pendingPoints, setPendingPoints] = useState({});
   const [contributions, setContributions] = useState([]);
+  const [userDetails, setUserDetails] = useState({});
 
   const [pendingContributions, setPendingContributions] = useState([]);
 
@@ -51,7 +52,6 @@ function MemberDashboard() {
           }
         }
 
-
         setContributions(done);
         setPendingContributions(pending);
         setClubPoints({ codechefvitc: donepoints });
@@ -65,6 +65,37 @@ function MemberDashboard() {
     }
   }, [currentUser]);
 
+//fetching user details
+  useEffect(() => {
+    const fetchUser = async (userId) => {
+      try {
+        const response = await fetch(`${baseURL}/userApi/get/${userId}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('Error fetching user:', errorData.error || 'Unknown error');
+          return;
+        }
+
+        const user = await response.json();
+        setUserDetails(user);
+        console.log('Fetched user data:', user);
+      } catch (error) {
+        console.error('Error in fetch request:', error);
+      }
+    };
+
+    if (currentUser) {
+      fetchUser(currentUser); // Fetch user data for the current user
+    }
+  }, [currentUser, baseURL, token]); // Dependencies: refetch when these change
+
   return (
     <div className="w-[100vw] mx-auto p-6 space-y-6 bg-[#e8f1fe]">
       <div className="w-full h-full flex md:flex-row flex-col md:gap-40">
@@ -77,7 +108,7 @@ function MemberDashboard() {
               </button>}
             </div>
             <div className='md:min-h-[500px] md:flex md:justify-center md:mb-[-40px] '>
-              <ProfileCard isAdmin={true} badges={badges} />
+              <ProfileCard isAdmin={true} FirstName={userDetails.firstName} LastName={userDetails.lastName} regNo={userDetails.regNo} badges={badges} />
             </div>
 
             <div className='flex-grow md:min-w-[409px]'>

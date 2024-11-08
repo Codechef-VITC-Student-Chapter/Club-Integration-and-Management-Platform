@@ -1,7 +1,7 @@
 import Profile from '../assets/dashboard_Profile.png';
 import CCLogo from '../assets/dashboard_cclogo.png';
 
-const ProfileCard = ({ isAdmin = true, FirstName = "FirstName", LastName = "LastName", badges = [] }) => {
+const ProfileCard = ({ isAdmin = true, FirstName = "FirstName", LastName = "LastName", regNo, badges = [] }) => {
     return (
         <div className={`bg-[#2E3446] ${isAdmin ? 'h-[300px] w-[40vw] md:h-[445px] md:w-[367px]' : 'h-full'} rounded-3xl flex flex-col p-4 gap-3 justify-center items-center md:min-w-[367px]`}>
             <img src={Profile} alt="Profile" className='aspect-square mx-8 mt-8' />
@@ -11,7 +11,7 @@ const ProfileCard = ({ isAdmin = true, FirstName = "FirstName", LastName = "Last
                         <span>{FirstName}</span>
                         <span>{LastName}</span>
                     </div>
-                    <span>22BCE5007</span>
+                    <span>{regNo}</span>
                 </div>
                 <div className='md:flex hidden w-full justify-start'>
                     <Badges badges={badges} />
