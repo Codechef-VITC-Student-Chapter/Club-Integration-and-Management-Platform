@@ -80,7 +80,6 @@ const RequestScreen = () => {
         if (!response.ok) throw new Error('Failed to fetch club details');
         const data = await response.json();
         console.log(club);
-        console.log("hello"); 
         setClub(data);
       } catch (error) {
         console.error('Error fetching club details:', error);

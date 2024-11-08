@@ -23,66 +23,7 @@ function UploadDetails() {
   const [availablePoints, setAvailablePoints] = useState([]);
   const [error, setError] = useState('');
 
-  const departmentPoints = {
-    smandc: [
-      {
-        label: 'Technical Writing for CodeChef Newsletter - 3 Points/Publish',
-        value: 3,
-      },
-      {
-        label: 'Providing Reel Script that gets implemented - 4 Points/Reel',
-        value: 4,
-      },
-      { label: 'Acting in Reels - 5 Points/Reel', value: 5 },
-      {
-        label: 'Resharing Reels (claim within 24 hours) - 1 Point/Reel',
-        value: 1,
-      },
-    ],
-    design: [
-      { label: 'Poster Design - 7 Points/Accepted Poster', value: 7 },
-      { label: 'Story Design - 7 points/Accepted Story', value: 7 },
-    ],
-    mands: [
-      {
-        label:
-          'Offline Event Registrations (Referral) - 2 Points/Reg (max 20 Points/event)',
-        value: 2,
-      },
-      {
-        label:
-          'Online Event Registrations (Referral) - 1 Point/Reg (max 5 Points/event)',
-        value: 1,
-      },
-      {
-        label: 'Participation in Physical/ Hostel Marketing - 8 Points/session',
-        value: 8,
-      },
-      { label: 'Cold Mails to Sponsors - 1 Point/2 Mails', value: 1 },
-    ],
-    cp: [
-      { label: 'Attending Weekly Online Discussions - 1 Point/Meet', value: 1 },
-      {
-        label: 'Attempting Online CodeChef Contest - 3 Points/Contest',
-        value: 3,
-      },
-      {
-        label: 'Attempting Weekly Tasks/ Questions - 2 Points/Que Solved',
-        value: 2,
-      },
-    ],
-    em: [
-      { label: 'Registration Desk - 10 Points', value: 10 },
-      { label: 'Disciplinary Committee - 10 Points', value: 10 },
-      { label: 'Backstage duty -10 Points', value: 10 },
-      { label: 'Entry/Exit duty -10 Points', value: 10 },
-      { label: 'Miscellaneous Management Tasks (Will be notified)', value: 0 }, // value 0 means to be notified
-    ],
-    clubleads: [
-      { label: 'Attending events - 4 Points/Event (min 4 events)', value: 4 },
-      { label: 'Attending FFCS meets - 1 Point/meet (mandatory)', value: 1 },
-    ],
-  };
+  const departmentPoints = {};
 
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -92,7 +33,7 @@ function UploadDetails() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ club_id: 'codechefvitc' }),
+          body: JSON.stringify({ clubId: 'codechefvitc' }),
         });
 
         const deps = await response.json();
@@ -121,7 +62,7 @@ function UploadDetails() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ dep_id: department }),
+          body: JSON.stringify({ depId: department }),
         });
         const decodeLeads = await response.json();
         setLeads(decodeLeads);
@@ -190,13 +131,13 @@ function UploadDetails() {
           title: title,
           points: totalPoints,
           user: currentUser,
-          desc: description,
-          proof_files: links,
+          description: description,
+          proofFiles: links,
           target: lead,
           club: club,
-          dep: department,
+          department: department,
           status: 'pending',
-          created_at: Date.now(),
+          createdAt: Date.now(),
         }),
       });
 
@@ -267,8 +208,8 @@ function UploadDetails() {
             >
               <option value="">Select Lead</option>
               {leads.map((lead) => (
-                <option key={lead.user_id} value={lead.user_id}>
-                  {lead.first_name} {lead.last_name}
+                <option key={lead.userId} value={lead.userId}>
+                  {lead.firstName} {lead.lastName}
                 </option>
               ))}
             </select>
