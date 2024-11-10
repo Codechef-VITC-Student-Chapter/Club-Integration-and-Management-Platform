@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const clubSchema = new mongoose.Schema({
-    clubId: {
+    ID: {
         type: String,
         required: true,
         unique: true,
@@ -12,12 +12,10 @@ const clubSchema = new mongoose.Schema({
     },
     clubLeads: {
         type: [String],
-        ref: 'User',
         default: []
     },
-    clubDeps: {
+    departments: {
         type: [String],
-        ref: 'Department',
         default: []
     }
 });

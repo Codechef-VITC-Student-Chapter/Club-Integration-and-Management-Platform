@@ -15,19 +15,19 @@ function MemberDashboard() {
   const [pendingPoints, setPendingPoints] = useState({});
   const [contributions, setContributions] = useState([]);
   const [userDetails, setUserDetails] = useState({});
-
+  
   const [pendingContributions, setPendingContributions] = useState([]);
-
+  
   useEffect(() => {
     const fetchContributions = async () => {
       try {
-        const response = await fetch(`${baseURL}/userAPI/get-contribution-data`, {
+        const response = await fetch(`${baseURL}/userApi/get-contribution-data`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ user: currentUser }),
+          body: JSON.stringify({ user: userDetails._id }),
         });
 
         const data = await response.json();
@@ -64,8 +64,8 @@ function MemberDashboard() {
       fetchContributions();
     }
   }, [currentUser]);
-
-//fetching user details
+  
+  //fetching user details
   useEffect(() => {
     const fetchUser = async (userId) => {
       try {
@@ -82,10 +82,9 @@ function MemberDashboard() {
           console.error('Error fetching user:', errorData.error || 'Unknown error');
           return;
         }
-
+        
         const user = await response.json();
         setUserDetails(user);
-        console.log('Fetched user data:', user);
       } catch (error) {
         console.error('Error in fetch request:', error);
       }
@@ -95,6 +94,7 @@ function MemberDashboard() {
       fetchUser(currentUser); // Fetch user data for the current user
     }
   }, [currentUser, baseURL, token]); // Dependencies: refetch when these change
+  
 
   return (
     <div className="w-[100vw] mx-auto p-6 space-y-6 bg-[#e8f1fe]">

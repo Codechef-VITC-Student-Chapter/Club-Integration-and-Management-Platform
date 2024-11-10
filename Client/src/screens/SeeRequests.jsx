@@ -64,7 +64,7 @@ function SeeRequests() {
         <h1 className="text-2xl font-bold mb-6">Review Requests</h1>
         {requests.map((request, index) => (
           <div
-            key={request.cont_id}
+            key={request.contId}
             className={`transition-opacity duration-300 ${
               removing === index ? 'opacity-0' : 'opacity-100'
             }`}

@@ -1,7 +1,7 @@
 import { Schema } from 'mongoose';
 
 const userSchema = new Schema({
-    userId: {
+    ID: {
         type: String,
         required: true,
         unique: true

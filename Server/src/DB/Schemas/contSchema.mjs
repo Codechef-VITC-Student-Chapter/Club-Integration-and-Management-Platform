@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const contSchema = new mongoose.Schema({
-    contId: {
+    ID: {
         type: String,
         required: true,
         unique: true,
@@ -15,8 +15,7 @@ const contSchema = new mongoose.Schema({
         required: true
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        type: String,
         required: true
     },
     description: {
@@ -31,14 +30,12 @@ const contSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    club: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Club',
+    clubId: {
+        type: String,
         required: true
     },
     department: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Department',
+        type: String,
         required: true
     },
     status: {
