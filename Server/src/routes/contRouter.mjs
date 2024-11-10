@@ -34,18 +34,18 @@ contRouter.get('/points/:id', async (req, res) => {
   }
 });
 
-contRouter.delete('/delete/:id', async (req, res) => {
-  try {
-    if (req.user != 'UID' + req.params.id) {
-      return res.status(401).json({ error: 'This is not your contribution' });
-    }
-    const contId = req.params.id;
-    const deletedContribution = await removeContribution(contId);
-    res.status(200).json(deletedContribution);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
-});
+// contRouter.delete('/delete/:id', async (req, res) => {
+//   try {
+//     if (req.user != 'UID' + req.params.id) {
+//       return res.status(401).json({ error: 'This is not your contribution' });
+//     }
+//     const contId = req.params.id;
+//     const deletedContribution = await removeContribution(contId);
+//     res.status(200).json(deletedContribution);
+//   } catch (error) {
+//     res.status(404).json({ error: error.message });
+//   }
+// });
 
 contRouter.get('/get/:id', async (req, res) => {
   try {
