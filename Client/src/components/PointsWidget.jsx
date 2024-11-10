@@ -4,7 +4,7 @@ function PointsWidget({ clubPoints, pendingPoints }) {
   const clubNames = Object.keys(clubPoints);
 
   return (
-    <div className="rounded-3xl h-[166px] md:h-[203px] w-full max-w-[409px] flex flex-col border border-black border-solid">
+    <div className="rounded-3xl h-[166px] md:h-[203px] bg-white w-full max-w-[409px] flex flex-col border border-black border-solid">
       {clubNames.map((club) => {
         const totalPoints = clubPoints[club]?.total || 45; // Extract total points from clubPoints
         const pendingPointsForClub = pendingPoints[club] || 10; // Extract pending points
@@ -62,7 +62,7 @@ function PointsWidget({ clubPoints, pendingPoints }) {
                   </svg>
                 </div>
 
-                <div className="bg-[#E9F1FE] h-[80%] w-[80%] rounded-full flex justify-center items-center absolute">
+                <div className="rounded-full flex justify-center items-center absolute">
                   <h1 className="font-bold text-2xl md:text-3xl text-black">
                     {totalPoints}
                   </h1>

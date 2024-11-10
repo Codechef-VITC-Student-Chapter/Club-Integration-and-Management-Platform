@@ -33,8 +33,8 @@ const TaskComponent = ({
 
   return (
     <>
-      <div
-        className="relative max-w-sm border rounded-xl p-4 shadow-lg bg-white font-sans md:min-w-[312px] md:p-6 md:max-h-[280px]"
+     <div
+        className="relative max-w-sm border rounded-xl p-4 shadow-lg bg-white font-sans md:min-w-[312px] md:p-6"
         style={{
           fontFamily: 'Lato, sans-serif',
           border: `1px solid ${taskColor}`,
@@ -52,7 +52,7 @@ const TaskComponent = ({
             {taskName}
           </h2>
         </div>
-        <div className="flex justify-between items-center mt-12 mb-4 md:mt-7 md:mb-6">
+        <div className="flex justify-between items-center mt-12 mb-4 md:mt-7 md:mb-3">
           <div className="space-y-2">
             <div className="text-sm flex items-center md:text-[15px]" style={{ color: textColor, fontWeight: 500 }}>
               <FaUser className="mr-2" />
@@ -72,7 +72,7 @@ const TaskComponent = ({
 
           {points !== undefined && (
             <div
-              className="rounded-full h-[52px] w-[52px] flex items-center justify-center md:h-[60px] md:w-[60px] md:text-xl"
+              className="rounded-full size-[60px] flex items-center justify-center md:w-[60px] md:text-xl"
               style={{ backgroundColor: taskColor, color: isPending ? 'black' : 'white' }}
             >
               {points}
@@ -82,9 +82,9 @@ const TaskComponent = ({
 
         <div className="text-sm mb-4 md:text-sm" style={{ color: textColor, fontWeight: 500 }}>
           <strong>Task Description:</strong>{" "}
-          {description.length > 100 ? (
+          {description.length > 50 ? (
             <>
-              {description.slice(0, 100) + "... "}
+              {description.slice(0, 50) + "... "}
               <button
                 className="underline"
                 onClick={handleSeeMoreClick}

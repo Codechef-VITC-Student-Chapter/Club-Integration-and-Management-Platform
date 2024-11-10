@@ -17,15 +17,18 @@ const MemberDashboard = React.lazy(() => import("./MemberDashboard"));
 function AppContent() {
   const { token, isAdmin } = useRunningContext();
 
-  // if (!token) {
-  //   return (
-  //     <Routes>
-  //       <Route path="/loginform" element={<LoginForm />} />
-  //       <Route path="/signup" element={<SignUpForm />} />
-  //       <Route path="/*" element={<MemberDashboard />} />
-  //     </Routes>
-  //   );
-  // }
+  console.log(token)
+
+  if (!token) {
+    return (
+      <Routes>
+        <Route path="/loginform" element={<LoginForm />} />
+        <Route path="/signup" element={<SignUpForm />} />
+        <Route path="/*" element={<LoginForm />} />
+      </Routes>
+    );
+  }
+
   return (
     <>
       <Navbar />

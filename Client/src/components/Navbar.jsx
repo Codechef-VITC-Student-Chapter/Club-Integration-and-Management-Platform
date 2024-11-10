@@ -42,7 +42,7 @@ function Navbar() {
   ];
 
   return (
-    <nav className="bg-gray-800  text-white p-3 rounded-lg mx-auto my-2 w-11/12 lg:w-full lg:my-0 lg:py-0 lg:pt-2 lg:font-lato lg:rounded-none">
+    <nav className="bg-gray-800  text-white p-3 rounded-lg mx-auto my-2 w-11/12 lg:w-full lg:my-0 lg:py-0 lg:pt-2 lg:font-lato lg:rounded-none h-[70px]">
       <div className="container mx-auto flex items-center justify-between">
         {/* Mobile Menu Button */}
         <div className="flex items-center justify-start lg:hidden">
