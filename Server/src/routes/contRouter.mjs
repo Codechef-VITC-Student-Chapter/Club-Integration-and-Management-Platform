@@ -15,7 +15,7 @@ contRouter.post('/add', async (req, res) => {
     const contributionData = req.body;
     const timeStamp = Date.now();
     const contributionId = `CID${contributionData.user.slice(3)}${timeStamp}`;
-    contributionData.contId = contributionId;
+    contributionData.ID = contributionId;
     const newContribution = await addContribution(contributionData);
     res.status(201).json(newContribution);
   } catch (error) {

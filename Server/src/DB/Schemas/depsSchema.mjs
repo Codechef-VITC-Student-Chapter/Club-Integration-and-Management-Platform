@@ -5,7 +5,7 @@ const depsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    depName: {
+    departmentName: {
         type: String,
         required: true
     },
@@ -13,12 +13,12 @@ const depsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    leads: {
+    departmentLeads: {
         type: [String],
         required: false,
         default: []
     },
-    subDeps: {
+    subDepartments: {
         type: [String],
         required: false,
         default: []

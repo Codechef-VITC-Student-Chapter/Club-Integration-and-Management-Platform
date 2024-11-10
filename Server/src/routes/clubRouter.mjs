@@ -70,7 +70,7 @@ clubRouter.post('/get-departments', async (req, res) => {
     const { clubId } = req.body;
     const club = await getClubById(clubId);
     const departments = [];
-    for (let depId of club.clubDeps) {
+    for (let depId of club.departments) {
       const department = await getDepartmentById(depId);
       departments.push({ id: depId, name: department.depName });
     }

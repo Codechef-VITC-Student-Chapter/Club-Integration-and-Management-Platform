@@ -6,7 +6,7 @@ const userSchema = new Schema({
         required: true,
         unique: true
     },
-    regNo: {
+    registrationNumber: {
         type: String,
         required: true
     },
@@ -31,7 +31,7 @@ const userSchema = new Schema({
         default: false,
         required: true     
     },
-    deps: {
+    departments: {
         type: [String],
         default: []
     },

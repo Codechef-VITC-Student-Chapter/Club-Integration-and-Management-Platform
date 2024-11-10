@@ -23,7 +23,7 @@ depsRouter.post('/add', async (req, res) => {
         const depsData = req.body;
         const clubId = depsData.clubId;
         const newDep = await addDepartment(depsData);
-        await addDepartmentToClub(clubId, newDep.depId);
+        await addDepartmentToClub(clubId, newDep.ID);
 
         res.status(201).json(newDep);
     } catch (error) {
