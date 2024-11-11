@@ -5,7 +5,7 @@ import dot from '../assets/adminview/Admin_view_dot.png';
 import tick from '../assets/adminview/Admin_view_tick.png';
 import file from '../assets/adminview/Admin_view_file.png'
 
-function Admin_view() {
+function AdminView() {
   // Sample data with initial status for each card
   const [requests, setRequests] = useState([
     { id: 1, status: "default" ,heading:"Backend And Hosting For Flappy Chef",
@@ -227,4 +227,4 @@ function Admin_view() {
   );
 }
 
-export default Admin_view;
+export default AdminView;
