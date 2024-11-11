@@ -32,7 +32,7 @@ function SiteRouter() {
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path="/upload" element={<UploadDetails />} />
-          {isAdmin && <Route path="/requests" element={<Admin_view />} />}
+          {isAdmin && <Route path="/requests" element={<AdminView />} />}
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/dashboard" element={<MemberDashboard />} />
           <Route path="/login" element={<MemberDashboard />} />
