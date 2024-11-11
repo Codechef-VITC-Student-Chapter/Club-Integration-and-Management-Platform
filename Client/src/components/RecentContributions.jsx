@@ -1,5 +1,5 @@
 import React from 'react';
-import TaskComponent from './TaskCard'; // Adjusting import path to match actual component name
+import TaskComponent from './TaskComponent'; // Adjusting import path to match actual component name
 
 function RecentContributions({  contributions }) {
   return (

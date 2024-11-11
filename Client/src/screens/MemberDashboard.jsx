@@ -119,15 +119,15 @@ function MemberDashboard() {
       }
     };
     if (currentUser) {
-      fetchContributions();
+      // fetchContributions();
     }
   }, [currentUser]);
 
   return (    
-  <div className="w-[100vw] md:h-[calc(100vh-70px)] bg-[#e8f1fe]">
+    <div className="w-[100vw] md:h-[calc(100vh-70px)] bg-[#e8f1fe]">
     <div className="w-full h-full flex md:flex-row flex-col">
       <div className='w-full xl:w-[25%] md:w-[30%] h-full'>
-        <div className='flex md:flex-col flex-row md:gap-3 w-full md:justify-center md:items-center justify-center'>
+        <div className='flex md:flex-col items-center flex-row md:gap-3 w-full md:justify-center md:items-center justify-center md:pb-12 h-full'>
           <div className='md:flex md:justify-center w-full xl:px-10 lg:p-8 md:px-1 px-2'>
             <ProfileCard isAdmin={isAdmin} badges={badges} />
           </div>

@@ -5,19 +5,16 @@ import { Routes, Route } from "react-router-dom";
 import LoadingScreen from "./LoadingScreen";
 import Navbar from "../components/Navbar";
 import { useRunningContext } from "../contexts/RunningContext";
-import Admin_view from "./Admin_view";
 
 const PageNotFound = React.lazy(() => import("./PageNotFound"));
 const LoginForm = React.lazy(() => import("./LoginForm"));
 const SignUpForm = React.lazy(() => import("./SignUpForm"));
 const UploadDetails = React.lazy(() => import("./UploadDetails"));
-const SeeRequests = React.lazy(() => import("./SeeRequests"));
+const Admin_view = React.lazy(() => import("./Admin_view"));
 const MemberDashboard = React.lazy(() => import("./MemberDashboard"));
 
-function AppContent() {
+function SiteRouter() {
   const { token, isAdmin } = useRunningContext();
-
-  console.log(token)
 
   if (!token) {
     return (
@@ -30,12 +27,12 @@ function AppContent() {
   }
 
   return (
-    <>
+    <div className="h-[100vh] bg-[#e8f1fe]">
       <Navbar />
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path="/upload" element={<UploadDetails />} />
-          {isAdmin && <Route path="/requests" element={<SeeRequests />} />}
+          {isAdmin && <Route path="/requests" element={<Admin_view />} />}
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/dashboard" element={<MemberDashboard />} />
           <Route path="/login" element={<MemberDashboard />} />
@@ -45,8 +42,8 @@ function AppContent() {
           <Route path="/*" element={<PageNotFound />} />
         </Routes>
       </Suspense>
-    </>
+    </div>
   );
 }
 
-export default AppContent;
+export default SiteRouter;

@@ -1,5 +1,5 @@
 import React from 'react';
-import TaskComponent from './TaskCard'; // Assuming TaskCard is in the same directory
+import TaskComponent from './TaskComponent'; // Assuming TaskCard is in the same directory
 
 function PendingContributions({ pendingContributions }) {
   return (

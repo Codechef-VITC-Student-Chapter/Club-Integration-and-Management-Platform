@@ -38,7 +38,6 @@ function Navbar() {
     { name: 'Dashboard', path: '/dashboard', logo: dash },
     { name: 'Leaderboard', path: '/leaderboard', logo: lead },
     { name: 'Requests', path: '/upload', logo: req },
-    { name: 'Settings', path: '/settings', logo: set }, // Added Settings for consistency
   ];
 
   return (
