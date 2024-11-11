@@ -10,7 +10,7 @@ const PageNotFound = React.lazy(() => import("./PageNotFound"));
 const LoginForm = React.lazy(() => import("./LoginForm"));
 const SignUpForm = React.lazy(() => import("./SignUpForm"));
 const UploadDetails = React.lazy(() => import("./UploadDetails"));
-const Admin_view = React.lazy(() => import("./Admin_view"));
+const AdminView = React.lazy(() => import("./AdminView"));
 const MemberDashboard = React.lazy(() => import("./MemberDashboard"));
 
 function SiteRouter() {
@@ -37,7 +37,7 @@ function SiteRouter() {
           <Route path="/dashboard" element={<MemberDashboard />} />
           <Route path="/login" element={<MemberDashboard />} />
           <Route path="/signup" element={<MemberDashboard />} />
-          <Route path="/adminview" element={<Admin_view/>}/>
+          <Route path="/adminview" element={<AdminView/>}/>
           <Route path="/" element={<MemberDashboard />} />
           <Route path="/*" element={<PageNotFound />} />
         </Routes>
