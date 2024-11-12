@@ -14,7 +14,7 @@ mongoose
     console.log(err);
   });
 
-const Club = mongoose.models.Club || mongoose.model('Clubs', clubSchema);
+const Club = mongoose.models.Club || mongoose.model('Club', clubSchema);
 
 export const addClub = async (clubData) => {
   try {
@@ -23,14 +23,13 @@ export const addClub = async (clubData) => {
     return newClub;
   } catch (error) {
     console.log(error);
-    console.log(clubData);
     throw new Error('Failed to add club');
   }
 };
 
 export const removeClub = async (clubId) => {
   try {
-    const deletedClub = await Club.findOneAndDelete({ clubId: clubId });
+    const deletedClub = await Club.findOneAndDelete({ ID: clubId });
     if (!deletedClub) {
       throw new Error('Club not found');
     }
@@ -42,7 +41,7 @@ export const removeClub = async (clubId) => {
 
 export const getClubById = async (clubId) => {
   try {
-    const club = await Club.findOne({ clubId: clubId });
+    const club = await Club.findOne({ ID: clubId });
     if (!club) {
       throw new Error('Club not found');
     }
@@ -54,12 +53,12 @@ export const getClubById = async (clubId) => {
 
 export const addDepartmentToClub = async (clubId, departmentId) => {
   try {
-    const club = await Club.findOne({ clubId: clubId });
+    const club = await Club.findOne({ ID: clubId });
     if (!club) {
       throw new Error('Club not found');
     }
-    if (!club.clubDeps.includes(departmentId)) {
-      club.clubDeps.push(departmentId);
+    if (!club.departments.includes(departmentId)) {
+      club.departments.push(departmentId);
       await club.save();
     }
     return club;
@@ -70,12 +69,12 @@ export const addDepartmentToClub = async (clubId, departmentId) => {
 
 export const removeDepartmentFromClub = async (clubId, departmentId) => {
   try {
-    const club = await Club.findOne({ clubId: clubId });
+    const club = await Club.findOne({ ID: clubId });
     if (!club) {
       throw new Error('Club not found');
     }
-    club.clubDeps = club.clubDeps.filter(
-      (dep) => dep.toString() !== departmentId
+    club.departments = club.departments.filter(
+      (dep) => dep !== departmentId
     );
     await club.save();
     return club;
@@ -86,7 +85,7 @@ export const removeDepartmentFromClub = async (clubId, departmentId) => {
 
 export const addUserToClub = async (clubId, userId) => {
   try {
-    const club = await Club.findOne({ clubId: clubId });
+    const club = await Club.findOne({ ID: clubId });
     if (!club) {
       throw new Error('Club not found');
     }
@@ -102,12 +101,12 @@ export const addUserToClub = async (clubId, userId) => {
 
 export const removeUserFromClub = async (clubId, userId) => {
   try {
-    const club = await Club.findOne({ clubId: clubId });
+    const club = await Club.findOne({ ID: clubId });
     if (!club) {
       throw new Error('Club not found');
     }
     club.clubLeads = club.clubLeads.filter(
-      (user) => user.toString() !== userId
+      (user) => user !== userId
     );
     await club.save();
     return club;

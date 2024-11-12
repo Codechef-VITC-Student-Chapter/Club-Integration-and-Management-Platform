@@ -16,19 +16,16 @@ mongoose
     console.log(err);
   });
 
-const Contribution =
-  mongoose.models.Contribution ||
-  mongoose.model('Contributions', contributionSchema);
-
-const User = mongoose.models.User || mongoose.model('Users', userSchema);
+const Contribution = mongoose.models.Contribution || mongoose.model('Contribution', contributionSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 export const addContribution = async (contributionData) => {
   try {
     const newContribution = new Contribution(contributionData);
     await newContribution.save();
     await User.findOneAndUpdate(
-      { userId: contributionData.user },
-      { $push: { contributions: contributionData.contId } },
+      { ID: contributionData.userId },
+      { $push: { contributions: newContribution.ID } },
       { new: true }
     );
     return newContribution;
@@ -41,7 +38,7 @@ export const addContribution = async (contributionData) => {
 export const removeContribution = async (contId) => {
   try {
     const deletedContribution = await Contribution.findOneAndDelete({
-      contId: contId,
+      ID: contId,
     });
     if (!deletedContribution) {
       throw new Error('Contribution not found');
@@ -54,7 +51,7 @@ export const removeContribution = async (contId) => {
 
 export const getContributionById = async (contId) => {
   try {
-    const contribution = await Contribution.findOne({ contId: contId });
+    const contribution = await Contribution.findOne({ ID: contId });
     if (!contribution) {
       throw new Error('Contribution not found');
     }
@@ -83,7 +80,7 @@ export const updateContributionStatus = async (contId, newStatus) => {
       throw new Error('Invalid status');
     }
     const updatedContribution = await Contribution.findOneAndUpdate(
-      { contId: contId },
+      { ID: contId },
       { status: newStatus },
       { new: true }
     );
