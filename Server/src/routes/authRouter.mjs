@@ -3,6 +3,7 @@ import crypto from 'crypto';
 
 import { generateToken } from '../utils/jwtUtils.mjs';
 import { addUser, getUserByReg } from '../utils/userUtils.mjs';
+
 const authRouter = express.Router();
 
 function hashPassword(password) {
@@ -10,24 +11,24 @@ function hashPassword(password) {
 }
 
 authRouter.post('/signup', async (req, res) => {
-  const { regno, firstname, lastname, email, password } = req.body;
-  const user_id = 'UID' + regno;
+  const { regNo, firstName, lastName, email, password } = req.body;
+  const userId = 'UID' + regNo;
 
   try {
     const newUser = {
-      user_id,
-      reg_no: regno,
-      first_name: firstname,
-      last_name: lastname,
-      email: email,
-      password_hash: hashPassword(password),
+      userId,
+      regNo,
+      firstName,
+      lastName,
+      email,
+      passwordHash: hashPassword(password),
     };
 
     await addUser(newUser);
 
     const token = await generateToken({
-      id: newUser.user_id,
-      name: newUser.first_name + ' ' + newUser.last_name,
+      id: newUser.userId,
+      name: newUser.firstName + ' ' + newUser.lastName,
       isLead: newUser.isLead,
     });
     res.json({ token });
@@ -38,24 +39,24 @@ authRouter.post('/signup', async (req, res) => {
 });
 
 authRouter.post('/login', async (req, res) => {
-  const { regno, password } = req.body;
+  const { regNo, password } = req.body;
 
   try {
-    const user = await getUserByReg(regno);
+    const user = await getUserByReg(regNo);
 
     if (!user) {
       return res.status(404).send('User not found');
     }
 
-    const isMatch = hashPassword(password) === user.password_hash;
+    const isMatch = hashPassword(password) === user.passwordHash;
 
     if (!isMatch) {
       return res.status(401).send('Invalid credentials');
     }
 
     const token = await generateToken({
-      id: user.user_id,
-      name: user.first_name + ' ' + user.last_name,
+      id: user.userId,
+      name: user.firstName + ' ' + user.lastName,
       isLead: user.isLead,
     });
     res.json({ token });

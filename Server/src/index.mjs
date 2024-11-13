@@ -16,7 +16,6 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(bodyParser.json());
 
 app.use('/userApi', userRouter);
 app.use('/clubApi', clubRouter);

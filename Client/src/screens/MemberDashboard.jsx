@@ -78,13 +78,13 @@ function MemberDashboard() {
   useEffect(() => {
     const fetchContributions = async () => {
       try {
-        const response = await fetch(`${baseURL}/userAPI/getContributionData`, {
+        const response = await fetch(`${baseURL}/userApi/get-contribution-data`, {
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ user: currentUser }),
+          body: JSON.stringify({ user: userDetails._id }),
         });
 
         const data = await response.json();
@@ -109,7 +109,6 @@ function MemberDashboard() {
           }
         }
 
-
         setContributions(done);
         setPendingContributions(pending);
         setClubPoints({ codechefvitc: donepoints });
@@ -119,9 +118,40 @@ function MemberDashboard() {
       }
     };
     if (currentUser) {
-      // fetchContributions();
+      fetchContributions();
     }
   }, [currentUser]);
+  
+  //fetching user details
+  useEffect(() => {
+    const fetchUser = async (userId) => {
+      try {
+        const response = await fetch(`${baseURL}/userApi/get/${userId}`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('Error fetching user:', errorData.error || 'Unknown error');
+          return;
+        }
+        
+        const user = await response.json();
+        setUserDetails(user);
+      } catch (error) {
+        console.error('Error in fetch request:', error);
+      }
+    };
+
+    if (currentUser) {
+      fetchUser(currentUser); // Fetch user data for the current user
+    }
+  }, [currentUser, baseURL, token]); // Dependencies: refetch when these change
+  
 
   return (    
     <div className="w-[100vw] md:h-[calc(100vh-70px)] bg-[#e8f1fe]">

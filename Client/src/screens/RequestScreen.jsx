@@ -1,9 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import EditLinks from '../components/EditLinks.jsx'
 
 const RequestScreen = () => {
   const [isELopen, setisELopen] = useState(false);
   const [links, setLinks] = useState(['']);
+  const [club, setClub] = useState(null); //newly added
+  const id = "102";
+  const baseURL = 'http://localhost:3000';
+
+  //to get the club details - newly added
+  useEffect(() => {
+    const fetchClubDetails = async () => {
+      try {
+        const response = await fetch(`${baseURL}/clubApi/get/${id}`);
+        if (!response.ok) throw new Error('Failed to fetch club details');
+        const data = await response.json();
+        console.log(club);
+        setClub(data);
+      } catch (error) {
+        console.error('Error fetching club details:', error);
+      }
+    };
+
+    fetchClubDetails();
+  }, []);
+
 
   return (
     <div className="min-h-screen p-5">
@@ -15,7 +36,7 @@ const RequestScreen = () => {
           <div className="bg-white rounded-3xl p-6 shadow-md">
             <form>
               <div className="mb-4">
-                  Club: <b>CodeChef VIT - C</b>
+                Club: <b>{club?.clubName || 'Loading...'}</b>
               </div>
 
               <div className="mb-4">
@@ -23,6 +44,9 @@ const RequestScreen = () => {
                 <div className="relative">
                   <select className="w-full p-2 rounded border appearance-none bg-white pr-8">
                     <option>Select Lead</option>
+                    {club?.clubLeads.map((lead, index) => (
+                      <option key={index}>{lead}</option>
+                    ))}
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -37,6 +61,9 @@ const RequestScreen = () => {
                 <div className="relative">
                   <select className="w-full p-2 rounded border appearance-none bg-white pr-8">
                     <option>Select Department</option>
+                    {club?.clubDeps.map((department, index) => (
+                      <option key={index}>{department}</option>
+                    ))}
                   </select>
                   <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                     <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

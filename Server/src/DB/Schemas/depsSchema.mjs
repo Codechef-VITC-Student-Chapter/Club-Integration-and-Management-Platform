@@ -1,28 +1,25 @@
 import mongoose from "mongoose";
 
 const depsSchema = new mongoose.Schema({
-    dep_id: {
+    ID: {
         type: String,
         required: true
     },
-    dep_name: {
+    departmentName: {
         type: String,
         required: true
     },
-    club_id: {
+    clubId: {
         type: String,
-        ref: 'Club',
         required: true
     },
-    leads: {
+    departmentLeads: {
         type: [String],
-        ref: 'User',
         required: false,
         default: []
     },
-    subdeps: {
+    subDepartments: {
         type: [String],
-        ref: 'Department',
         required: false,
         default: []
     }

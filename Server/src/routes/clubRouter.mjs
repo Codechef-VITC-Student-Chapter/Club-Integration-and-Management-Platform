@@ -18,6 +18,7 @@ const clubRouter = express.Router();
 //         const clubData = req.body;
 //         const newClub = await addClub(clubData);
 //         res.status(201).json(newClub);
+//         console.log("Successfully added");
 //     } catch (error) {
 //         console.log(error);
 //         res.status(400).json({ error: error.message });
@@ -66,12 +67,12 @@ clubRouter.get('/get/:id', async (req, res) => {
 
 clubRouter.post('/get-departments', async (req, res) => {
   try {
-    const { club_id } = req.body;
-    const club = await getClubById(club_id);
+    const { clubId } = req.body;
+    const club = await getClubById(clubId);
     const departments = [];
-    for (let dep_id of club.club_deps) {
-      const department = await getDepartmentById(dep_id);
-      departments.push({ id: dep_id, name: department.dep_name });
+    for (let depId of club.departments) {
+      const department = await getDepartmentById(depId);
+      departments.push({ id: depId, name: department.depName });
     }
     res.status(200).json(departments);
   } catch (error) {
