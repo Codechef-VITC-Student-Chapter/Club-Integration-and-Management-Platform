@@ -17,6 +17,7 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.5.2",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "server": "file:"
   }
 }
