@@ -3,21 +3,78 @@ import PointsWidget from '../components/PointsWidget'; // Assuming PointsWidget 
 import RecentContributions from '../components/RecentContributions'; // Assuming RecentContributions is in the same directory
 import PendingContributions from '../components/PendingContributions'; // Assuming PendingContributions is in the same directory
 import { useRunningContext } from '../contexts/RunningContext';
-import CCLogo from '../assets/dashboard_cclogo.png';
-import ProfileCard, { Badges } from '../components/ProfileCard';
-import { useNavigate } from 'react-router-dom';
+import ProfileCard from '../components/ProfileCard';
+import Badge from '../components/Badge';
+
 function MemberDashboard() {
-  const { baseURL, currentUser, token, handleError,  badges = ["Member"] } =
+  const { baseURL, currentUser, token, handleError,  badges = ["Member"], isAdmin } =
     useRunningContext();
-  const isAdmin = true
-  const navigate = useNavigate()
-  const [clubPoints, setClubPoints] = useState({});
-  const [pendingPoints, setPendingPoints] = useState({});
-  const [contributions, setContributions] = useState([]);
-  const [userDetails, setUserDetails] = useState({});
-  
-  const [pendingContributions, setPendingContributions] = useState([]);
-  
+  const [clubPoints, setClubPoints] = useState({ codechefvitc: 0 });
+  const [pendingPoints, setPendingPoints] = useState({ codechefvitc: 0 });
+  const [contributions, setContributions] = useState([
+    {
+      cont_id: "1",
+      title: "Task 1",
+      target: "User A",
+      dep: "Web Dev",
+      created_at: "2024-10-01",
+      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
+      points: 10,
+      status: "accepted"
+    },
+    {
+      cont_id: "2",
+      title: "Task 2",
+      target: "User B",
+      dep: "Web Dev",
+      created_at: "2024-10-01",
+      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
+      points: 10,
+      status: "rejected"
+    },{
+      cont_id: "1",
+      title: "Task 3",
+      target: "User C",
+      dep: "Web Dev",
+      created_at: "2024-10-01",
+      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
+      points: 10,
+      status: "accepted"
+    },]);
+
+
+  const [pendingContributions, setPendingContributions] = useState([
+    {
+      cont_id: "1",
+      title: "Task 1",
+      target: "User A",
+      dep: "Web Dev",
+      created_at: "2024-10-01",
+      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
+      points: 10,
+      status: "pending"
+    },
+    {
+      cont_id: "2",
+      title: "Task 2",
+      target: "User B",
+      dep: "Web Dev",
+      created_at: "2024-10-01",
+      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
+      points: 10,
+      status: "pending"
+    },{
+      cont_id: "1",
+      title: "Task 3",
+      target: "User C",
+      dep: "Web Dev",
+      created_at: "2024-10-01",
+      desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
+      points: 10,
+      status: "pending"
+    },
+  ]);
+
   useEffect(() => {
     const fetchContributions = async () => {
       try {
@@ -96,61 +153,53 @@ function MemberDashboard() {
   }, [currentUser, baseURL, token]); // Dependencies: refetch when these change
   
 
-  return (
-    <div className="w-[100vw] mx-auto p-6 space-y-6 bg-[#e8f1fe]">
-      <div className="w-full h-full flex md:flex-row flex-col md:gap-40">
-        <div className='w-full md:w-[30%] xl:w-[20%] md:h-[100vh]  flex flex-col text-white my-14 h-[50vh]'>
-          <div className='flex md:w-[300px] md:flex-col h-[340px] flex-row md:gap-4 gap-2 w-full md:h-[650px] md:justify-center md:items-center md:mx-[50px] justify-center'>
-            <div className=' w-full md:h-[15%] h-full flex-col gap-8 items-center text-center md:block hidden'>
-             {isAdmin && <button className=' bg-[#4079DA] p-3 rounded-xl text-center text-md mx-10 mb-5'
-             onClick={()=>navigate("/adminview")}>
-                Admin View
-              </button>}
-            </div>
-            <div className='md:min-h-[500px] md:flex md:justify-center md:mb-[-40px] '>
-              <ProfileCard isAdmin={true} FirstName={userDetails.firstName} LastName={userDetails.lastName} regNo={userDetails.regNo} badges={badges} />
-            </div>
-
-            <div className='flex-grow md:min-w-[409px]'>
-              {/* Add club points div here here */}
-              <PointsWidget clubPoints={clubPoints} pendingPoints={pendingPoints} />
-              {isAdmin && <div className=' md:hidden bg-[#4079DA] p-3 rounded-xl text-center text-md mx-1 mb-5 my-10 min-w-[50px]'>
-                Admin View
-              </div>}
-            </div>
-
+  return (    
+    <div className="w-[100vw] md:h-[calc(100vh-70px)] bg-[#e8f1fe]">
+    <div className="w-full h-full flex md:flex-row flex-col">
+      <div className='w-full xl:w-[25%] md:w-[30%] h-full'>
+        <div className='flex md:flex-col items-center flex-row md:gap-3 w-full md:justify-center md:items-center justify-center md:pb-12 h-full'>
+          <div className='md:flex md:justify-center w-full xl:px-10 lg:p-8 md:px-1 px-2'>
+            <ProfileCard isAdmin={isAdmin} badges={badges} />
           </div>
-          <div className='bg-[#2E3446] mx-5 rounded-2xl p-3 md:hidden flex justify-start'>
-            <Badges badges={badges} />
 
+          <div className='flex flex-col items-center justify-center md:p-4 pr-6 pt-5 w-full text-white'>
+            <PointsWidget clubPoints={clubPoints} pendingPoints={pendingPoints} />
+            {isAdmin && <div className=' md:hidden bg-[#4079DA] p-3 rounded-xl text-center text-md mx-1 mb-5 my-10 min-w-[50px]'>
+              Admin View
+            </div>}
           </div>
 
         </div>
-        <div className='md:w-[70%] w-full md:h-[100vh] '>
-          <div className="flex flex-wrap gap-8 bg-white py-9 rounded-[45px] border-2 border-zinc-800">
-            <div className="flex-1 flex flex-col mx-3">
-              <div className=" bg-[#e8f1fe] shadow-md rounded-[30px] mb-2 border-2 border-[#1a8755] md:w-[64vw] md:h-[400px]">
-                <h2 className="text-xl  mb-2 bg-[#1a8755]  rounded-t-[30px] md:px-[90px] px-[30px] p-[5px] text-white">Recent Contributions</h2>
-                <div className="  overflow-y-auto h-[400px] overflow-x-scroll md:p-6 p-2">
-                  <RecentContributions contributions={contributions} />
-                </div>
-              </div>
-            </div>
-            <div className="flex-1 flex flex-col mx-3 relative">
-              <div className=" bg-[#e8f1fe] shadow-md rounded-[30px] mb-2 border-2 border-[#ffac32] md:w-[64vw] md:h-[400px]">
-                <h2 className="text-xl mb-2 bg-[#ffac32] rounded-t-[30px] md:px-[90px] px-[30px] p-[5px]">Pending Contributions</h2>
-                <div className=" overflow-y-auto h-[400px] overflow-x-scroll md:p-6 p-2">
-                  <PendingContributions
-                    pendingContributions={pendingContributions}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className='bg-[#2E3446] text-white mx-5 rounded-2xl p-3 md:hidden flex justify-start'>
+          <Badge badges={badges} />
         </div>
 
       </div>
+      <div className='xl:w-[75%] md:w-[70%] h-full p-8'>
+        <div className="flex flex-col md:h-full gap-8 bg-[#e8f1fe] md:bg-white rounded-[45px] md:border-2 md:border-zinc-800 w-full h-full md:p-6">
+          <div className="flex-1 flex flex-col h-full">
+            <div className="md:bg-[#e8f1fe] bg-white min-h-[400px] md:min-h-min shadow-md rounded-[30px] border-2 border-[#1a8755] h-[100%]">
+              <h2 className="text-xl bg-[#1a8755]  rounded-t-[25px] border-[#1a8755] md:px-[90px] px-[30px] p-[15px] text-white">Recent Contributions</h2>
+              <div className="overflow-y-auto p-6 h-full">
+                <RecentContributions contributions={contributions} />
+              </div>
+            </div>
+          </div>
+          <div className="flex-1 flex flex-col relative h-full">
+            <div className=" md:bg-[#e8f1fe] bg-white md:min-h-min min-h-[400px] shadow-md rounded-[30px] border-2 border-[#ffac32] h-full">
+              <h2 className="text-xl bg-[#ffac32] rounded-t-[25px] md:px-[90px] px-[30px] p-[15px]">Pending Contributions</h2>
+              <div className="overflow-y-auto p-6 h-full">
+                <PendingContributions
+                  pendingContributions={pendingContributions}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
+  </div>
   );
 }
 

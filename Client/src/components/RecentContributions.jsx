@@ -1,9 +1,9 @@
 import React from 'react';
-import TaskComponent from './TaskCard'; // Adjusting import path to match actual component name
+import TaskComponent from './TaskComponent'; // Adjusting import path to match actual component name
 
 function RecentContributions({  contributions }) {
   return (
-    <div className="space-y-2 flex flex-col md:flex-row gap-8 items-center">
+    <div className="flex flex-col md:flex-row gap-8 items-center overflow-scroll">
       {contributions.length === 0 ? (
         <p>No recent contributions.</p>
       ) : (

@@ -1,9 +1,9 @@
 import React from 'react';
-import TaskComponent from './TaskCard'; // Assuming TaskCard is in the same directory
+import TaskComponent from './TaskComponent'; // Assuming TaskCard is in the same directory
 
 function PendingContributions({ pendingContributions }) {
   return (
-    <div className="space-y-2 flex flex-col md:flex-row gap-8 items-center">
+    <div className="flex flex-col md:flex-row gap-8 items-center overflow-scroll">
       {pendingContributions.length === 0 ? (
         <p>No pending contributions.</p>
       ) : (
