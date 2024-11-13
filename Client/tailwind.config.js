@@ -7,6 +7,10 @@ export default {
         'desktop-login': "url('./assets/desktop_login.png')",
         'mobile-login': "url('./assets/mobile_login.png')",
       },
+      fontFamily: {
+        lato: ['Lato', 'sans-serif'],
+        mooli: ['Mooli', 'sans-serif'],
+      },
     },
   },
   plugins: [],

@@ -6,18 +6,19 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Analytics } from '@vercel/analytics/react';
 
 import { RunningProvider } from './contexts/RunningContext.jsx';
-import AppContent from './screens/AppContent.jsx';
+import SiteRouter from './screens/SiteRouter.jsx';
 
 function App() {
   return (
     <>
       <BrowserRouter>
         <RunningProvider>
-          <AppContent />
+          <SiteRouter />
         </RunningProvider>
         <ToastContainer />
       </BrowserRouter>
       <Analytics />
+      
     </>
   );
 }
