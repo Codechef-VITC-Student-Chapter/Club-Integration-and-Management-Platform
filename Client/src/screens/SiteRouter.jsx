@@ -9,7 +9,7 @@ import { useRunningContext } from "../contexts/RunningContext";
 const PageNotFound = React.lazy(() => import("./PageNotFound"));
 const LoginForm = React.lazy(() => import("./LoginForm"));
 const SignUpForm = React.lazy(() => import("./SignUpForm"));
-const UploadDetails = React.lazy(() => import("./UploadDetails"));
+const RequestScreen = React.lazy(() => import("./RequestScreen"));
 const AdminView = React.lazy(() => import("./AdminView"));
 const MemberDashboard = React.lazy(() => import("./MemberDashboard"));
 
@@ -31,7 +31,7 @@ function SiteRouter() {
       <Navbar />
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
-          <Route path="/upload" element={<UploadDetails />} />
+          <Route path="/upload" element={<RequestScreen />} />
           {isAdmin && <Route path="/requests" element={<AdminView />} />}
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/dashboard" element={<MemberDashboard />} />
