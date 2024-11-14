@@ -14,8 +14,9 @@ function LoginForm() {
   const { baseURL, setCurrentUser, currentUser, setToken } =
     useRunningContext();
 
-  const [regNo, setregNo] = useState("");
+  const [registrationNumber, setRegistrationNumber] = useState("");
   const [password, setPassword] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -25,7 +26,7 @@ function LoginForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          regNo: regNo,
+          registrationNumber: registrationNumber,
           password: hashPassword(password),
         }),
       });
@@ -84,12 +85,12 @@ function LoginForm() {
                     <PiUserCircle className="h-5 w-5 text-black" />
                   </div>
                   <input
-                    type="regNo"
-                    name="regNo"
+                    type="registrationNumber"
+                    name="registrationNumber"
                     className="appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                     placeholder="23ABC1234"
-                    value={regNo}
-                    onChange={(e) => setregNo(e.target.value)}
+                    value={registrationNumber}
+                    onChange={(e) => setRegistrationNumber(e.target.value)}
                   />
                 </div>
               </div>
