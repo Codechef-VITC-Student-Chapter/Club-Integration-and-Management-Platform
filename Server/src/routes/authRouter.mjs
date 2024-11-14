@@ -15,11 +15,6 @@ authRouter.post("/signup", async (req, res) => {
   const ID = "UID" + registrationNumber;
 
   try {
-    const existingUser = await getUserByReg(registrationNumber);
-    if (existingUser) {
-      return res.status(400).send("User already exists");
-    }
-
     const newUser = {
       ID,
       registrationNumber,
@@ -45,6 +40,7 @@ authRouter.post("/signup", async (req, res) => {
 
 authRouter.post("/login", async (req, res) => {
   const { registrationNumber, password } = req.body;
+
 
   try {
     const user = await getUserByReg(registrationNumber);

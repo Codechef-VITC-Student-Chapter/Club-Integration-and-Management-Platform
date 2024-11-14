@@ -18,82 +18,82 @@ function MemberDashboard() {
   
   const [pendingContributions, setPendingContributions] = useState([]);
   
-  useEffect(() => {
-    const fetchContributions = async () => {
-      try {
-        const response = await fetch(`${baseURL}/userApi/get-contribution-data`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ user: userDetails._id }),
-        });
+  // useEffect(() => {
+  //   const fetchContributions = async () => {
+  //     try {
+  //       const response = await fetch(`${baseURL}/userApi/get-contribution-data`, {
+  //         method: 'POST',
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ user: userDetails._id }),
+  //       });
 
-        const data = await response.json();
-        if (response.status == 403) {
-          handleError('Fetching contributions', data.error);
-          return;
-        }
-        const done = [];
-        const pending = [];
-        var donepoints = 0;
-        var pendingpoints = 0;
-        for (let i = 0; i < data.length; i++) {
-          const current = data[i];
-          if (current.status == 'pending') {
-            pendingpoints += data[i].points;
-            pending.push(current);
-          } else {
-            if (current.status == 'approved') {
-              donepoints += data[i].points;
-            }
-            done.push(current);
-          }
-        }
+  //       const data = await response.json();
+  //       if (response.status == 403) {
+  //         handleError('Fetching contributions', data.error);
+  //         return;
+  //       }
+  //       const done = [];
+  //       const pending = [];
+  //       var donepoints = 0;
+  //       var pendingpoints = 0;
+  //       for (let i = 0; i < data.length; i++) {
+  //         const current = data[i];
+  //         if (current.status == 'pending') {
+  //           pendingpoints += data[i].points;
+  //           pending.push(current);
+  //         } else {
+  //           if (current.status == 'approved') {
+  //             donepoints += data[i].points;
+  //           }
+  //           done.push(current);
+  //         }
+  //       }
 
-        setContributions(done);
-        setPendingContributions(pending);
-        setClubPoints({ codechefvitc: donepoints });
-        setPendingPoints({ codechefvitc: pendingpoints });
-      } catch (error) {
-        console.log('Error in fetching contributions: ', error);
-      }
-    };
-    if (currentUser) {
-      fetchContributions();
-    }
-  }, [currentUser]);
+  //       setContributions(done);
+  //       setPendingContributions(pending);
+  //       setClubPoints({ codechefvitc: donepoints });
+  //       setPendingPoints({ codechefvitc: pendingpoints });
+  //     } catch (error) {
+  //       console.log('Error in fetching contributions: ', error);
+  //     }
+  //   };
+  //   if (currentUser) {
+  //     fetchContributions();
+  //   }
+  // }, [currentUser]);
   
-  //fetching user details
-  useEffect(() => {
-    const fetchUser = async (userId) => {
-      try {
-        const response = await fetch(`${baseURL}/userApi/get/${userId}`, {
-          method: 'GET',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+  // //fetching user details
+  // useEffect(() => {
+  //   const fetchUser = async (userId) => {
+  //     try {
+  //       const response = await fetch(`${baseURL}/userApi/get/${userId}`, {
+  //         method: 'GET',
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //           'Content-Type': 'application/json',
+  //         },
+  //       });
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          console.error('Error fetching user:', errorData.error || 'Unknown error');
-          return;
-        }
+  //       if (!response.ok) {
+  //         const errorData = await response.json();
+  //         console.error('Error fetching user:', errorData.error || 'Unknown error');
+  //         return;
+  //       }
         
-        const user = await response.json();
-        setUserDetails(user);
-      } catch (error) {
-        console.error('Error in fetch request:', error);
-      }
-    };
+  //       const user = await response.json();
+  //       setUserDetails(user);
+  //     } catch (error) {
+  //       console.error('Error in fetch request:', error);
+  //     }
+  //   };
 
-    if (currentUser) {
-      fetchUser(currentUser); // Fetch user data for the current user
-    }
-  }, [currentUser, baseURL, token]); // Dependencies: refetch when these change
+  //   if (currentUser) {
+  //     fetchUser(currentUser); // Fetch user data for the current user
+  //   }
+  // }, [currentUser, baseURL, token]); // Dependencies: refetch when these change
   
 
   return (
