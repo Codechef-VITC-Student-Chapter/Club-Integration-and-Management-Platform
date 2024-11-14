@@ -54,9 +54,7 @@ export const getUserById = async (ID) => {
 
 export const getUserByReg = async (registrationNumber) => {
   try {
-    console.log(registrationNumber);
     const user = await User.findOne({ registrationNumber: registrationNumber });
-    console.log(user);
     if (!user) {
       return false;
     }

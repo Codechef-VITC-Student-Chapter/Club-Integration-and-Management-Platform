@@ -75,18 +75,6 @@ function MemberDashboard() {
     },
   ]);
 
-  useEffect(() => {
-    const fetchContributions = async () => {
-      try {
-        const response = await fetch(`${baseURL}/userApi/get-contribution-data`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ user: userDetails._id }),
-        });
-
   //       const data = await response.json();
   //       if (response.status == 403) {
   //         handleError('Fetching contributions', data.error);
