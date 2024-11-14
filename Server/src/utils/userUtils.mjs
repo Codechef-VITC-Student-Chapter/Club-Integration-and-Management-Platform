@@ -54,7 +54,9 @@ export const getUserById = async (ID) => {
 
 export const getUserByReg = async (registrationNumber) => {
   try {
+    console.log(registrationNumber);
     const user = await User.findOne({ registrationNumber: registrationNumber });
+    console.log(user);
     if (!user) {
       throw new Error('User not found');
     }
@@ -63,6 +65,7 @@ export const getUserByReg = async (registrationNumber) => {
     throw new Error('Failed to fetch user');
   }
 };
+
 
 export const addDepartments = async (ID, departments) => {
   try {
