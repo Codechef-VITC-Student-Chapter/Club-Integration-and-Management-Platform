@@ -154,9 +154,9 @@ function MemberDashboard() {
   
 
   return (    
-    <div className="w-[100vw] md:h-[calc(100vh-70px)] bg-[#e8f1fe]">
+    <div className="w-[100vw] bg-[#e8f1fe]">
     <div className="w-full h-full flex md:flex-row flex-col">
-      <div className='w-full xl:w-[25%] md:w-[30%] h-full'>
+      <div className='w-full xl:w-[25%] md:w-[30%] h-full overflow-y-scroll'>
         <div className='flex md:flex-col items-center flex-row md:gap-3 w-full md:justify-center md:items-center justify-center md:pb-12 h-full'>
           <div className='md:flex md:justify-center w-full xl:px-10 lg:p-8 md:px-1 px-2'>
             <ProfileCard isAdmin={isAdmin} badges={badges} />
@@ -188,7 +188,7 @@ function MemberDashboard() {
           <div className="flex-1 flex flex-col relative h-full">
             <div className=" md:bg-[#e8f1fe] bg-white md:min-h-min min-h-[400px] shadow-md rounded-[30px] border-2 border-[#ffac32] h-full">
               <h2 className="text-xl bg-[#ffac32] rounded-t-[25px] md:px-[90px] px-[30px] p-[15px]">Pending Contributions</h2>
-              <div className="overflow-y-auto p-6 h-full">
+              <div className="p-6 h-full">
                 <PendingContributions
                   pendingContributions={pendingContributions}
                 />
