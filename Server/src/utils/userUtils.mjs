@@ -58,7 +58,7 @@ export const getUserByReg = async (registrationNumber) => {
     const user = await User.findOne({ registrationNumber: registrationNumber });
     console.log(user);
     if (!user) {
-      throw new Error('User not found');
+      return false;
     }
     return user;
   } catch (error) {
