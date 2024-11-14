@@ -40,8 +40,6 @@ authRouter.post("/signup", async (req, res) => {
 
 authRouter.post("/login", async (req, res) => {
   const { registrationNumber, password } = req.body;
-
-
   try {
     const user = await getUserByReg(registrationNumber);
 
