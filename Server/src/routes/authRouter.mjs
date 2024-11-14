@@ -11,13 +11,13 @@ function hashPassword(password) {
 }
 
 authRouter.post('/signup', async (req, res) => {
-  const { regNo, firstName, lastName, email, password } = req.body;
-  const userId = 'UID' + regNo;
+  const { registrationNumber, firstName, lastName, email, password } = req.body;
+  const ID = 'UID' + registrationNumber;
 
   try {
     const newUser = {
-      userId,
-      regNo,
+      ID,
+      registrationNumber,
       firstName,
       lastName,
       email,
@@ -27,7 +27,7 @@ authRouter.post('/signup', async (req, res) => {
     await addUser(newUser);
 
     const token = await generateToken({
-      id: newUser.userId,
+      id: newUser.ID,
       name: newUser.firstName + ' ' + newUser.lastName,
       isLead: newUser.isLead,
     });
@@ -39,10 +39,10 @@ authRouter.post('/signup', async (req, res) => {
 });
 
 authRouter.post('/login', async (req, res) => {
-  const { regNo, password } = req.body;
-
+  const { registrationNumber, password } = req.body;
+  console.log(req.body);
   try {
-    const user = await getUserByReg(regNo);
+    const user = await getUserByReg(registrationNumber);
 
     if (!user) {
       return res.status(404).send('User not found');
@@ -55,7 +55,7 @@ authRouter.post('/login', async (req, res) => {
     }
 
     const token = await generateToken({
-      id: user.userId,
+      id: user.ID,
       name: user.firstName + ' ' + user.lastName,
       isLead: user.isLead,
     });
