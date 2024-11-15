@@ -18,19 +18,20 @@ import {
 
 const depsRouter = express.Router();
 
-// depsRouter.post('/add', async (req, res) => {
-//     try {
-//         const depsData = req.body;
-//         const clubId = depsData.clubId;
-//         const newDep = await addDepartment(depsData);
-//         await addDepartmentToClub(clubId, newDep.ID);
+depsRouter.post('/add', async (req, res) => {
+    try {
+        const depsData = req.body;
+        console.log(depsData)
+        const clubId = depsData.clubId;
+        const newDep = await addDepartment(depsData);
+        await addDepartmentToClub(clubId, newDep.ID);
 
-//         res.status(201).json(newDep);
-//     } catch (error) {
-//         console.log(error);
-//         res.status(400).json({ error: error.message });
-//     }
-// });
+        res.status(201).json(newDep);
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({ error: error.message });
+    }
+});
 
 // depsRouter.delete('/delete/:id', async (req, res) => {
 //     try {
