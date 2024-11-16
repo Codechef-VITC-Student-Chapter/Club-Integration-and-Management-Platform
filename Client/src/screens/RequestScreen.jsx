@@ -12,7 +12,7 @@ const RequestScreen = () => {
   const [description, setDescription] = useState('');
   const [points, setPoints] = useState('');
   const { token, currentUser } = useRunningContext(); 
-  const id = '102';
+  const id = 'C001';
   const baseURL = 'http://localhost:3000';
 
   useEffect(() => {
@@ -21,6 +21,7 @@ const RequestScreen = () => {
         const response = await fetch(`${baseURL}/clubApi/get/${id}`);
         if (!response.ok) throw new Error('Failed to fetch club details');
         const data = await response.json();
+        console.log(data.clubLeads)
         setClub(data);
       } catch (error) {
         console.error('Error fetching club details:', error);
@@ -36,11 +37,11 @@ const RequestScreen = () => {
     const payload = {
       title,
       points: Number(points),
-      userId: currentUser?.userId,
+      userId: currentUser,
       description,
       proofFiles: links,
       target: lead,
-      clubId: club?.clubId,
+      clubId: club.ID,
       department,
     };
 
@@ -48,8 +49,8 @@ const RequestScreen = () => {
       const response = await fetch(`${baseURL}/contApi/add`, {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       });
@@ -59,7 +60,7 @@ const RequestScreen = () => {
         throw new Error(error.message || 'Failed to submit request');
       }
 
-      alert('Request submitted successfully!');
+      window.location.replace("/")
     } catch (error) {
       console.error('Error submitting request:', error);
       alert('Failed to submit the request.');
@@ -86,7 +87,7 @@ const RequestScreen = () => {
                     onChange={(e) => setLead(e.target.value)}
                   >
                     <option>Select Lead</option>
-                    {club?.clubLeads.map((lead, index) => (
+                    {club?.clubLeads && club.clubLeads.map((lead, index) => (
                       <option key={index} value={lead}>
                         {lead}
                       </option>
@@ -104,7 +105,7 @@ const RequestScreen = () => {
                     onChange={(e) => setDepartment(e.target.value)}
                   >
                     <option>Select Department</option>
-                    {club?.clubDeps.map((department, index) => (
+                    {club?.departments && club.departments.map((department, index) => (
                       <option key={index} value={department}>
                         {department}
                       </option>
