@@ -17,13 +17,13 @@ import {
 } from '../utils/userUtils.mjs';
 
 import { addUserToClub } from '../utils/clubUtils.mjs';
-
 import { getRequests } from '../utils/contUtils.mjs';
 
 const userRouter = express.Router();
 
 userRouter.use(authenticateToken);
 
+// Route to delete a user
 // userRouter.delete('/delete/:userId', async (req, res) => {
 //   try {
 //     const userDeleted = await removeUser(req.params.userId);
@@ -33,6 +33,7 @@ userRouter.use(authenticateToken);
 //   }
 // });
 
+// Route to get user data
 userRouter.get('/get/:userId', async (req, res) => {
   try {
     const user = await getUserById(req.params.userId);
@@ -42,83 +43,88 @@ userRouter.get('/get/:userId', async (req, res) => {
   }
 });
 
-userRouter.get('/getRequests/:userId', async (req, res) => {
+// Route to get user requests
+userRouter.get('/get-requests/:userId', async (req, res) => {
   try {
-    var requests = await getRequests(req.params.userId);
+    const requests = await getRequests(req.params.userId);
     const answer = [];
-    for (var request of requests) {
+
+    for (const request of requests) {
       const club = await getClubById(request.club);
-      const dep = await getDepartmentById(request.dep);
-      var temp = {
-        cont_id: request.cont_id,
+      const department = await getDepartmentById(request.dep);
+      const temp = {
+        contId: request.contId,
         title: request.title,
         points: request.points,
         user: request.user,
-        desc: request.desc,
-        proof_files: request.proof_files,
+        description: request.description,
+        proofFiles: request.proofFiles,
         target: request.target,
         club: request.club,
         dep: request.dep,
-        created_at: request.created_at,
+        createdAt: request.createdAt,
         status: request.status,
-        cname: club.cname,
-        dname: dep.dep_name,
+        clubName: club.clubName,
+        departmentName: department.depName,
       };
       answer.push(temp);
     }
+
     res.status(200).json(answer);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-userRouter.post('/getContributionData', async (req, res) => {
+// Route to get user contribution data
+userRouter.post('/get-contribution-data', async (req, res) => {
   try {
     const user = await getUserById(req.body.user);
     const contributions = user.contributions;
     const contributionData = [];
-    for (let contributionId of contributions) {
+
+    for (const contributionId of contributions) {
       const contribution = await getContributionById(contributionId);
-      const club = await getClubById(contribution.club);
-      const dep = await getDepartmentById(contribution.dep);
-      var temp = {
-        cont_id: contribution.cont_id,
+      const club = await getClubById(contribution.club.type);
+      const department = await getDepartmentById(contribution.department.type);
+
+      const temp = {
+        contId: contribution.contId,
         title: contribution.title,
         points: contribution.points,
         user: contribution.user,
-        desc: contribution.desc,
-        proof_files: contribution.proof_files,
+        description: contribution.description,
+        proofFiles: contribution.proofFiles,
         target: contribution.target,
         club: contribution.club,
-        dep: contribution.dep,
+        dep: contribution.department,
         status: contribution.status,
-        created_at: contribution.created_at,
-        cname: club.cname,
-        dname: dep.dep_name,
+        createdAt: contribution.createdAt,
+        clubName: club.clubName,
+        departmentName: department.depName,
       };
       contributionData.push(temp);
     }
+
     res.status(200).json(contributionData);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(error.status).json({ error: error.message });
   }
 });
 
+// Route to make user a lead
 // userRouter.patch('/make-lead/:userId', async (req, res) => {
-//   try{
-//     const { club_id } = req.body;
-
-//     const club = await addUserToClub(club_id, req.params.userId);
-//     console.log(club);
+//   try {
+//     const { clubId } = req.body;
+//     const club = await addUserToClub(clubId, req.params.userId);
 //     const user = await updateLead(req.params.userId, true);
-//     console.log(user);
-
-//     res.status(200).json({user, club});
-//   }catch (error){
+//     res.status(200).json({ user, club });
+//   } catch (error) {
 //     res.status(500).json({ error: error.message });
 //   }
 // });
 
+// Route to add departments to a user
 // userRouter.patch('/add-departments/:userId', async (req, res) => {
 //   try {
 //     const { departments } = req.body;
@@ -132,6 +138,7 @@ userRouter.post('/getContributionData', async (req, res) => {
 //   }
 // });
 
+// Route to add clubs to a user
 // userRouter.patch('/add-clubs/:userId', async (req, res) => {
 //   try {
 //     const { clubs } = req.body;
@@ -145,6 +152,7 @@ userRouter.post('/getContributionData', async (req, res) => {
 //   }
 // });
 
+// Route to remove departments from a user
 // userRouter.patch('/remove-departments/:userId', async (req, res) => {
 //   try {
 //     const { departments } = req.body;
@@ -158,9 +166,10 @@ userRouter.post('/getContributionData', async (req, res) => {
 //   }
 // });
 
+// Route to remove clubs from a user
 // userRouter.patch('/remove-clubs/:userId', async (req, res) => {
 //   try {
-//     const { clubs } = req.body; // Expecting an array of clubs to remove
+//     const { clubs } = req.body;
 //     if (!Array.isArray(clubs)) {
 //       return res.status(400).json({ error: 'Clubs must be an array' });
 //     }
@@ -171,8 +180,7 @@ userRouter.post('/getContributionData', async (req, res) => {
 //   }
 // });
 
-// New routes for contributions
-
+// Route to add contributions to a user
 // userRouter.patch('/add-contributions/:userId', async (req, res) => {
 //   try {
 //     const { contributions } = req.body;
@@ -186,6 +194,7 @@ userRouter.post('/getContributionData', async (req, res) => {
 //   }
 // });
 
+// Route to remove contributions from a user
 // userRouter.patch('/remove-contributions/:userId', async (req, res) => {
 //   try {
 //     const { contributions } = req.body;

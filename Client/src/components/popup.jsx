@@ -37,9 +37,6 @@ const TaskModal = ({
                         className="p-4 border rounded-xl shadow-lg font-sans"
                         style={{ fontFamily: 'Lato, sans-serif', border: `1px solid ${taskColor}` }}
                     >
-                        {/* <div className="text-lg font-bold mb-4" style={{ color: textColor }}>
-              Task: {taskName}
-            </div> */}
                         <div className="space-y-2">
                             <div style={{ color: textColor }}>
                                 <strong>Target:</strong> {target}

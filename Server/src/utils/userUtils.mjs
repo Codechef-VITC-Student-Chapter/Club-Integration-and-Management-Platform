@@ -15,7 +15,7 @@ mongoose
     console.log(err);
   });
 
-const User = mongoose.models.User || mongoose.model('Users', userSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
 
 export const addUser = async (userData) => {
   try {
@@ -28,9 +28,9 @@ export const addUser = async (userData) => {
   }
 };
 
-export const removeUser = async (userId) => {
+export const removeUser = async (ID) => {
   try {
-    const deletedUser = await User.findOneAndDelete({ user_id: userId });
+    const deletedUser = await User.findOneAndDelete({ ID: ID });
     if (!deletedUser) {
       throw new Error('User not found');
     }
@@ -40,9 +40,9 @@ export const removeUser = async (userId) => {
   }
 };
 
-export const getUserById = async (userId) => {
+export const getUserById = async (ID) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ ID: ID });
     if (!user) {
       throw new Error('User not found');
     }
@@ -52,9 +52,9 @@ export const getUserById = async (userId) => {
   }
 };
 
-export const getUserByReg = async (regNo) => {
+export const getUserByReg = async (registrationNumber) => {
   try {
-    const user = await User.findOne({ reg_no: regNo });
+    const user = await User.findOne({ registrationNumber: registrationNumber });
     if (!user) {
       throw new Error('User not found');
     }
@@ -64,13 +64,13 @@ export const getUserByReg = async (regNo) => {
   }
 };
 
-export const addDepartments = async (userId, departments) => {
+export const addDepartments = async (ID, departments) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ ID: ID });
     if (!user) {
       throw new Error('User not found');
     }
-    user.deps = [...new Set([...user.deps, ...departments])]; // Avoid duplicate entries
+    user.departments = [...new Set([...user.departments, ...departments])]; // Avoid duplicate entries
     await user.save();
     return user;
   } catch (error) {
@@ -78,9 +78,9 @@ export const addDepartments = async (userId, departments) => {
   }
 };
 
-export const addClubs = async (userId, clubs) => {
+export const addClubs = async (ID, clubs) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ ID: ID });
     if (!user) {
       throw new Error('User not found');
     }
@@ -92,13 +92,13 @@ export const addClubs = async (userId, clubs) => {
   }
 };
 
-export const removeDepartments = async (userId, departmentsToRemove) => {
+export const removeDepartments = async (ID, departmentsToRemove) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ ID: ID });
     if (!user) {
       throw new Error('User not found');
     }
-    user.deps = user.deps.filter(
+    user.departments = user.departments.filter(
       (department) => !departmentsToRemove.includes(department)
     );
     await user.save();
@@ -108,9 +108,9 @@ export const removeDepartments = async (userId, departmentsToRemove) => {
   }
 };
 
-export const removeClubs = async (userId, clubsToRemove) => {
+export const removeClubs = async (ID, clubsToRemove) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ ID: ID });
     if (!user) {
       throw new Error('User not found');
     }
@@ -122,17 +122,13 @@ export const removeClubs = async (userId, clubsToRemove) => {
   }
 };
 
-// Functions to handle contributions
-
-export const addContributions = async (userId, contributions) => {
+export const addContributions = async (ID, contributions) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ ID: ID });
     if (!user) {
       throw new Error('User not found');
     }
-    user.contributions = [
-      ...new Set([...user.contributions, ...contributions]),
-    ]; // Avoid duplicate entries
+    user.contributions = [...new Set([...user.contributions, ...contributions])]; // Avoid duplicate entries
     await user.save();
     return user;
   } catch (error) {
@@ -140,9 +136,9 @@ export const addContributions = async (userId, contributions) => {
   }
 };
 
-export const updateLead = async (userId, leadType) => {
+export const updateLead = async (ID, leadType) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ ID: ID });
     if (!user) {
       throw new Error('User not found');
     }
@@ -154,9 +150,9 @@ export const updateLead = async (userId, leadType) => {
   }
 };
 
-export const removeContributions = async (userId, contributionsToRemove) => {
+export const removeContributions = async (ID, contributionsToRemove) => {
   try {
-    const user = await User.findOne({ user_id: userId });
+    const user = await User.findOne({ ID: ID });
     if (!user) {
       throw new Error('User not found');
     }

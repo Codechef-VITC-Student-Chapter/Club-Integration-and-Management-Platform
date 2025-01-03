@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 
 const contSchema = new mongoose.Schema({
-    cont_id: {
+    ID: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
     },
     title: {
         type: String,
@@ -14,16 +14,15 @@ const contSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    user: {
-        type: String,
-        ref: 'User',
-        required: true
-    },
-    desc: {
+    userId: {
         type: String,
         required: true
     },
-    proof_files: {
+    description: {
+        type: String,
+        required: true
+    },
+    proofFiles: {
         type: [String], 
         default: []
     },
@@ -31,14 +30,12 @@ const contSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    club: {
+    clubId: {
         type: String,
-        ref: 'Club',
         required: true
     },
-    dep: {
+    department: {
         type: String,
-        ref: 'Department',
         required: true
     },
     status: {
@@ -46,7 +43,7 @@ const contSchema = new mongoose.Schema({
         enum: ['pending', 'approved', 'rejected'], 
         default: 'pending'
     },
-    created_at: {
+    createdAt: {
         type: Date,
         default: Date.now
     }

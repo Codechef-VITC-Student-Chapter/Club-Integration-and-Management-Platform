@@ -133,9 +133,9 @@ function SignUpForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          regno: formData.reg_no,
-          firstname: formData.firstName,
-          lastname: formData.lastName,
+          regNo: formData.reg_no,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
           email: formData.email,
           password: hashPassword(formData.password),
         }),
