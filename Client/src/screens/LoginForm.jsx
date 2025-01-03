@@ -32,18 +32,17 @@ function LoginForm() {
       const data = await response.json();
 
       if (data.token) {
-        localStorage.setItem("token", data.token);
-        var payload = JSON.parse(window.atob(data.token.split(".")[1]));
+        localStorage.setItem('token', data.token);
+        var payload = JSON.parse(window.atob(data.token.split('.')[1]));
         setCurrentUser(payload.user_id);
         setToken(data.token);
       }
     } catch (error) {
-      console.log("Error in logging in! " + error);
+      toast.error('Error in logging in!');
+      console.log('Error in logging in! ' + error);
     }
   };
 
-  
-  
   return (
     <div className="bg-[#E9F1FE] relative h-screen overflow-hidden">
       <img
