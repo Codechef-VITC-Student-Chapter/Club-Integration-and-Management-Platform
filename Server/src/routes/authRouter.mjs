@@ -10,6 +10,7 @@ function hashPassword(password) {
 }
 
 authRouter.post('/signup', async (req, res) => {
+  console.log('here!');
   const { regno, firstname, lastname, email, password } = req.body;
   const user_id = 'UID' + regno;
 

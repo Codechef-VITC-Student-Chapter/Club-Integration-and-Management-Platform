@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import Logo from "../assets/logo.png";
-import { PiUserCircle, PiLockLight } from "react-icons/pi";
-import { useRunningContext } from "../contexts/RunningContext";
-import loginImage from "../assets/loginScreen_Background.png";
-import mobileLoginImage from "../assets/mobileLoginScreen_Background.png";
+import React, { useState } from 'react';
+import Logo from '../assets/logo.png';
+import { PiUserCircle, PiLockLight } from 'react-icons/pi';
+import { useRunningContext } from '../contexts/RunningContext';
+import loginImage from '../assets/loginScreen_Background.png';
+import mobileLoginImage from '../assets/mobileLoginScreen_Background.png';
 
-import SHA256 from "crypto-js/sha256";
+import SHA256 from 'crypto-js/sha256';
+import { toast } from 'react-toastify';
 function hashPassword(password) {
   return SHA256(password).toString();
 }
@@ -14,15 +15,15 @@ function LoginForm() {
   const { baseURL, setCurrentUser, currentUser, setToken } =
     useRunningContext();
 
-  const [regno, setRegno] = useState("");
-  const [password, setPassword] = useState("");
+  const [regno, setRegno] = useState('');
+  const [password, setPassword] = useState('');
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await fetch(`${baseURL}/authApi/login`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           regno: regno,

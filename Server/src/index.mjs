@@ -5,7 +5,6 @@ import cors from 'cors';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
-
 import userRouter from './routes/usersRouter.mjs';
 import clubRouter from './routes/clubRouter.mjs';
 import authRouter from './routes/authRouter.mjs';
@@ -16,7 +15,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
 app.use('/userApi', userRouter);
 app.use('/clubApi', clubRouter);

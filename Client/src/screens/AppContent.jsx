@@ -35,9 +35,9 @@ function AppContent() {
           {isAdmin && <Route path="/requests" element={<SeeRequests />} />}
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/dashboard" element={<MemberDashboard />} />
-          <Route path="/login" element={<MemberDashboard />} />
-          <Route path="/signup" element={<MemberDashboard />} />
-          <Route path="/adminview" element={<Admin_view/>}/>
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/signup" element={<SignUpForm />} />
+          <Route path="/adminview" element={<Admin_view />} />
           <Route path="/" element={<MemberDashboard />} />
           <Route path="/*" element={<PageNotFound />} />
         </Routes>
