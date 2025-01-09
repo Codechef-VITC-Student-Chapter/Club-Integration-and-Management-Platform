@@ -1,8 +1,8 @@
-import express from 'express';
-import { authenticateToken } from '../middleware/authenticateToken.mjs';
-import { getContributionById } from '../utils/contUtils.mjs';
-import { getClubById } from '../utils/clubUtils.mjs';
-import { getDepartmentById } from '../utils/depsUtils.mjs';
+import express from "express";
+import { authenticateToken } from "../middleware/authenticateToken.mjs";
+import { getContributionById } from "../utils/contUtils.mjs";
+import { getClubById } from "../utils/clubUtils.mjs";
+import { getDepartmentById } from "../utils/depsUtils.mjs";
 
 import {
   removeUser,
@@ -14,10 +14,10 @@ import {
   removeClubs,
   addContributions,
   removeContributions,
-} from '../utils/userUtils.mjs';
+} from "../utils/userUtils.mjs";
 
-import { addUserToClub } from '../utils/clubUtils.mjs';
-import { getRequests } from '../utils/contUtils.mjs';
+import { addUserToClub } from "../utils/clubUtils.mjs";
+import { getRequests } from "../utils/contUtils.mjs";
 
 const userRouter = express.Router();
 
@@ -34,7 +34,7 @@ userRouter.use(authenticateToken);
 // });
 
 // Route to get user data
-userRouter.get('/get/:userId', async (req, res) => {
+userRouter.get("/get/:userId", async (req, res) => {
   try {
     const user = await getUserById(req.params.userId);
     res.status(200).json(user);
@@ -44,7 +44,7 @@ userRouter.get('/get/:userId', async (req, res) => {
 });
 
 // Route to get user requests
-userRouter.get('/get-requests/:userId', async (req, res) => {
+userRouter.get("/get-requests/:userId", async (req, res) => {
   try {
     const requests = await getRequests(req.params.userId);
     const answer = [];
@@ -77,38 +77,42 @@ userRouter.get('/get-requests/:userId', async (req, res) => {
 });
 
 // Route to get user contribution data
-userRouter.post('/get-contribution-data', async (req, res) => {
+userRouter.post("/get-contribution-data", async (req, res) => {
   try {
     const user = await getUserById(req.body.user);
     const contributions = user.contributions;
     const contributionData = [];
+    // console.log("Got user");
 
     for (const contributionId of contributions) {
       const contribution = await getContributionById(contributionId);
-      const club = await getClubById(contribution.club.type);
-      const department = await getDepartmentById(contribution.department.type);
+      // console.log("Got cont");
 
+      const club = await getClubById(contribution.clubId);
+      // console.log("Getting Data");
+      const department = await getDepartmentById(contribution.department);
       const temp = {
-        contId: contribution.contId,
+        contId: contribution.ID,
         title: contribution.title,
         points: contribution.points,
-        user: contribution.user,
+        user: contribution.userId,
         description: contribution.description,
         proofFiles: contribution.proofFiles,
         target: contribution.target,
-        club: contribution.club,
+        club: contribution.clubId,
         dep: contribution.department,
         status: contribution.status,
         createdAt: contribution.createdAt,
         clubName: club.clubName,
-        departmentName: department.depName,
+        departmentName: department.departmentName,
       };
       contributionData.push(temp);
     }
+    // console.log(contributionData);
 
     res.status(200).json(contributionData);
   } catch (error) {
-    res.status(error.status).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
