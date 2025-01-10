@@ -1,35 +1,35 @@
 import express from "express";
 import crypto from "crypto";
-
+import CryptoJs from "crypto-js";
 import { generateToken } from "../utils/jwtUtils.mjs";
 import { addUser, getUserByReg } from "../utils/userUtils.mjs";
 
 const authRouter = express.Router();
 
+// function hashPassword(password) {
+//   return crypto.createHash("sha256").update(password).digest("hex");
+// }
+const { SHA256 } = CryptoJs;
 function hashPassword(password) {
-  return crypto.createHash("sha256").update(password).digest("hex");
+  return SHA256(password).toString();
 }
-
 authRouter.post("/signup", async (req, res) => {
-  const { regNo, firstName, lastName, email, password } = req.body;
-  const userId = "UID" + regNo;
-
+  const { reg_number, first_name, last_name, email, password } = req.body;
+  const user_id = "UID" + reg_number;
   try {
     const newUser = {
-      ID: userId,
-      registrationNumber: regNo,
-      firstName,
-      lastName,
+      id: user_id,
+      reg_number,
+      first_name,
+      last_name,
       email,
-      passwordHash: hashPassword(password),
+      password: hashPassword(password),
     };
-
     await addUser(newUser);
-
     const token = await generateToken({
-      id: newUser.userId,
-      name: newUser.firstName + " " + newUser.lastName,
-      isLead: newUser.isLead,
+      id: newUser.user_id,
+      name: newUser.first_name + " " + newUser.last_name,
+      is_lead: newUser.is_lead,
     });
     res.json({ token });
   } catch (error) {
@@ -39,25 +39,24 @@ authRouter.post("/signup", async (req, res) => {
 });
 
 authRouter.post("/login", async (req, res) => {
-  const { regNo, password } = req.body;
+  const { reg_number, password } = req.body;
 
   try {
-    const user = await getUserByReg(regNo);
+    const user = await getUserByReg(reg_number);
 
     if (!user) {
       return res.status(404).send("User not found");
     }
-
-    const isMatch = hashPassword(password) === user.passwordHash;
+    const isMatch = hashPassword(password) === user.password;
 
     if (!isMatch) {
       return res.status(401).send("Invalid credentials");
     }
 
     const token = await generateToken({
-      id: user.ID,
-      name: user.firstName + " " + user.lastName,
-      isLead: user.isLead,
+      id: user.id,
+      name: user.first_name + " " + user.last_name,
+      is_lead: user.is_lead,
     });
     res.json({ token });
   } catch (error) {

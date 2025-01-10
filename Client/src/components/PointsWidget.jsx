@@ -2,12 +2,13 @@ import React from "react";
 
 function PointsWidget({ clubPoints, pendingPoints }) {
   const clubNames = Object.keys(clubPoints);
+  // console.log(clubNames);
 
   return (
     <div className="rounded-3xl h-[166px] md:h-[203px] bg-white w-full max-w-[409px] flex flex-col border border-black border-solid">
       {clubNames.map((club) => {
-        const totalPoints = clubPoints[club]?.total || 45; // Extract total points from clubPoints
-        const pendingPointsForClub = pendingPoints[club] || 10; // Extract pending points
+        const totalPoints = clubPoints[club] || 0; // Extract total points from clubPoints
+        const pendingPointsForClub = pendingPoints[club] || 0; // Extract pending points
         const remainingPoints = 100 - (totalPoints + pendingPointsForClub);
 
         const radius = 50;
@@ -29,7 +30,12 @@ function PointsWidget({ clubPoints, pendingPoints }) {
             <div className="flex md:flex-row justify-center items-center pt-4">
               <div className="rounded-full h-28 w-28 md:h-36 md:w-36 relative flex justify-center items-center pb-2 transform scale-90 sm:scale-100">
                 <div className="flex">
-                  <svg width="100%" height="100%" viewBox="0 0 120 120" className="rounded-full">
+                  <svg
+                    width="100%"
+                    height="100%"
+                    viewBox="0 0 120 120"
+                    className="rounded-full"
+                  >
                     <circle
                       cx="60"
                       cy="60"

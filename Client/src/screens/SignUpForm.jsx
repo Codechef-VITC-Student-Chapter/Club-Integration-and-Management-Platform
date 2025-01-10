@@ -45,19 +45,19 @@ function SignUpForm() {
   const { baseURL, setCurrentUser, setIsAdmin, setToken } = useRunningContext();
 
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
-    reg_no: "",
+    reg_number: "",
     password: "",
     confirmPassword: "",
   });
 
   const [errors, setErrors] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     email: "",
-    reg_no: "",
+    reg_number: "",
     password: "",
     confirmPassword: "",
   });
@@ -66,13 +66,13 @@ function SignUpForm() {
     let isValid = true;
     const newErrors = {};
 
-    if (!formData.firstName) {
-      newErrors.firstName = "First Name is required";
+    if (!formData.first_name) {
+      newErrors.first_name = "First Name is required";
       isValid = false;
     }
 
-    if (!formData.lastName) {
-      newErrors.lastName = "Last Name is required";
+    if (!formData.last_name) {
+      newErrors.last_name = "Last Name is required";
       isValid = false;
     }
 
@@ -84,13 +84,13 @@ function SignUpForm() {
       isValid = false;
     }
 
-    if (!formData.reg_no) {
-      newErrors.reg_no = "Register Number is required";
+    if (!formData.reg_number) {
+      newErrors.reg_number = "Register Number is required";
       isValid = false;
     } else if (
-      !/^[0-9]{2}[A-Z]{3}[0-9]{4,5}$/.test(formData.reg_no.toUpperCase())
+      !/^[0-9]{2}[A-Z]{3}[0-9]{4,5}$/.test(formData.reg_number.toUpperCase())
     ) {
-      newErrors.reg_no = "Register Number is not in the format required";
+      newErrors.reg_number = "Register Number is not in the format required";
       isValid = false;
     }
 
@@ -133,9 +133,9 @@ function SignUpForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          regNo: formData.reg_no,
-          firstName: formData.firstName,
-          lastName: formData.lastName,
+          reg_number: formData.reg_number,
+          first_name: formData.first_name,
+          last_name: formData.last_name,
           email: formData.email,
           password: hashPassword(formData.password),
         }),
@@ -146,8 +146,9 @@ function SignUpForm() {
       if (data.token) {
         localStorage.setItem("token", data.token);
         var payload = JSON.parse(window.atob(data.token.split(".")[1]));
-        setCurrentUser(payload.user_id);
-        // setIsAdmin(payload.is_admin);
+        // console.log(payload);
+        setCurrentUser(payload.id);
+        setIsAdmin(payload.is_lead);
         setToken(data.token);
       }
     } catch (error) {
@@ -158,6 +159,7 @@ function SignUpForm() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    // console.log({ [name]: value });
     validate();
   };
 
@@ -201,7 +203,7 @@ function SignUpForm() {
                   </label>
                   <div
                     className={`flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm ${
-                      errors.firstName ? "border-red-500" : "border-black"
+                      errors.first_name ? "border-red-500" : "border-black"
                     }`}
                   >
                     <div className="p-2">
@@ -209,16 +211,16 @@ function SignUpForm() {
                     </div>
                     <input
                       type="text"
-                      name="firstName"
-                      value={formData.firstName}
+                      name="first_name"
+                      value={formData.first_name}
                       onChange={handleChange}
                       className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md`}
                       placeholder="First Name"
                     />
                   </div>
-                  {errors.firstName && (
+                  {errors.first_name && (
                     <p className="text-red-500 text-xs sm:text-sm mt-1">
-                      {errors.firstName}
+                      {errors.first_name}
                     </p>
                   )}
                 </div>
@@ -228,7 +230,7 @@ function SignUpForm() {
                   </label>
                   <div
                     className={`flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm ${
-                      errors.lastName ? "border-red-500" : "border-black"
+                      errors.last_name ? "border-red-500" : "border-black"
                     }`}
                   >
                     <div className="p-2">
@@ -236,16 +238,16 @@ function SignUpForm() {
                     </div>
                     <input
                       type="text"
-                      name="lastName"
-                      value={formData.lastName}
+                      name="last_name"
+                      value={formData.last_name}
                       onChange={handleChange}
                       className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md`}
                       placeholder="Last Name"
                     />
                   </div>
-                  {errors.lastName && (
+                  {errors.last_name && (
                     <p className="text-red-500 text-xs sm:text-sm mt-1">
-                      {errors.lastName}
+                      {errors.last_name}
                     </p>
                   )}
                 </div>
@@ -283,7 +285,7 @@ function SignUpForm() {
                 </label>
                 <div
                   className={`flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm ${
-                    errors.reg_no ? "border-red-500" : "border-black"
+                    errors.reg_number ? "border-red-500" : "border-black"
                   }`}
                 >
                   <div className="p-2">
@@ -291,16 +293,16 @@ function SignUpForm() {
                   </div>
                   <input
                     type="text"
-                    name="reg_no"
-                    value={formData.reg_no}
+                    name="reg_number"
+                    value={formData.reg_number}
                     onChange={handleChange}
                     className={`appearance-none block w-full pr-3 py-1 md:py-2 placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md `}
                     placeholder="Registration Number"
                   />
                 </div>
-                {errors.reg_no && (
+                {errors.reg_number && (
                   <p className="text-red-500 text-xs sm:text-sm mt-1">
-                    {errors.reg_no}
+                    {errors.reg_number}
                   </p>
                 )}
               </div>
@@ -335,9 +337,11 @@ function SignUpForm() {
                 <label className="block text-sm text-black mb-1">
                   CONFIRM PASSWORD
                 </label>
-                <div className={`flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm ${
-                      errors.confirmPassword ? "border-red-500" : "border-black"
-                    }`}>
+                <div
+                  className={`flex items-center border-[1px] md:border-2 border-black rounded-md shadow-sm ${
+                    errors.confirmPassword ? "border-red-500" : "border-black"
+                  }`}
+                >
                   <div className="p-2">
                     <PiLockLight className="h-5 w-5 text-black" />
                   </div>

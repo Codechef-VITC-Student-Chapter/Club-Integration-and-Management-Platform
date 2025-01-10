@@ -2,15 +2,15 @@ import Profile from "../assets/dashboard_Profile.png";
 import Badge from "./Badge";
 
 const ProfileCard = ({
-  isAdmin = true,
-  FirstName = "FirstName",
-  LastName = "LastName",
-  regNo,
+  isAdmin = false,
+  first_name = "first_name",
+  last_name = "last_name",
+  reg_number,
   badges = [],
 }) => {
   return (
     <div
-      className={`h-full w-full rounded-3xl flex flex-col p-4 gap-6 justify-center items-center text-white`}
+      className={`h-full w-full rounded-3xl flex flex-col p-2 gap-6 justify-center items-center text-white`}
     >
       <div className="w-full h-full flex-col gap-8 items-center text-center md:block hidden">
         {isAdmin && (
@@ -27,10 +27,10 @@ const ProfileCard = ({
         <div className="flex flex-col gap-5 h-full w-full justify-between items-center text-center">
           <div className="lg:text-xl text-md">
             <div className="flex sm:gap-3 gap-0 sm:flex-row flex-col justify-center items-center">
-              <span>{FirstName}</span>
-              <span>{LastName}</span>
+              <span>{first_name}</span>
+              <span>{last_name}</span>
             </div>
-            <span className="font-semibold">{regNo}</span>
+            <span className="font-semibold">{reg_number}</span>
           </div>
           <div className="md:flex hidden w-full justify-star">
             <Badge badges={badges} />

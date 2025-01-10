@@ -6,72 +6,6 @@ import { useRunningContext } from "../contexts/RunningContext";
 import ProfileCard from "../components/ProfileCard";
 import Badge from "../components/Badge";
 
-// const MOCK_CONTRIBUTIONS = [
-//   {
-//     cont_id: "1",
-//     title: "Task 1",
-//     target: "User A",
-//     dep: "Web Dev",
-//     created_at: "2024-10-01",
-//     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
-//     points: 10,
-//     status: "accepted",
-//   },
-//   {
-//     cont_id: "2",
-//     title: "Task 2",
-//     target: "User B",
-//     dep: "Web Dev",
-//     created_at: "2024-10-01",
-//     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
-//     points: 10,
-//     status: "rejected",
-//   },
-//   {
-//     cont_id: "1",
-//     title: "Task 3",
-//     target: "User C",
-//     dep: "Web Dev",
-//     created_at: "2024-10-01",
-//     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
-//     points: 10,
-//     status: "accepted",
-//   },
-// ];
-
-// const MOCK_PENDING = [
-//   {
-//     cont_id: "1",
-//     title: "Task 1",
-//     target: "User A",
-//     dep: "Web Dev",
-//     created_at: "2024-10-01",
-//     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
-//     points: 10,
-//     status: "pending",
-//   },
-//   {
-//     cont_id: "2",
-//     title: "Task 2",
-//     target: "User B",
-//     dep: "Web Dev",
-//     created_at: "2024-10-01",
-//     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
-//     points: 10,
-//     status: "pending",
-//   },
-//   {
-//     cont_id: "1",
-//     title: "Task 3",
-//     target: "User C",
-//     dep: "Web Dev",
-//     created_at: "2024-10-01",
-//     desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime laudantium asperiores itaque fuga illo incidunt quam ipsam repellendus cumque at",
-//     points: 10,
-//     status: "pending",
-//   },
-// ];
-
 function MemberDashboard() {
   const {
     baseURL,
@@ -90,7 +24,7 @@ function MemberDashboard() {
 
   const fetchContributions = async () => {
     // console.log(userDetails);
-    if (!userDetails?.ID) return;
+    if (!userDetails?.id) return;
 
     try {
       const response = await fetch(`${baseURL}/userApi/get-contribution-data`, {
@@ -99,11 +33,11 @@ function MemberDashboard() {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ user: userDetails.ID }),
+        body: JSON.stringify({ user: userDetails.id }),
       });
 
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       if (response.status === 403) {
         handleError("Fetching contributions", data.error);
         return;
@@ -129,7 +63,8 @@ function MemberDashboard() {
         },
         { done: [], pending: [], donePoints: 0, pendingPoints: 0 }
       );
-
+      // console.log(donePoints, pPoints);
+      // console.log(pending);
       setContributions(done);
       setPendingContributions(pending);
       setClubPoints({ codechefvitc: donePoints });
@@ -143,7 +78,7 @@ function MemberDashboard() {
   };
 
   const fetchUserDetails = async () => {
-    console.log(currentUser);
+    // console.log(currentUser);
     if (!currentUser) return;
 
     try {
@@ -161,6 +96,7 @@ function MemberDashboard() {
       }
 
       const userData = await response.json();
+      // console.log(userData);
       setUserDetails(userData);
     } catch (error) {
       handleError("Error fetching user details", error.message);
@@ -178,6 +114,8 @@ function MemberDashboard() {
       fetchContributions();
     }
   }, [userDetails]);
+  // console.log(isAdmin);
+  // console.log();
 
   return (
     <div className="min-h-screen bg-[#e8f1fe]">
@@ -185,12 +123,13 @@ function MemberDashboard() {
         <aside className="w-full xl:w-1/4 md:w-[30%]">
           <div className="flex md:flex-col flex-row md:gap-3 items-center justify-center md:pb-12">
             <div className="md:w-full xl:px-10 lg:p-8 md:px-1 px-2 flex items-center flex-col">
-              {!isAdmin && (
-                <div className="bg-[#4079DA] p-3 rounded-xl text-white text-md mx-1  text-center min-w-[50%] ">
-                  Admin View
-                </div>
-              )}
-              <ProfileCard isAdmin={isAdmin} badges={badges} />
+              <ProfileCard
+                isAdmin={isAdmin}
+                badges={badges}
+                first_name={userDetails?.first_name}
+                last_name={userDetails?.last_name}
+                reg_number={userDetails?.reg_number}
+              />
             </div>
 
             <div className="flex flex-col items-center md:p-4 pr-6 pt-5 w-full">

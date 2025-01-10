@@ -79,6 +79,7 @@ userRouter.get("/get-requests/:userId", async (req, res) => {
 // Route to get user contribution data
 userRouter.post("/get-contribution-data", async (req, res) => {
   try {
+    // console.log(req.body);
     const user = await getUserById(req.body.user);
     const contributions = user.contributions;
     const contributionData = [];
@@ -88,23 +89,23 @@ userRouter.post("/get-contribution-data", async (req, res) => {
       const contribution = await getContributionById(contributionId);
       // console.log("Got cont");
 
-      const club = await getClubById(contribution.clubId);
+      const club = await getClubById(contribution.club_id);
       // console.log("Getting Data");
       const department = await getDepartmentById(contribution.department);
       const temp = {
-        contId: contribution.ID,
+        id: contribution.id,
         title: contribution.title,
         points: contribution.points,
-        user: contribution.userId,
+        user: contribution.user_id,
         description: contribution.description,
-        proofFiles: contribution.proofFiles,
+        proof_files: contribution.proof_files,
         target: contribution.target,
-        club: contribution.clubId,
-        dep: contribution.department,
+        club: contribution.club_id,
+        department: contribution.department,
         status: contribution.status,
-        createdAt: contribution.createdAt,
-        clubName: club.clubName,
-        departmentName: department.departmentName,
+        created_at: contribution.created_at,
+        club_name: club.name,
+        department_name: department.department_name,
       };
       contributionData.push(temp);
     }
@@ -112,6 +113,7 @@ userRouter.post("/get-contribution-data", async (req, res) => {
 
     res.status(200).json(contributionData);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 });
