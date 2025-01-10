@@ -1,21 +1,22 @@
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-import depsSchema from '../DB/Schemas/depsSchema.mjs';
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import depsSchema from "../DB/Schemas/depsSchema.mjs";
 
 dotenv.config();
 
-const connectionString = process.env.CONNECTION_STRING;
+// const connectionString = process.env.CONNECTION_STRING;
 
-mongoose
-  .connect(connectionString)
-  .then(() => {
-    console.log('Connected to MongoDB');
-  })
-  .catch((err) => {
-    console.log(err);
-  });
+// mongoose
+//   .connect(connectionString)
+//   .then(() => {
+//     console.log('Connected to MongoDB');
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
 
-const Department = mongoose.models.Department || mongoose.model('Department', depsSchema);
+const Department =
+  mongoose.models.Department || mongoose.model("Department", depsSchema);
 
 export const addDepartment = async (depsData) => {
   try {
@@ -24,7 +25,7 @@ export const addDepartment = async (depsData) => {
     return newDepartment;
   } catch (error) {
     console.log(error);
-    throw new Error('Failed to add department');
+    throw new Error("Failed to add department");
   }
 };
 
@@ -34,23 +35,23 @@ export const removeDepartment = async (ID) => {
       ID: ID,
     });
     if (!deletedDepartment) {
-      throw new Error('Department not found');
+      throw new Error("Department not found");
     }
     return deletedDepartment;
   } catch (error) {
-    throw new Error('Failed to remove department');
+    throw new Error("Failed to remove department");
   }
 };
 
 export const getDepartmentById = async (ID) => {
   try {
-    const department = await Department.findOne({ ID: ID });
+    const department = await Department.findOne({ id: ID });
     if (!department) {
-      throw new Error('Department not found');
+      throw new Error("Department not found");
     }
     return department;
   } catch (error) {
-    throw new Error('Failed to fetch department');
+    throw new Error("Failed to fetch department");
   }
 };
 
@@ -58,7 +59,7 @@ export const addSubDepartment = async (ID, subDeptId) => {
   try {
     const department = await Department.findOne({ ID: ID });
     if (!department) {
-      throw new Error('Department not found');
+      throw new Error("Department not found");
     }
     if (!department.subDepartments.includes(subDeptId)) {
       department.subDepartments.push(subDeptId);
@@ -66,7 +67,7 @@ export const addSubDepartment = async (ID, subDeptId) => {
     }
     return department;
   } catch (error) {
-    throw new Error('Failed to add sub-department to department');
+    throw new Error("Failed to add sub-department to department");
   }
 };
 
@@ -74,7 +75,7 @@ export const removeSubDepartment = async (ID, subDeptId) => {
   try {
     const department = await Department.findOne({ ID: ID });
     if (!department) {
-      throw new Error('Department not found');
+      throw new Error("Department not found");
     }
     department.subDepartments = department.subDepartments.filter(
       (subdep) => subdep !== subDeptId
@@ -82,7 +83,7 @@ export const removeSubDepartment = async (ID, subDeptId) => {
     await department.save();
     return department;
   } catch (error) {
-    throw new Error('Failed to remove sub-department from department');
+    throw new Error("Failed to remove sub-department from department");
   }
 };
 
@@ -90,7 +91,7 @@ export const addLeadToDepartment = async (ID, userId) => {
   try {
     const department = await Department.findOne({ ID: ID });
     if (!department) {
-      throw new Error('Department not found');
+      throw new Error("Department not found");
     }
     if (!department.departmentLeads.includes(userId)) {
       department.departmentLeads.push(userId);
@@ -98,7 +99,7 @@ export const addLeadToDepartment = async (ID, userId) => {
     }
     return department;
   } catch (error) {
-    throw new Error('Failed to add lead to department');
+    throw new Error("Failed to add lead to department");
   }
 };
 
@@ -106,7 +107,7 @@ export const removeLeadFromDepartment = async (ID, userId) => {
   try {
     const department = await Department.findOne({ ID: ID });
     if (!department) {
-      throw new Error('Department not found');
+      throw new Error("Department not found");
     }
     department.departmentLeads = department.departmentLeads.filter(
       (user) => user !== userId
@@ -114,6 +115,6 @@ export const removeLeadFromDepartment = async (ID, userId) => {
     await department.save();
     return department;
   } catch (error) {
-    throw new Error('Failed to remove lead from department');
+    throw new Error("Failed to remove lead from department");
   }
 };

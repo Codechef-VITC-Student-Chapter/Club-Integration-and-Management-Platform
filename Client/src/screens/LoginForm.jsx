@@ -12,8 +12,14 @@ function hashPassword(password) {
 }
 
 function LoginForm() {
-  const { baseURL, setCurrentUser, currentUser, setToken } =
-    useRunningContext();
+  const {
+    baseURL,
+    setCurrentUser,
+    currentUser,
+    setToken,
+    setIsAdmin,
+    isAdmin,
+  } = useRunningContext();
 
   const [regNo, setregNo] = useState("");
   const [password, setPassword] = useState("");
@@ -26,17 +32,22 @@ function LoginForm() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          regNo: regNo,
+          reg_number: regNo,
           password: hashPassword(password),
         }),
       });
+      // console.log(response);
+
       const data = await response.json();
       // console.log(data);
       if (data.token) {
         localStorage.setItem("token", data.token);
         var payload = JSON.parse(window.atob(data.token.split(".")[1]));
         // console.log(payload);
-        setCurrentUser(payload.user_id);
+        setCurrentUser(payload.id);
+        setIsAdmin(payload.is_lead);
+        console.log(currentUser);
+
         setToken(data.token);
       }
     } catch (error) {
