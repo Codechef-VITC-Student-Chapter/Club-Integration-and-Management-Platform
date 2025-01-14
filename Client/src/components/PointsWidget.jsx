@@ -1,21 +1,20 @@
-import React from "react";
-
 function PointsWidget({ clubPoints, pendingPoints }) {
   const clubNames = Object.keys(clubPoints);
-  // console.log(clubNames);
 
   return (
     <div className="rounded-3xl h-[166px] md:h-[203px] bg-white w-full max-w-[409px] flex flex-col border border-black border-solid">
       {clubNames.map((club) => {
-        const totalPoints = clubPoints[club] || 0; // Extract total points from clubPoints
-        const pendingPointsForClub = pendingPoints[club] || 0; // Extract pending points
+        const totalPoints = clubPoints[club] || 0;
+        const pendingPointsForClub = pendingPoints[club] || 0;
         const remainingPoints = 100 - (totalPoints + pendingPointsForClub);
 
         const radius = 50;
         const circumference = 2 * Math.PI * radius;
-        const totalPointsDash = (totalPoints / 100) * circumference;
-        const pendingPointsDash = (pendingPointsForClub / 100) * circumference;
-        const remainingPointsDash = (remainingPoints / 100) * circumference;
+
+        // Calculate dash lengths for each segment
+        const completedDash = (totalPoints / 100) * circumference;
+        const pendingDash = (pendingPointsForClub / 100) * circumference;
+        const remainingDash = (remainingPoints / 100) * circumference;
 
         return (
           <div key={club} className="flex flex-col">
@@ -34,36 +33,39 @@ function PointsWidget({ clubPoints, pendingPoints }) {
                     width="100%"
                     height="100%"
                     viewBox="0 0 120 120"
-                    className="rounded-full"
+                    className="rounded-full transform -rotate-90" // Rotate SVG so the circle starts from the top
                   >
+                    {/* Background circle (black) */}
                     <circle
                       cx="60"
                       cy="60"
                       r={radius}
                       fill="none"
-                      stroke="green"
+                      stroke="#333333"
                       strokeWidth="10"
-                      strokeDasharray={`${totalPointsDash} ${circumference}`}
+                      strokeDasharray={`${circumference} ${circumference}`}
                     />
+                    {/* Pending points (yellow) */}
                     <circle
                       cx="60"
                       cy="60"
                       r={radius}
                       fill="none"
-                      stroke="yellow"
+                      stroke="#FFC107"
                       strokeWidth="10"
-                      strokeDasharray={`${pendingPointsDash} ${circumference}`}
-                      strokeDashoffset={-totalPointsDash}
+                      strokeDasharray={`${pendingDash} ${circumference}`}
+                      strokeDashoffset={-completedDash}
                     />
+                    {/* Completed points (green) - drawn last to be on top */}
                     <circle
                       cx="60"
                       cy="60"
                       r={radius}
                       fill="none"
-                      stroke="black"
+                      stroke="#4CAF50"
                       strokeWidth="10"
-                      strokeDasharray={`${remainingPointsDash} ${circumference}`}
-                      strokeDashoffset={-(totalPointsDash + pendingPointsDash)}
+                      strokeDasharray={`${completedDash} ${circumference}`}
+                      strokeDashoffset="0"
                     />
                   </svg>
                 </div>
@@ -75,22 +77,22 @@ function PointsWidget({ clubPoints, pendingPoints }) {
                 </div>
               </div>
               <div className="flex flex-col justify-center items-center mt-4 md:mt-0 transform scale-90 sm:scale-100">
-                <h1 className="text-green-700 font-bold text-sm md:text-lg md:block hidden">
+                <h1 className="text-[#4CAF50] font-bold text-sm md:text-lg md:block hidden">
                   Total Points Earned
                 </h1>
-                <h1 className="text-green-700 font-bold text-sm md:text-lg md:hidden block">
+                <h1 className="text-[#4CAF50] font-bold text-sm md:text-lg md:hidden block">
                   Earned
                 </h1>
-                <h1 className="text-green-700 text-sm md:text-base">
+                <h1 className="text-[#4CAF50] text-sm md:text-base">
                   {totalPoints}/100
                 </h1>
-                <h1 className="text-yellow-400 font-bold text-sm md:text-lg md:block hidden">
+                <h1 className="text-[#FFC107] font-bold text-sm md:text-lg md:block hidden">
                   Pending Points
                 </h1>
-                <h1 className="text-yellow-400 font-bold text-sm md:text-lg md:hidden block">
+                <h1 className="text-[#FFC107] font-bold text-sm md:text-lg md:hidden block">
                   Pending
                 </h1>
-                <h1 className="text-yellow-400 text-sm md:text-base">
+                <h1 className="text-[#FFC107] text-sm md:text-base">
                   {pendingPointsForClub}
                 </h1>
               </div>
