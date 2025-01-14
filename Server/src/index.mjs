@@ -26,14 +26,15 @@ mongoose
     console.log(err);
   });
 
+app.use(express.json());
 app.use(
   cors({
     origin: process.env.CLIENT_ORIGIN,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-app.use(express.json());
 
 app.use("/userApi", userRouter);
 app.use("/clubApi", clubRouter);

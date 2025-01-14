@@ -15,7 +15,7 @@ function hashPassword(password) {
 }
 authRouter.post("/signup", async (req, res) => {
   const { reg_number, first_name, last_name, email, password } = req.body;
-  const user_id = "UID" + reg_number;
+  const user_id = "UID" + reg_number.toUpperCase();
   try {
     const newUser = {
       id: user_id,

@@ -1,4 +1,4 @@
-import express from 'express';
+import express from "express";
 import {
   addClub,
   removeClub,
@@ -7,9 +7,11 @@ import {
   removeDepartmentFromClub,
   addUserToClub,
   removeUserFromClub,
-} from '../utils/clubUtils.mjs';
+} from "../utils/clubUtils.mjs";
 
-import { getDepartmentById } from '../utils/depsUtils.mjs';
+import { getDepartmentById } from "../utils/depsUtils.mjs";
+import { getUserById, getUserByReg } from "../utils/userUtils.mjs";
+import clubSchema from "../DB/Schemas/clubSchema.mjs";
 
 const clubRouter = express.Router();
 
@@ -35,7 +37,7 @@ const clubRouter = express.Router();
 //     }
 // });
 
-clubRouter.get('/get/:id', async (req, res) => {
+clubRouter.get("/get/:id", async (req, res) => {
   try {
     const clubId = req.params.id;
     const club = await getClubById(clubId);
@@ -65,17 +67,20 @@ clubRouter.get('/get/:id', async (req, res) => {
 //     }
 // });
 
-clubRouter.post('/get-departments', async (req, res) => {
+clubRouter.post("/get-departments", async (req, res) => {
   try {
     const { clubId } = req.body;
     const club = await getClubById(clubId);
-    const departments = [];
-    for (let depId of club.departments) {
-      const department = await getDepartmentById(depId);
-      departments.push({ id: depId, name: department.depName });
-    }
+    let departments = [];
+    departments = await Promise.all(
+      club.departments.map(async (id) => {
+        const department = await getDepartmentById(id);
+        return { id, name: department.department_name };
+      })
+    );
     res.status(200).json(departments);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: error.message });
   }
 });
