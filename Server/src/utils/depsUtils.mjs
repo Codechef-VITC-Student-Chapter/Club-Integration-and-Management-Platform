@@ -51,6 +51,7 @@ export const getDepartmentById = async (ID) => {
     }
     return department;
   } catch (error) {
+    console.log(error);
     throw new Error("Failed to fetch department");
   }
 };

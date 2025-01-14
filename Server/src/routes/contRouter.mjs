@@ -9,6 +9,10 @@ import { authenticateToken } from "../middleware/authenticateToken.mjs";
 
 const contRouter = express.Router();
 contRouter.use(authenticateToken);
+// contRouter.use((req, res, next) => {
+//   console.log("Hello");
+//   next();
+// });
 
 contRouter.post("/add", async (req, res) => {
   try {
@@ -61,7 +65,9 @@ contRouter.get("/get/:id", async (req, res) => {
 
 contRouter.patch("/update-status/:id", async (req, res) => {
   try {
-    if (!req.isLead) {
+    // console.log(req.body);
+    if (!req.body.is_lead) {
+      console.log("Stoopid");
       return res.status(401).json({ error: "User is not a lead" });
     }
     const contId = req.params.id;
@@ -69,7 +75,8 @@ contRouter.patch("/update-status/:id", async (req, res) => {
     const updatedContribution = await updateContributionStatus(contId, status);
     res.status(200).json(updatedContribution);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.log(error);
+    res.status(500).json({ error: error.message });
   }
 });
 

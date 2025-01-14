@@ -140,7 +140,7 @@ function SignUpForm() {
           password: hashPassword(formData.password),
         }),
       });
-      console.log(response);
+      // console.log(response);
       const data = await response.json();
 
       if (data.token) {

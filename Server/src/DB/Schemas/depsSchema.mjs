@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const depsSchema = new mongoose.Schema({
   id: {
@@ -23,6 +23,18 @@ const depsSchema = new mongoose.Schema({
     required: false,
     default: [],
   },
+  tasks: [
+    {
+      title: {
+        type: String,
+        required: true,
+      },
+      points: {
+        type: Number,
+        required: true,
+      },
+    },
+  ],
 });
 
 export default depsSchema;

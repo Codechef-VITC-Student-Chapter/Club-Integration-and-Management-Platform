@@ -66,6 +66,7 @@ export const getContributionById = async (contId) => {
 export const getRequests = async (uid) => {
   try {
     const requests = await Contribution.find({ target: uid });
+    // console.log(requests);
     if (!requests) {
       return { requests: [] };
     }
@@ -82,7 +83,7 @@ export const updateContributionStatus = async (contId, newStatus) => {
       throw new Error("Invalid status");
     }
     const updatedContribution = await Contribution.findOneAndUpdate(
-      { ID: contId },
+      { id: contId },
       { status: newStatus },
       { new: true }
     );

@@ -46,7 +46,7 @@ function LoginForm() {
         // console.log(payload);
         setCurrentUser(payload.id);
         setIsAdmin(payload.is_lead);
-        console.log(currentUser);
+        // console.log(currentUser);
 
         setToken(data.token);
       }

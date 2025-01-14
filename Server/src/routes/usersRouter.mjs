@@ -50,28 +50,30 @@ userRouter.get("/get-requests/:userId", async (req, res) => {
     const answer = [];
 
     for (const request of requests) {
-      const club = await getClubById(request.club);
-      const department = await getDepartmentById(request.dep);
+      // console.log(request.club_id, request.department);
+      const club = await getClubById(request.club_id);
+      const department = await getDepartmentById(request.department);
       const temp = {
-        contId: request.contId,
+        id: request.id,
         title: request.title,
         points: request.points,
-        user: request.user,
+        user_id: request.user_id,
         description: request.description,
-        proofFiles: request.proofFiles,
+        proof_files: request.proof_files,
         target: request.target,
-        club: request.club,
-        dep: request.dep,
-        createdAt: request.createdAt,
+        club_id: request.club_id,
+        department: request.department,
+        created_at: request.created_at,
         status: request.status,
-        clubName: club.clubName,
-        departmentName: department.depName,
+        club_name: club.name,
+        department_name: department.department_name,
       };
       answer.push(temp);
     }
 
     res.status(200).json(answer);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 });
