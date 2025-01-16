@@ -1,8 +1,8 @@
-import express from "express";
-import { authenticateToken } from "../middleware/authenticateToken.mjs";
-import { getContributionById } from "../utils/contUtils.mjs";
-import { getClubById } from "../utils/clubUtils.mjs";
-import { getDepartmentById } from "../utils/depsUtils.mjs";
+import express from 'express';
+import { authenticateToken } from '../middleware/authenticateToken.mjs';
+import { getContributionById } from '../utils/contUtils.mjs';
+import { getClubById } from '../utils/clubUtils.mjs';
+import { getDepartmentById } from '../utils/depsUtils.mjs';
 
 import {
   removeUser,
@@ -14,10 +14,10 @@ import {
   removeClubs,
   addContributions,
   removeContributions,
-} from "../utils/userUtils.mjs";
+} from '../utils/userUtils.mjs';
 
-import { addUserToClub } from "../utils/clubUtils.mjs";
-import { getRequests } from "../utils/contUtils.mjs";
+import { addUserToClub } from '../utils/clubUtils.mjs';
+import { getRequests } from '../utils/contUtils.mjs';
 
 const userRouter = express.Router();
 
@@ -34,7 +34,7 @@ userRouter.use(authenticateToken);
 // });
 
 // Route to get user data
-userRouter.get("/get/:userId", async (req, res) => {
+userRouter.get('/get/:userId', async (req, res) => {
   try {
     const user = await getUserById(req.params.userId);
     res.status(200).json(user);
@@ -44,7 +44,7 @@ userRouter.get("/get/:userId", async (req, res) => {
 });
 
 // Route to get user requests
-userRouter.get("/get-requests/:userId", async (req, res) => {
+userRouter.get('/get-requests/:userId', async (req, res) => {
   try {
     const requests = await getRequests(req.params.userId);
     const answer = [];
@@ -66,7 +66,7 @@ userRouter.get("/get-requests/:userId", async (req, res) => {
         created_at: request.created_at,
         status: request.status,
         club_name: club.name,
-        department_name: department.department_name,
+        department_name: department.department,
       };
       answer.push(temp);
     }
@@ -79,7 +79,7 @@ userRouter.get("/get-requests/:userId", async (req, res) => {
 });
 
 // Route to get user contribution data
-userRouter.post("/get-contribution-data", async (req, res) => {
+userRouter.post('/get-contribution-data', async (req, res) => {
   try {
     // console.log(req.body);
     const user = await getUserById(req.body.user);
@@ -107,7 +107,7 @@ userRouter.post("/get-contribution-data", async (req, res) => {
         status: contribution.status,
         created_at: contribution.created_at,
         club_name: club.name,
-        department_name: department.department_name,
+        department_name: department.department,
       };
       contributionData.push(temp);
     }

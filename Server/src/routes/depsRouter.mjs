@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 import {
   addDepartment,
   removeDepartment,
@@ -7,14 +7,14 @@ import {
   removeSubDepartment,
   addLeadToDepartment,
   removeLeadFromDepartment,
-} from "../utils/depsUtils.mjs";
+} from '../utils/depsUtils.mjs';
 
-import { getUserById } from "../utils/userUtils.mjs";
+import { getUserById } from '../utils/userUtils.mjs';
 
 import {
   addDepartmentToClub,
   removeDepartmentFromClub,
-} from "../utils/clubUtils.mjs";
+} from '../utils/clubUtils.mjs';
 
 const depsRouter = express.Router();
 
@@ -43,7 +43,7 @@ const depsRouter = express.Router();
 //     }
 // });
 
-depsRouter.get("/get/:id", async (req, res) => {
+depsRouter.get('/get/:id', async (req, res) => {
   try {
     const depId = req.params.id;
     const department = await getDepartmentById(depId);
@@ -63,18 +63,18 @@ depsRouter.get("/get/:id", async (req, res) => {
 //     }
 // });
 
-depsRouter.post("/get-leads", async (req, res) => {
+depsRouter.post('/get-leads', async (req, res) => {
   try {
     const { depId } = req.body;
     const department = await getDepartmentById(depId);
-    const leads = department.department_leads;
+    const leads = department.leads;
 
     const leadsWithUserData = await Promise.all(
-      department.department_leads.map(async (lead) => {
+      department.leads.map(async (lead) => {
         const user = await getUserById(lead);
         return {
           user_id: user.id,
-          name: user.first_name + " " + user.last_name,
+          name: user.first_name + ' ' + user.last_name,
         };
       })
     );
