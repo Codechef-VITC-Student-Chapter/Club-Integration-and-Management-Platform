@@ -1,17 +1,17 @@
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState } from 'react';
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route } from 'react-router-dom';
 
-import LoadingScreen from "./LoadingScreen";
-import Navbar from "../components/Navbar";
-import { useRunningContext } from "../contexts/RunningContext";
+import LoadingScreen from './LoadingScreen';
+import Navbar from '../components/Navbar';
+import { useRunningContext } from '../contexts/RunningContext';
 
-const PageNotFound = React.lazy(() => import("./PageNotFound"));
-const LoginForm = React.lazy(() => import("./LoginForm"));
-const SignUpForm = React.lazy(() => import("./SignUpForm"));
-const RequestScreen = React.lazy(() => import("./RequestScreen"));
-const AdminView = React.lazy(() => import("./AdminView"));
-const MemberDashboard = React.lazy(() => import("./MemberDashboard"));
+const PageNotFound = React.lazy(() => import('./PageNotFound'));
+const LoginForm = React.lazy(() => import('./LoginForm'));
+const SignUpForm = React.lazy(() => import('./SignUpForm'));
+const RequestScreen = React.lazy(() => import('./RequestScreen'));
+const AdminView = React.lazy(() => import('./AdminView'));
+const MemberDashboard = React.lazy(() => import('./MemberDashboard'));
 
 function SiteRouter() {
   const { token, isAdmin } = useRunningContext();
@@ -31,7 +31,7 @@ function SiteRouter() {
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route path="/upload" element={<RequestScreen />} />
-          {isAdmin && <Route path="/requests" element={<AdminView />} />}
+          {isAdmin && <Route path="/adminview" element={<AdminView />} />}
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/dashboard" element={<MemberDashboard />} />
           <Route path="/" element={<MemberDashboard />} />

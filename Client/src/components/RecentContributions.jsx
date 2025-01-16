@@ -1,5 +1,5 @@
-import React from "react";
-import TaskComponent from "./TaskComponent"; // Adjusting import path to match actual component name
+import React from 'react';
+import TaskComponent from './TaskComponent'; // Adjusting import path to match actual component name
 
 function RecentContributions({ contributions }) {
   return (
@@ -12,7 +12,7 @@ function RecentContributions({ contributions }) {
             key={contribution.id}
             taskName={contribution.title} // Match the prop name expected in TaskComponent
             target={contribution.target} // Match the prop name expected in TaskComponent
-            department={contribution.department_name} // Match the prop name expected in TaskComponent
+            department={contribution.department} // Match the prop name expected in TaskComponent
             date={contribution.created_at} // Match the prop name expected in TaskComponent
             description={contribution.description} // Match the prop name expected in TaskComponent
             id={contribution.id} // Assuming you want to pass the ID as well

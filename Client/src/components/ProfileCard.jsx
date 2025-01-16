@@ -1,13 +1,16 @@
-import Profile from "../assets/dashboard_Profile.png";
-import Badge from "./Badge";
+import Profile from '../assets/dashboard_Profile.png';
+import Badge from './Badge';
+import { useNavigate } from 'react-router-dom';
 
 const ProfileCard = ({
   isAdmin = false,
-  first_name = "first_name",
-  last_name = "last_name",
+  first_name = 'first_name',
+  last_name = 'last_name',
   reg_number,
   badges = [],
 }) => {
+  const navigate = useNavigate();
+
   return (
     <div
       className={`h-full w-full rounded-3xl flex flex-col p-2 gap-6 justify-center items-center text-white`}
@@ -16,7 +19,7 @@ const ProfileCard = ({
         {isAdmin && (
           <button
             className=" bg-[#4079DA] p-3 rounded-xl text-center text-md"
-            onClick={() => navigate("/adminview")}
+            onClick={() => navigate('/adminview')}
           >
             Admin View
           </button>

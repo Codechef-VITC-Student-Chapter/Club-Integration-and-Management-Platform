@@ -1,56 +1,51 @@
-import React, { useEffect, useState } from "react";
-import AdminViewCard from "../components/AdminViewCard";
-import dot from "../assets/Admin_view_dot.png";
-import tick from "../assets/Admin_view_tick.png";
-import file from "../assets/Admin_view_file.png";
-import { useRunningContext } from "../contexts/RunningContext";
+import React, { useEffect, useState } from 'react';
+import AdminViewCard from '../components/AdminViewCard';
+import dot from '../assets/Admin_view_dot.png';
+import tick from '../assets/Admin_view_tick.png';
+import file from '../assets/Admin_view_file.png';
+import { useRunningContext } from '../contexts/RunningContext';
 
 function AdminView() {
   const [requests, setRequests] = useState([]);
-  const { currentUser, token, isAdmin } = useRunningContext();
+  const { baseURL, currentUser, token, isAdmin } = useRunningContext();
   useEffect(() => {
     const fetchRequests = async () => {
       try {
         const response = await fetch(
-          `${
-            import.meta.env.VITE_BASE_URL
-          }/userApi/get-requests/${currentUser}`,
+          `${baseURL}/userApi/get-requests/${currentUser}`,
           {
-            method: "GET",
+            method: 'GET',
             headers: {
-              "Content-Type": "application/json",
+              'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        if (!response.ok) throw new Error("Failed to fetch requests");
+        if (!response.ok) throw new Error('Failed to fetch requests');
         const data = await response.json();
         // console.log(data);
         setRequests(data);
       } catch (error) {
-        console.error("Error fetching requests: ", error);
+        console.error('Error fetching requests: ', error);
       }
     };
     fetchRequests();
   }, []);
   const updateStatus = async (id, newStatus) => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_BASE_URL}/contApi/update-status/${id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            status: newStatus,
-            is_lead: isAdmin,
-          }),
-        }
-      );
+      const response = await fetch(`${baseURL}/contApi/update-status/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          status: newStatus,
+          is_lead: isAdmin,
+        }),
+      });
       // console.log(response);
-      if (!response.ok) throw new Error("Failed to update request");
+      if (!response.ok) throw new Error('Failed to update request');
       const data = await response.json();
       // console.log(data);
       setRequests((prevRequests) =>
@@ -59,15 +54,15 @@ function AdminView() {
         )
       );
     } catch (error) {
-      console.error("Error fetching requests: ", error);
+      console.error('Error fetching requests: ', error);
     }
   };
 
-  const pendingRequests = requests.filter((req) => req.status === "pending");
-  const completedRequests = requests.filter((req) => req.status !== "pending");
+  const pendingRequests = requests.filter((req) => req.status === 'pending');
+  const completedRequests = requests.filter((req) => req.status !== 'pending');
 
   return (
-    <div style={{ background: "#E9F1FE", minHeight: "100vh", padding: "40px" }}>
+    <div style={{ background: '#E9F1FE', minHeight: '100vh', padding: '40px' }}>
       <div className="flex">
         <img src={file} alt="FileImage" className="h-10" />
         <p className="text-4xl ml-3">Review Request</p>
