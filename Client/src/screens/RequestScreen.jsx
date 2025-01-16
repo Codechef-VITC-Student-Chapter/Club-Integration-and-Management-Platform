@@ -5,7 +5,6 @@ import { useRunningContext } from '../contexts/RunningContext.jsx';
 
 const RequestScreen = () => {
   const { baseURL, currentUser, token } = useRunningContext();
-  console.log('CURRENT USER IS:\n\n\n\n\n' + currentUser);
   const [isELopen, setisELopen] = useState(false);
   const [links, setLinks] = useState(['']);
   const [club, setClub] = useState(null);
@@ -416,7 +415,7 @@ const RequestScreen = () => {
                   </div>
                 )}
               </div>
-              {!choseCustom && selectedPoints && (
+              {!choseCustom && selectedPoints !== 0 && (
                 <div className="mb-6">
                   <label className="block mb-2">
                     How many times did you complete this task?
