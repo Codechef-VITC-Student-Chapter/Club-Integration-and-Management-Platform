@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const depsSchema = new mongoose.Schema({
   id: {
     type: String,
     required: true,
   },
-  department_name: {
+  name: {
     type: String,
     required: true,
   },
@@ -13,7 +13,7 @@ const depsSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  department_leads: {
+  leads: {
     type: [String],
     required: false,
     default: [],
