@@ -41,15 +41,15 @@ function Navbar() {
   ];
   if (isAdmin) {
     menuItems.push({
-      name: "Member Requests",
-      path: "/requests",
+      name: "Admin View",
+      path: "/adminview",
       logo: lead,
     });
   }
 
   return (
     <nav className="bg-gray-800  text-white p-3 rounded-lg mx-auto my-2 w-11/12 lg:w-full lg:my-0 lg:py-0 lg:pt-2 lg:font-lato lg:rounded-none h-[70px]">
-      <div className="container mx-auto flex items-center justify-between">
+      <div className="w-full flex items-center justify-between">
         {/* Mobile Menu Button */}
         <div className="flex items-center justify-start lg:hidden">
           <button
@@ -73,7 +73,7 @@ function Navbar() {
         </div>
 
         {/* Logo and Title */}
-        <div className="flex items-center justify-evenly lg:justify-normal lg:mx-16">
+        <div className="flex items-center justify-evenly lg:justify-normal lg:mx-6">
           <img
             src={logo}
             alt="CodeChef-VITC"
@@ -92,18 +92,19 @@ function Navbar() {
 
         {/* Desktop Menu */}
         <div className="hidden lg:flex lg:items-center lg:w-auto">
-          <ul className="flex flex-col lg:flex-row lg:space-x-4">
+          <ul className="flex flex-col lg:flex-row lg:space-x-2">
             {menuItems.map((item) => (
               <li key={item.name}>
                 <a
                   href={item.path}
-                  className={`block py-3 px-4 ${
+                  className={`flex gap-1 py-3 px-4 ${
                     selectedMenuItem === item.name.toLowerCase()
                       ? "border-b-4 border-orange-500"
                       : ""
                   }`}
                   onClick={() => handleMenuItemClick(item.name.toLowerCase())}
                 >
+                  <img src={item.logo} />
                   {item.name}
                 </a>
               </li>
@@ -118,8 +119,8 @@ function Navbar() {
             </li>
             <li>
               <img
-                src={userP}
-                alt="Profile"
+                src={signout}
+                alt="Signout"
                 className="w-8 h-8 rounded-full mb-3 flex items-center justify-start -translate-x-4 translate-y-2"
               />
             </li>
@@ -198,7 +199,7 @@ function Navbar() {
                   src={signout}
                   alt={"SignOut logo"}
                   className="w-6 h-6 mr-2"
-                ></img>
+                />
                 <button
                   onClick={() => {
                     signOut();

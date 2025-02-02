@@ -122,7 +122,7 @@ function MemberDashboard() {
       <div className="flex md:flex-row flex-col h-full">
         <aside className="w-full xl:w-1/4 md:w-[30%]">
           <div className="flex md:flex-col flex-row md:gap-3 items-center justify-center md:pb-12">
-            <div className="md:w-full xl:px-10 lg:p-8 md:px-1 px-2 flex items-center flex-col">
+            <div className="md:w-full xl:px-10 lg: md:px-1 px-2 flex items-center flex-col">
               <ProfileCard
                 isAdmin={isAdmin}
                 badges={badges}
@@ -132,7 +132,7 @@ function MemberDashboard() {
               />
             </div>
 
-            <div className="flex flex-col items-center md:p-4 pr-6 pt-5 w-full">
+            <div className="flex flex-col items-center md:p-4 w-2/3 md:w-full">
               <PointsWidget
                 clubPoints={clubPoints}
                 pendingPoints={pendingPoints}
@@ -148,7 +148,7 @@ function MemberDashboard() {
           <div className="flex flex-col gap-8 bg-[#e8f1fe] md:bg-white rounded-[45px] md:border-2 md:border-zinc-800 p-6">
             <section className="flex-1">
               <div className="md:bg-[#e8f1fe] bg-white min-h-[400px] md:min-h-min shadow-md rounded-[30px] border-2 border-[#1a8755]">
-                <h2 className="text-xl bg-[#1a8755] rounded-t-[25px] md:px-[90px] px-[30px] py-[15px] text-white">
+                <h2 className="text-xl bg-[#1a8755] rounded-t-[25px] md:px-[90px] px-[30px] py-[15px] text-white font-semibold">
                   Recent Contributions
                 </h2>
                 {contributions && (
@@ -161,7 +161,7 @@ function MemberDashboard() {
 
             <section className="flex-1">
               <div className="md:bg-[#e8f1fe] bg-white min-h-[400px] md:min-h-min shadow-md rounded-[30px] border-2 border-[#ffac32]">
-                <h2 className="text-xl bg-[#ffac32] rounded-t-[25px] md:px-[90px] px-[30px] py-[15px]">
+                <h2 className="text-xl bg-[#ffac32] rounded-t-[25px] md:px-[90px] px-[30px] py-[15px] font-semibold">
                   Pending Contributions
                 </h2>
                 {pendingContributions && (
