@@ -1,11 +1,11 @@
-import express from "express";
+import express from 'express';
 import {
   addContribution,
   removeContribution,
   getContributionById,
   updateContributionStatus,
-} from "../utils/contUtils.mjs";
-import { authenticateToken } from "../middleware/authenticateToken.mjs";
+} from '../utils/contUtils.mjs';
+import { authenticateToken } from '../middleware/authenticateToken.mjs';
 
 const contRouter = express.Router();
 contRouter.use(authenticateToken);
@@ -14,15 +14,15 @@ contRouter.use(authenticateToken);
 //   next();
 // });
 
-contRouter.post("/add", async (req, res) => {
+contRouter.post('/add', async (req, res) => {
   try {
     const contributionData = req.body;
+    console.log(contributionData);
     const timeStamp = Date.now();
     const contributionId = `CID${contributionData.user_id.slice(
       3
     )}${timeStamp}`;
     contributionData.id = contributionId;
-    // console.log(contributionData);
     const newContribution = await addContribution(contributionData);
     res.status(201).json(newContribution);
   } catch (error) {
@@ -31,7 +31,7 @@ contRouter.post("/add", async (req, res) => {
   }
 });
 
-contRouter.get("/points/:id", async (req, res) => {
+contRouter.get('/points/:id', async (req, res) => {
   try {
     const contId = req.params.id;
     const contribution = await getContributionById(contId);
@@ -54,7 +54,7 @@ contRouter.get("/points/:id", async (req, res) => {
 //   }
 // });
 
-contRouter.get("/get/:id", async (req, res) => {
+contRouter.get('/get/:id', async (req, res) => {
   try {
     const contId = req.params.id;
     const contribution = await getContributionById(contId);
@@ -64,12 +64,12 @@ contRouter.get("/get/:id", async (req, res) => {
   }
 });
 
-contRouter.patch("/update-status/:id", async (req, res) => {
+contRouter.patch('/update-status/:id', async (req, res) => {
   try {
     // console.log(req.body);
     if (!req.body.is_lead) {
-      console.log("Stoopid");
-      return res.status(401).json({ error: "User is not a lead" });
+      console.log('Stoopid');
+      return res.status(401).json({ error: 'User is not a lead' });
     }
     const contId = req.params.id;
     const { status } = req.body;

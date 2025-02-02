@@ -1,4 +1,4 @@
-import express from "express";
+import express from 'express';
 import {
   addClub,
   removeClub,
@@ -7,11 +7,11 @@ import {
   removeDepartmentFromClub,
   addUserToClub,
   removeUserFromClub,
-} from "../utils/clubUtils.mjs";
+} from '../utils/clubUtils.mjs';
 
-import { getDepartmentById } from "../utils/depsUtils.mjs";
-import { getUserById, getUserByReg } from "../utils/userUtils.mjs";
-import clubSchema from "../DB/Schemas/clubSchema.mjs";
+import { getDepartmentById } from '../utils/depsUtils.mjs';
+import { getUserById, getUserByReg } from '../utils/userUtils.mjs';
+import clubSchema from '../DB/Schemas/clubSchema.mjs';
 
 const clubRouter = express.Router();
 
@@ -37,13 +37,13 @@ const clubRouter = express.Router();
 //     }
 // });
 
-clubRouter.get("/get/:id", async (req, res) => {
+clubRouter.get('/get/:id', async (req, res) => {
   try {
-    // console.log('Hi ' + req.params.id);
+    console.log('Hi ' + req.params.id);
 
     const clubId = req.params.id;
     const club = await getClubById(clubId);
-    // console.log(club);
+    console.log(club);
     res.status(200).json(club);
   } catch (error) {
     res.status(404).json({ error: error.message });
@@ -70,7 +70,7 @@ clubRouter.get("/get/:id", async (req, res) => {
 //     }
 // });
 
-clubRouter.post("/get-departments", async (req, res) => {
+clubRouter.post('/get-departments', async (req, res) => {
   try {
     const { clubId } = req.body;
     const club = await getClubById(clubId);
