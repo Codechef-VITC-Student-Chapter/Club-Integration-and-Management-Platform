@@ -103,18 +103,22 @@ function Navbar() {
                 </a>
               </li>
             ))}
+            <li>
+              <button
+                onClick={signOut}
+                className="mt-2 lg:mt-0 text-white px-4 py-3 text-lg rounded"
+              >
+                Sign out
+              </button>
+            </li>
+            <li>
+              <img
+                src={signout}
+                alt="Signout"
+                className="w-8 h-8 rounded-full mb-3 flex items-center justify-start -translate-x-4 translate-y-2"
+              />
+            </li>
           </ul>
-          <button
-            onClick={signOut}
-            className="px-4 py-2 rounded border border-white bg-gray-800 text-white hover:bg-white hover:text-gray-800 transition duration-300"
-          >
-            Sign Out
-          </button>
-          <img
-            src={userP}
-            alt="Profile"
-            className="w-8 h-8 rounded-full ml-4"
-          />
         </div>
       </div>
     </nav>

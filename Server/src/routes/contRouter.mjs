@@ -17,12 +17,12 @@ contRouter.use(authenticateToken);
 contRouter.post("/add", async (req, res) => {
   try {
     const contributionData = req.body;
+    // console.log(contributionData);
     const timeStamp = Date.now();
     const contributionId = `CID${contributionData.user_id.slice(
       3
     )}${timeStamp}`;
     contributionData.id = contributionId;
-    // console.log(contributionData);
     const newContribution = await addContribution(contributionData);
     res.status(201).json(newContribution);
   } catch (error) {
@@ -68,7 +68,7 @@ contRouter.patch("/update-status/:id", async (req, res) => {
   try {
     // console.log(req.body);
     if (!req.body.is_lead) {
-      console.log("Stoopid");
+      // console.log("Stoopid");
       return res.status(401).json({ error: "User is not a lead" });
     }
     const contId = req.params.id;
