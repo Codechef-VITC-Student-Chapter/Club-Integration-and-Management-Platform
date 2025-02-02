@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import PointsWidget from "../components/PointsWidget";
-import RecentContributions from "../components/RecentContributions";
-import PendingContributions from "../components/PendingContributions";
-import { useRunningContext } from "../contexts/RunningContext";
-import ProfileCard from "../components/ProfileCard";
-import Badge from "../components/Badge";
+import { useState, useEffect } from "react";
+import PointsWidget from "./components/PointsWidget";
+import RecentContributions from "./components/RecentContributions";
+import PendingContributions from "./components/PendingContributions";
+import { useRunningContext } from "../../contexts/RunningContext";
+import ProfileCard from "./components/ProfileCard";
+import Badge from "./components/Badge";
 
 function MemberDashboard() {
   const {

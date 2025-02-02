@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import Logo from "../assets/logo.png";
+import { useState } from "react";
+import Logo from "../../assets/logo.png";
 import { PiUserCircle, PiLockLight } from "react-icons/pi";
-import { useRunningContext } from "../contexts/RunningContext";
-import loginImage from "../assets/loginScreen_Background.png";
-import mobileLoginImage from "../assets/mobileLoginScreen_Background.png";
+import { useRunningContext } from "../../contexts/RunningContext";
+import loginImage from "./assets/loginScreen_Background.png";
+import mobileLoginImage from "./assets/mobileLoginScreen_Background.png";
 
 import SHA256 from "crypto-js/sha256";
 import { toast } from "react-toastify";

@@ -2,16 +2,20 @@ import React, { Suspense } from "react";
 
 import { Routes, Route } from "react-router-dom";
 
-import LoadingScreen from "./LoadingScreen";
-import Navbar from "../components/Navbar";
+import LoadingScreen from "./Loading-Screen/LoadingScreen";
+import Navbar from "./Navbar/Navbar";
 import { useRunningContext } from "../contexts/RunningContext";
 
-const PageNotFound = React.lazy(() => import("./PageNotFound"));
-const LoginForm = React.lazy(() => import("./LoginForm"));
-const SignUpForm = React.lazy(() => import("./SignUpForm"));
-const RequestScreen = React.lazy(() => import("./RequestScreen"));
-const AdminView = React.lazy(() => import("./AdminView"));
-const MemberDashboard = React.lazy(() => import("./MemberDashboard"));
+const PageNotFound = React.lazy(() => import("./Page-Not-Found/PageNotFound"));
+const LoginForm = React.lazy(() => import("./Login-Form/LoginForm"));
+const SignUpForm = React.lazy(() => import("./Signup-Form/SignUpForm"));
+const RequestScreen = React.lazy(() =>
+  import("./Request-Screen/RequestScreen")
+);
+const AdminView = React.lazy(() => import("./Admin-View/AdminView"));
+const MemberDashboard = React.lazy(() =>
+  import("./Member-DashBoard/MemberDashboard")
+);
 
 function SiteRouter() {
   const { token, isAdmin } = useRunningContext();

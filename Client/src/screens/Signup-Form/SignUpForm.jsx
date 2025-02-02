@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import Logo from "../assets/logo.png";
+import { useState } from "react";
+import Logo from "../../assets/logo.png";
 import {
   PiUserCircle,
   PiLockLight,
   PiIdentificationCardLight,
 } from "react-icons/pi";
 import { MdOutlineMail } from "react-icons/md";
-import { useRunningContext } from "../contexts/RunningContext";
-import loginImage from "../assets/loginScreen_Background.png";
-import mobileLoginImage from "../assets/mobileLoginScreen_Background.png";
+import { useRunningContext } from "../../contexts/RunningContext";
+import loginImage from "./assets/loginScreen_Background.png";
+import mobileLoginImage from "./assets/mobileLoginScreen_Background.png";
 
 import SHA256 from "crypto-js/sha256";
 function hashPassword(password) {

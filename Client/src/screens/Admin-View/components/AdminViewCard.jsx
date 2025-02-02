@@ -1,13 +1,12 @@
-import PropTypes from 'prop-types';
-import { useState } from 'react';
+import PropTypes from "prop-types";
 
 function AdminViewCard({ request, onUpdateStatus }) {
   const handleApprove = () => {
-    onUpdateStatus(request.id, 'approved');
+    onUpdateStatus(request.id, "approved");
   };
 
   const handleDeny = () => {
-    onUpdateStatus(request.id, 'rejected');
+    onUpdateStatus(request.id, "rejected");
   };
 
   const handleChangeStatus = (newStatus) => {
@@ -15,18 +14,18 @@ function AdminViewCard({ request, onUpdateStatus }) {
   };
 
   const backgroundColor =
-    request.status === 'approved'
-      ? 'bg-[#9FEFA8]'
-      : request.status === 'rejected'
-      ? 'bg-[#F4AAAA]'
-      : 'bg-white';
+    request.status === "approved"
+      ? "bg-[#9FEFA8]"
+      : request.status === "rejected"
+      ? "bg-[#F4AAAA]"
+      : "bg-white";
 
   const borderColor =
-    request.status === 'approved'
-      ? 'border-green-900 border-2'
-      : request.status === 'rejected'
-      ? 'border-red-900 border-2'
-      : 'border-black';
+    request.status === "approved"
+      ? "border-green-900 border-2"
+      : request.status === "rejected"
+      ? "border-red-900 border-2"
+      : "border-black";
 
   return (
     <div
@@ -70,7 +69,7 @@ function AdminViewCard({ request, onUpdateStatus }) {
         </a>
 
         <div className="flex gap-4 items-center mt-4 md:mt-0 flex-wrap">
-          {request.status === 'pending' && (
+          {request.status === "pending" && (
             <>
               <button
                 className="bg-[#198754] text-white px-6 py-2 rounded hover:bg-green-600"
@@ -86,22 +85,22 @@ function AdminViewCard({ request, onUpdateStatus }) {
               </button>
             </>
           )}
-          {request.status !== 'pending' && (
+          {request.status !== "pending" && (
             <>
               <button
                 className={`px-6 py-2 rounded text-white transition-all duration-300 ${
-                  request.status === 'approved'
-                    ? 'bg-green-500 hover:bg-green-600'
-                    : 'bg-red-500 hover:bg-red-600'
+                  request.status === "approved"
+                    ? "bg-green-500 hover:bg-green-600"
+                    : "bg-red-500 hover:bg-red-600"
                 }`}
               >
-                {request.status === 'approved' ? '✔ Approved' : '✘ Rejected'}
+                {request.status === "approved" ? "✔ Approved" : "✘ Rejected"}
               </button>
               <button
                 className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
                 onClick={() =>
                   handleChangeStatus(
-                    request.status === 'approved' ? 'rejected' : 'approved'
+                    request.status === "approved" ? "rejected" : "approved"
                   )
                 }
               >

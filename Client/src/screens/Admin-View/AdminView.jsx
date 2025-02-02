@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
-import AdminViewCard from "../components/AdminViewCard";
-import dot from "../assets/Admin_view_dot.png";
-import tick from "../assets/Admin_view_tick.png";
-import file from "../assets/Admin_view_file.png";
-import { useRunningContext } from "../contexts/RunningContext";
+import { useEffect, useState } from "react";
+import AdminViewCard from "./components/AdminViewCard";
+import dot from "./assets/Admin_view_dot.png";
+import tick from "./assets/Admin_view_tick.png";
+import file from "./assets/Admin_view_file.png";
+import { useRunningContext } from "../../contexts/RunningContext";
 
 function AdminView() {
   const [requests, setRequests] = useState([]);

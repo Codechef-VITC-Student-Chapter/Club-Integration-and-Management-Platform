@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaUser, FaCodeBranch, FaCalendarAlt } from "react-icons/fa";
-import TaskModal from "./Popup.jsx"; // Adjust the path if needed
+import TaskModal from "./popup.jsx"; // Adjust the path if needed
 
 const TaskComponent = ({
   taskName,
