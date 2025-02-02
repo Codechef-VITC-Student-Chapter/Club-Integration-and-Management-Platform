@@ -112,7 +112,7 @@ function Navbar() {
             <li>
               <button
                 onClick={signOut}
-                className="mt-2 lg:mt-0 text-white px-4 py-3 rounded"
+                className="mt-2 lg:mt-0 text-white px-4 py-3 text-lg rounded"
               >
                 Sign out
               </button>
