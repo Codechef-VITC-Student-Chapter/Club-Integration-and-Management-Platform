@@ -1,22 +1,39 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import dotenv from 'dotenv';
 
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
-
 
 import userRouter from './routes/usersRouter.mjs';
 import clubRouter from './routes/clubRouter.mjs';
 import authRouter from './routes/authRouter.mjs';
 import depsRouter from './routes/depsRouter.mjs';
 import contRouter from './routes/contRouter.mjs';
+import mongoose from 'mongoose';
 
+dotenv.config();
 const app = express();
+const connectionString = process.env.CONNECTION_STRING;
 
-app.use(cors());
+mongoose
+  .connect(connectionString)
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
 app.use(express.json());
-app.use(bodyParser.json());
+app.use(
+  cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 app.use('/userApi', userRouter);
 app.use('/clubApi', clubRouter);

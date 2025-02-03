@@ -1,16 +1,16 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext, useEffect } from "react";
 
 const RunningContext = createContext();
 
 export const RunningProvider = ({ children }) => {
-  const baseURL = import.meta.env.VITE_BASE_URL || 'http://localhost:3000';
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const baseURL = import.meta.env.VITE_BASE_URL || "http://localhost:3000";
+  const [token, setToken] = useState(localStorage.getItem("token"));
   const [currentUser, setCurrentUser] = useState();
   const [isAdmin, setIsAdmin] = useState(false);
 
   const handleError = (task, error) => {
-    if (error == 'Invalid Token') {
-      localStorage.removeItem('token');
+    if (error == "Invalid Token") {
+      localStorage.removeItem("token");
       setToken(null);
     }
     console.log(`Error in task ${task} : ${error}`);
@@ -18,10 +18,11 @@ export const RunningProvider = ({ children }) => {
 
   useEffect(() => {
     if (token) {
-      var payload = JSON.parse(window.atob(token.split('.')[1]));
+      var payload = JSON.parse(window.atob(token.split(".")[1]));
       setCurrentUser(payload.id);
-      setIsAdmin(payload.isLead);
+      setIsAdmin(payload.is_lead);
     } else {
+      // console.log("No user");
       setCurrentUser();
       setIsAdmin(false);
     }

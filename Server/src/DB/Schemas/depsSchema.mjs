@@ -1,31 +1,40 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const depsSchema = new mongoose.Schema({
-    dep_id: {
+  id: {
+    type: String,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  club_id: {
+    type: String,
+    required: true,
+  },
+  leads: {
+    type: [String],
+    required: false,
+    default: [],
+  },
+  sub_departments: {
+    type: [String],
+    required: false,
+    default: [],
+  },
+  tasks: [
+    {
+      title: {
         type: String,
-        required: true
+        required: true,
+      },
+      points: {
+        type: Number,
+        required: true,
+      },
     },
-    dep_name: {
-        type: String,
-        required: true
-    },
-    club_id: {
-        type: String,
-        ref: 'Club',
-        required: true
-    },
-    leads: {
-        type: [String],
-        ref: 'User',
-        required: false,
-        default: []
-    },
-    subdeps: {
-        type: [String],
-        ref: 'Department',
-        required: false,
-        default: []
-    }
+  ],
 });
 
 export default depsSchema;

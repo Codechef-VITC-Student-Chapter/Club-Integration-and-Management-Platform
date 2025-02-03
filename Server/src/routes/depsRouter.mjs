@@ -21,9 +21,9 @@ const depsRouter = express.Router();
 // depsRouter.post('/add', async (req, res) => {
 //     try {
 //         const depsData = req.body;
-//         const club_id = depsData.club_id;
+//         const clubId = depsData.clubId;
 //         const newDep = await addDepartment(depsData);
-//         await addDepartmentToClub(club_id, newDep.dep_id);
+//         await addDepartmentToClub(clubId, newDep.ID);
 
 //         res.status(201).json(newDep);
 //     } catch (error) {
@@ -36,7 +36,7 @@ const depsRouter = express.Router();
 //     try {
 //         const depId = req.params.id;
 //         const deletedDepartment = await removeDepartment(depId);
-//         await removeDepartmentFromClub(deletedDepartment.club_id, depId);
+//         await removeDepartmentFromClub(deletedDepartment.clubId, depId);
 //         res.status(200).json(deletedDepartment);
 //     } catch (error) {
 //         res.status(404).json({ error: error.message });
@@ -63,25 +63,24 @@ depsRouter.get('/get/:id', async (req, res) => {
 //     }
 // });
 
-depsRouter.post('/getLeads', async (req, res) => {
+depsRouter.post('/get-leads', async (req, res) => {
   try {
-    const { dep_id } = req.body;
-    const department = await getDepartmentById(dep_id);
+    const { depId } = req.body;
+    const department = await getDepartmentById(depId);
     const leads = department.leads;
 
     const leadsWithUserData = await Promise.all(
-      leads.map(async (lead) => {
+      department.leads.map(async (lead) => {
         const user = await getUserById(lead);
         return {
-          user_id: user.user_id,
-          first_name: user.first_name,
-          last_name: user.last_name,
+          user_id: user.id,
+          name: user.first_name + ' ' + user.last_name,
         };
       })
     );
-
     res.status(200).json(leadsWithUserData);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: error.message });
   }
 });

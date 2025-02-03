@@ -1,4 +1,4 @@
-import express from 'express';
+import express from "express";
 import {
   addClub,
   removeClub,
@@ -7,9 +7,11 @@ import {
   removeDepartmentFromClub,
   addUserToClub,
   removeUserFromClub,
-} from '../utils/clubUtils.mjs';
+} from "../utils/clubUtils.mjs";
 
-import { getDepartmentById } from '../utils/depsUtils.mjs';
+import { getDepartmentById } from "../utils/depsUtils.mjs";
+import { getUserById, getUserByReg } from "../utils/userUtils.mjs";
+import clubSchema from "../DB/Schemas/clubSchema.mjs";
 
 const clubRouter = express.Router();
 
@@ -18,6 +20,7 @@ const clubRouter = express.Router();
 //         const clubData = req.body;
 //         const newClub = await addClub(clubData);
 //         res.status(201).json(newClub);
+//         console.log("Successfully added");
 //     } catch (error) {
 //         console.log(error);
 //         res.status(400).json({ error: error.message });
@@ -34,10 +37,13 @@ const clubRouter = express.Router();
 //     }
 // });
 
-clubRouter.get('/get/:id', async (req, res) => {
+clubRouter.get("/get/:id", async (req, res) => {
   try {
+    // console.log('Hi ' + req.params.id);
+
     const clubId = req.params.id;
     const club = await getClubById(clubId);
+    // console.log(club);
     res.status(200).json(club);
   } catch (error) {
     res.status(404).json({ error: error.message });
@@ -64,17 +70,20 @@ clubRouter.get('/get/:id', async (req, res) => {
 //     }
 // });
 
-clubRouter.post('/get-departments', async (req, res) => {
+clubRouter.post("/get-departments", async (req, res) => {
   try {
-    const { club_id } = req.body;
-    const club = await getClubById(club_id);
-    const departments = [];
-    for (let dep_id of club.club_deps) {
-      const department = await getDepartmentById(dep_id);
-      departments.push({ id: dep_id, name: department.dep_name });
-    }
+    const { clubId } = req.body;
+    const club = await getClubById(clubId);
+    let departments = [];
+    departments = await Promise.all(
+      club.departments.map(async (id) => {
+        const department = await getDepartmentById(id);
+        return { id, name: department.name };
+      })
+    );
     res.status(200).json(departments);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: error.message });
   }
 });
