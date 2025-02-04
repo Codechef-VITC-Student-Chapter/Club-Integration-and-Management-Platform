@@ -20,15 +20,15 @@ const MemberDashboard = React.lazy(() =>
 function SiteRouter() {
   const { token, isAdmin } = useRunningContext();
 
-  if (!token) {
-    return (
-      <Routes>
-        <Route path="/loginform" element={<LoginForm />} />
-        <Route path="/signup" element={<SignUpForm />} />
-        <Route path="/*" element={<LoginForm />} />
-      </Routes>
-    );
-  }
+  // if (!token) {
+  //   return (
+  //     <Routes>
+  //       <Route path="/loginform" element={<LoginForm />} />
+  //       <Route path="/signup" element={<SignUpForm />} />
+  //       <Route path="/*" element={<LoginForm />} />
+  //     </Routes>
+  //   );
+  // }
   return (
     <div className="h-full w-full bg-[#e8f1fe] overflow-x-hidden">
       <Navbar />

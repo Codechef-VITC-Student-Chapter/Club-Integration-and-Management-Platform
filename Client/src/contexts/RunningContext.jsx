@@ -20,7 +20,7 @@ export const RunningProvider = ({ children }) => {
     if (token) {
       var payload = JSON.parse(window.atob(token.split(".")[1]));
       setCurrentUser(payload.id);
-      setIsAdmin(payload.is_lead);
+      setIsAdmin(true);
     } else {
       // console.log("No user");
       setCurrentUser();
