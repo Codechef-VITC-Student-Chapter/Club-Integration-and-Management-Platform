@@ -45,6 +45,11 @@ const userSchema = new Schema({
     default: [],
     required: false,
   },
+  totalPoints: {
+    type: Number,
+    default: 0,
+    required: true,
+  },
 });
 
 export default userSchema;

@@ -82,15 +82,25 @@ export const updateContributionStatus = async (contId, newStatus) => {
     if (!validStatuses.includes(newStatus)) {
       throw new Error("Invalid status");
     }
-    const updatedContribution = await Contribution.findOneAndUpdate(
-      { id: contId },
-      { status: newStatus },
-      { new: true }
-    );
-    if (!updatedContribution) {
+
+    const contribution = await Contribution.findOne({ id: contId });
+    if (!contribution) {
       throw new Error("Contribution not found");
     }
-    return updatedContribution;
+
+    const oldStatus = contribution.status;
+    contribution.status = newStatus;
+    await contribution.save();
+
+    // Update user's total points if contribution is approved
+    if (newStatus === 'approved' && oldStatus !== 'approved') {
+      await User.findOneAndUpdate(
+        { id: contribution.user_id },
+        { $inc: { totalPoints: contribution.points } }
+      );
+    }
+
+    return contribution;
   } catch (error) {
     throw new Error("Failed to update contribution status");
   }
