@@ -3,7 +3,6 @@ import { authenticateToken } from '../middleware/authenticateToken.mjs';
 import { getContributionById } from '../utils/contUtils.mjs';
 import { getClubById } from '../utils/clubUtils.mjs';
 import { getDepartmentById } from '../utils/depsUtils.mjs';
-
 import {
   removeUser,
   getUserById,
@@ -14,6 +13,8 @@ import {
   removeClubs,
   addContributions,
   removeContributions,
+  getAllUser,
+  getUserByEmail
 } from '../utils/userUtils.mjs';
 
 import { addUserToClub } from '../utils/clubUtils.mjs';
@@ -21,7 +22,7 @@ import { getRequests } from '../utils/contUtils.mjs';
 
 const userRouter = express.Router();
 
-userRouter.use(authenticateToken);
+//userRouter.use(authenticateToken);
 
 // Route to delete a user
 // userRouter.delete('/delete/:userId', async (req, res) => {
@@ -42,7 +43,25 @@ userRouter.get('/get/:userId', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+userRouter.get('/getbyEmail/:emailId', async (req, res) => {
+  try {
+    console.log("email id:-",req.params.emailId);
+    const user = await getUserByEmail(req.params.emailId);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
+//Route to get all Users data
+userRouter.get('/getAllUsers',async(req,res)=>{
+  try{
+    const user = await getAllUser();
+    res.status(200).json(user);
+  }catch(error){
+    res.status(500).json( {error:error.message} )
+  }
+})
 // Route to get user requests
 userRouter.get('/get-requests/:userId', async (req, res) => {
   try {

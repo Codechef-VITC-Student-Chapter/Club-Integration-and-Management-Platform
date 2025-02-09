@@ -26,6 +26,11 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  otp: {
+    type: String,
+    default:"",
+    required: false,
+  },
   is_lead: {
     type: Boolean,
     default: false,
@@ -45,6 +50,12 @@ const userSchema = new Schema({
     default: [],
     required: false,
   },
+  resetAccessCode: {
+    type: String,
+    default:"",
+    required: false,
+  }
+
 });
 
 export default userSchema;

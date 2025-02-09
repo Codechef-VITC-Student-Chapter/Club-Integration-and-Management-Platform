@@ -15,7 +15,7 @@ dotenv.config();
 //     console.log(err);
 //   });
 
-const User = mongoose.models.User || mongoose.model("User", userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema,"users");
 
 export const addUser = async (userData) => {
   try {
@@ -39,7 +39,19 @@ export const removeUser = async (ID) => {
     throw new Error("Failed to remove user");
   }
 };
-
+export const getAllUser = async () => {
+  try {
+    const user = await User.find();
+    console.log(user);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch user");
+  }
+};
 export const getUserById = async (ID) => {
   try {
     const user = await User.findOne({ id: ID });
@@ -48,6 +60,20 @@ export const getUserById = async (ID) => {
     }
     return user;
   } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch user");
+  }
+};
+
+export const getUserByEmail = async (email) => {
+  try {
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return null;
+    }
+    return user;
+  } catch (error) {
+    console.log(error);
     throw new Error("Failed to fetch user");
   }
 };
