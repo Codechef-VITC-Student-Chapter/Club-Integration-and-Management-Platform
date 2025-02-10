@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import LoadingScreen from "./Loading-Screen/LoadingScreen";
 import Navbar from "./Navbar/Navbar";
 import { useRunningContext } from "../contexts/RunningContext";
+// import DepartmentContributions from "./Department-Contributions/DepartmentContributions";
 
 const PageNotFound = React.lazy(() => import("./Page-Not-Found/PageNotFound"));
 const LoginForm = React.lazy(() => import("./Login-Form/LoginForm"));
@@ -15,6 +16,9 @@ const RequestScreen = React.lazy(() =>
 const AdminView = React.lazy(() => import("./Admin-View/AdminView"));
 const MemberDashboard = React.lazy(() =>
   import("./Member-DashBoard/MemberDashboard")
+);
+const DepartmentContributions = React.lazy(()=>
+  import("./Department-Contributions/DepartmentContributions")
 );
 
 function SiteRouter() {
@@ -38,6 +42,7 @@ function SiteRouter() {
           {isAdmin && <Route path="/adminview" element={<AdminView />} />}
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/dashboard" element={<MemberDashboard />} />
+          <Route path="/contribution" element={<DepartmentContributions/>}/>
           <Route path="/" element={<MemberDashboard />} />
           <Route path="/*" element={<PageNotFound />} />
         </Routes>

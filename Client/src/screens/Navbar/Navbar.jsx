@@ -31,6 +31,7 @@ function Navbar() {
   };
 
   const menuItems = [
+    { name:"Contributions",path: "/contribution", logo: dash},
     { name: "Dashboard", path: "/dashboard", logo: dash },
     { name: "Leaderboard", path: "/leaderboard", logo: lead },
     { name: "Request", path: "/upload", logo: req },
