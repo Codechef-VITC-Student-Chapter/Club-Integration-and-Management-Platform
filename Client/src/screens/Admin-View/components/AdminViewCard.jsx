@@ -1,12 +1,19 @@
 import PropTypes from "prop-types";
+import { useState } from "react";
+import RejectBox from "./Rejectbox"
 
 function AdminViewCard({ request, onUpdateStatus }) {
+  const [rejecttoggle,settoggle]=useState(false)
+
   const handleApprove = () => {
     onUpdateStatus(request.id, "approved");
   };
 
   const handleDeny = () => {
     onUpdateStatus(request.id, "rejected");
+  
+    
+
   };
 
   const handleChangeStatus = (newStatus) => {
@@ -80,6 +87,7 @@ function AdminViewCard({ request, onUpdateStatus }) {
               <button
                 className="bg-[#DC3545] text-white px-6 py-2 rounded hover:bg-red-600"
                 onClick={handleDeny}
+                
               >
                 Reject
               </button>
@@ -87,7 +95,7 @@ function AdminViewCard({ request, onUpdateStatus }) {
           )}
           {request.status !== "pending" && (
             <>
-              <button
+              <button onClick={()=>{settoggle(!rejecttoggle)}}
                 className={`px-6 py-2 rounded text-white transition-all duration-300 ${
                   request.status === "approved"
                     ? "bg-green-500 hover:bg-green-600"
@@ -96,6 +104,7 @@ function AdminViewCard({ request, onUpdateStatus }) {
               >
                 {request.status === "approved" ? "✔ Approved" : "✘ Rejected"}
               </button>
+                {request.status=='rejected'  &&rejecttoggle&& <RejectBox onClose={()=>{settoggle(!rejecttoggle)}} title={request.title} points={request.points} username={request.id} toggle={rejecttoggle} ></RejectBox> }
               <button
                 className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
                 onClick={() =>
