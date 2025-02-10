@@ -127,7 +127,7 @@ function SignUpForm() {
     }
 
     try {
-      const response = await fetch(`${baseURL}/authApi/signup`, {
+      const response = await fetch(`${baseURL}authApi/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
