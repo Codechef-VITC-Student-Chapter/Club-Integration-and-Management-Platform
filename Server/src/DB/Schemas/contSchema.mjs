@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const contSchema = new mongoose.Schema({
   id: {
@@ -30,6 +30,10 @@ const contSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  secTargets: {
+    type: [String], //target added
+    default: [],
+  },
   club_id: {
     type: String,
     required: true,
@@ -40,8 +44,13 @@ const contSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'approved', 'rejected'],
-    default: 'pending',
+    enum: ["pending", "approved", "rejected"],
+    default: "pending",
+  },
+  //added reason
+  reason: {
+    type: String,
+    default: "", // Added reason field with default empty string
   },
   created_at: {
     type: Date,
@@ -49,4 +58,4 @@ const contSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model('Contribution', contSchema);
+export default mongoose.model("Contribution", contSchema);

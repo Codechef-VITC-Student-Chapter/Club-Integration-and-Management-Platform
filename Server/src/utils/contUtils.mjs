@@ -23,7 +23,22 @@ const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export const addContribution = async (contributionData) => {
   try {
-    const newContribution = new Contribution(contributionData);
+    if (
+      !Array.isArray(contributionData.target) ||
+      contributionData.target.length === 0
+    ) {
+      throw new Error("Target must be a non-empty array of strings.");
+    }
+
+    const primaryTarget = contributionData.target[0]; // First element as target
+    const secondaryTargets = contributionData.target.slice(1); // Rest as secTargets
+
+    const newContribution = new Contribution({
+      ...contributionData,
+      target: primaryTarget,
+      secTargets: secondaryTargets,
+    });
+
     await newContribution.save();
     await User.findOneAndUpdate(
       { id: contributionData.user_id },
@@ -65,18 +80,22 @@ export const getContributionById = async (contId) => {
 
 export const getRequests = async (uid) => {
   try {
-    const requests = await Contribution.find({ target: uid });
-    // console.log(requests);
-    if (!requests) {
-      return { requests: [] };
-    }
+    const requests = await Contribution.find({
+      $or: [{ target: uid }, { secTargets: uid }],
+    });
+
     return requests;
   } catch (error) {
     throw new Error("Failed to fetch requests: " + error.message);
   }
 };
 
-export const updateContributionStatus = async (contId, newStatus) => {
+export const updateContributionStatus = async (
+  contId,
+  newStatus,
+  reason = ""
+) => {
+  //reason added
   try {
     const validStatuses = ["pending", "approved", "rejected"];
     if (!validStatuses.includes(newStatus)) {
@@ -84,7 +103,7 @@ export const updateContributionStatus = async (contId, newStatus) => {
     }
     const updatedContribution = await Contribution.findOneAndUpdate(
       { id: contId },
-      { status: newStatus },
+      { status: newStatus, reason, description: reason }, //reason added
       { new: true }
     );
     if (!updatedContribution) {

@@ -4,6 +4,7 @@ import {
   removeContribution,
   getContributionById,
   updateContributionStatus,
+  getRequests,
 } from "../utils/contUtils.mjs";
 import { authenticateToken } from "../middleware/authenticateToken.mjs";
 
@@ -72,9 +73,23 @@ contRouter.patch("/update-status/:id", async (req, res) => {
       return res.status(401).json({ error: "User is not a lead" });
     }
     const contId = req.params.id;
-    const { status } = req.body;
-    const updatedContribution = await updateContributionStatus(contId, status);
+    const { status, reason = "" } = req.body; //added reason
+    const updatedContribution = await updateContributionStatus(
+      contId,
+      status,
+      reason
+    );
     res.status(200).json(updatedContribution);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+contRouter.get("/getRequests/:userId", async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const requests = await getRequests(userId);
+    res.status(200).json({ requests });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.message });
