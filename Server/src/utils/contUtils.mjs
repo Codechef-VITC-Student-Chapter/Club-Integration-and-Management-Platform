@@ -23,17 +23,32 @@ const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export const addContribution = async (contributionData) => {
   try {
+    if (!contributionData.id) {
+      throw new Error("Contribution ID is required");
+    }
+
+    console.log("Saving contribution data:", contributionData);
+
     const newContribution = new Contribution(contributionData);
-    await newContribution.save();
-    await User.findOneAndUpdate(
-      { id: contributionData.user_id },
-      { $push: { contributions: newContribution.id } },
-      { new: true }
-    );
-    return newContribution;
+    
+    const validationError = newContribution.validateSync();
+    if (validationError) {
+      throw new Error(`Validation error: ${validationError.message}`);
+    }
+
+    const savedContribution = await newContribution.save();
+    if (contributionData.user_id) {
+      await User.findOneAndUpdate(
+        { id: contributionData.user_id },
+        { $push: { contributions: savedContribution.id } },
+        { new: true }
+      );
+    }
+
+    return savedContribution;
   } catch (error) {
-    console.log(error);
-    throw new Error("Failed to add contribution");
+    console.log("Detailed error:", error);
+    throw new Error("Failed to add contribution: " + error.message);
   }
 };
 
@@ -91,13 +106,17 @@ export const updateContributionStatus = async (contId, newStatus) => {
     const oldStatus = contribution.status;
     contribution.status = newStatus;
     await contribution.save();
-
-    // Update user's total points if contribution is approved
+    
     if (newStatus === 'approved' && oldStatus !== 'approved') {
-      await User.findOneAndUpdate(
-        { id: contribution.user_id },
-        { $inc: { totalPoints: contribution.points } }
-      );
+      const user = await User.findOne({ id: contribution.user_id }); 
+      if (user) {
+        await User.findOneAndUpdate(
+          { id: contribution.user_id },
+          { $inc: { totalPoints: contribution.points } }
+        );
+      } else {
+        throw new Error("User not found");
+      }
     }
 
     return contribution;
