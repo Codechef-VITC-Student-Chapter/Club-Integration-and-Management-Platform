@@ -3,7 +3,6 @@ import { authenticateToken } from '../middleware/authenticateToken.mjs';
 import { getContributionById } from '../utils/contUtils.mjs';
 import { getClubById } from '../utils/clubUtils.mjs';
 import { getDepartmentById } from '../utils/depsUtils.mjs';
-
 import {
   removeUser,
   getUserById,
@@ -14,6 +13,8 @@ import {
   removeClubs,
   addContributions,
   removeContributions,
+  getAllUser,
+  getUserByEmail
 } from '../utils/userUtils.mjs';
 
 import { addUserToClub } from '../utils/clubUtils.mjs';
@@ -21,7 +22,7 @@ import { getRequests } from '../utils/contUtils.mjs';
 
 const userRouter = express.Router();
 
-userRouter.use(authenticateToken);
+//userRouter.use(authenticateToken);
 
 // Route to delete a user
 // userRouter.delete('/delete/:userId', async (req, res) => {
@@ -42,7 +43,25 @@ userRouter.get('/get/:userId', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+userRouter.get('/getbyEmail/:emailId', async (req, res) => {
+  try {
+    console.log("email id:-",req.params.emailId);
+    const user = await getUserByEmail(req.params.emailId);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
+//Route to get all Users data
+userRouter.get('/getAllUsers',async(req,res)=>{
+  try{
+    const user = await getAllUser();
+    res.status(200).json(user);
+  }catch(error){
+    res.status(500).json( {error:error.message} )
+  }
+})
 // Route to get user requests
 userRouter.get('/get-requests/:userId', async (req, res) => {
   try {
@@ -50,28 +69,30 @@ userRouter.get('/get-requests/:userId', async (req, res) => {
     const answer = [];
 
     for (const request of requests) {
-      const club = await getClubById(request.club);
-      const department = await getDepartmentById(request.dep);
+      // console.log(request.club_id, request.department);
+      const club = await getClubById(request.club_id);
+      const department = await getDepartmentById(request.department);
       const temp = {
-        contId: request.contId,
+        id: request.id,
         title: request.title,
         points: request.points,
-        user: request.user,
+        user_id: request.user_id,
         description: request.description,
-        proofFiles: request.proofFiles,
+        proof_files: request.proof_files,
         target: request.target,
-        club: request.club,
-        dep: request.dep,
-        createdAt: request.createdAt,
+        club_id: request.club_id,
+        department: request.department,
+        created_at: request.created_at,
         status: request.status,
-        clubName: club.cname,
-        departmentName: department.depName,
+        club_name: club.name,
+        department_name: department.department,
       };
       answer.push(temp);
     }
 
     res.status(200).json(answer);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -79,35 +100,41 @@ userRouter.get('/get-requests/:userId', async (req, res) => {
 // Route to get user contribution data
 userRouter.post('/get-contribution-data', async (req, res) => {
   try {
+    // console.log(req.body);
     const user = await getUserById(req.body.user);
     const contributions = user.contributions;
     const contributionData = [];
+    // console.log("Got user");
 
     for (const contributionId of contributions) {
       const contribution = await getContributionById(contributionId);
-      const club = await getClubById(contribution.club);
-      const department = await getDepartmentById(contribution.dep);
+      // console.log("Got cont");
 
+      const club = await getClubById(contribution.club_id);
+      // console.log("Getting Data");
+      const department = await getDepartmentById(contribution.department);
       const temp = {
-        contId: contribution.contId,
+        id: contribution.id,
         title: contribution.title,
         points: contribution.points,
-        user: contribution.user,
+        user: contribution.user_id,
         description: contribution.description,
-        proofFiles: contribution.proofFiles,
+        proof_files: contribution.proof_files,
         target: contribution.target,
-        club: contribution.club,
-        dep: contribution.dep,
+        club: contribution.club_id,
+        department: contribution.department,
         status: contribution.status,
-        createdAt: contribution.createdAt,
-        clubName: club.cname,
-        departmentName: department.depName,
+        created_at: contribution.created_at,
+        club_name: club.name,
+        department_name: department.department,
       };
       contributionData.push(temp);
     }
+    // console.log(contributionData);
 
     res.status(200).json(contributionData);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 });

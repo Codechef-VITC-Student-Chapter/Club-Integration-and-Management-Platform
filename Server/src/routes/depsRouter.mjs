@@ -23,7 +23,7 @@ const depsRouter = express.Router();
 //         const depsData = req.body;
 //         const clubId = depsData.clubId;
 //         const newDep = await addDepartment(depsData);
-//         await addDepartmentToClub(clubId, newDep.depId);
+//         await addDepartmentToClub(clubId, newDep.ID);
 
 //         res.status(201).json(newDep);
 //     } catch (error) {
@@ -63,25 +63,24 @@ depsRouter.get('/get/:id', async (req, res) => {
 //     }
 // });
 
-depsRouter.post('/getLeads', async (req, res) => {
+depsRouter.post('/get-leads', async (req, res) => {
   try {
     const { depId } = req.body;
     const department = await getDepartmentById(depId);
     const leads = department.leads;
 
     const leadsWithUserData = await Promise.all(
-      leads.map(async (lead) => {
+      department.leads.map(async (lead) => {
         const user = await getUserById(lead);
         return {
-          userId: user.userId,
-          firstName: user.firstName,
-          lastName: user.lastName,
+          user_id: user.id,
+          name: user.first_name + ' ' + user.last_name,
         };
       })
     );
-
     res.status(200).json(leadsWithUserData);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: error.message });
   }
 });
