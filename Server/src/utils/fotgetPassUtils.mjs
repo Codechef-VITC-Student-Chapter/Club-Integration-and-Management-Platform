@@ -11,8 +11,8 @@ const transporter = nodemailer.createTransport({
   port: 465, // 465 for SSL, 587 for TLS
   secure: true, // true for 465, false for 587
   auth: {
-    user: "", // Your Gmail ID
-    pass: "", // Use App Password, not your actual Gmail password
+    user: "mailId@domain.com", // Your Gmail ID
+    pass: "CreatedAppPasswordfromGoogleSecurityCenter", // Use App Password, not your actual Gmail password
   },
 });
 
