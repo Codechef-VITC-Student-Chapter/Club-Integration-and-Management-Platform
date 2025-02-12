@@ -2,8 +2,10 @@ import express from "express"
 import crypto from "crypto";
 import {getUserByEmail} from "../utils/userUtils.mjs"
 import { verifyEmail,generateOtp, setOtp, sendOtp, verifyOtp, verifyCodeAndReset} from "../utils/fotgetPassUtils.mjs";
-
+import bodyParser from "body-parser";
 const forgetPassRouter = express.Router();
+forgetPassRouter.use(express.json());
+forgetPassRouter.use(express.urlencoded({extended:true}));
 
 forgetPassRouter.post("/getOtp/:emailId",async(req,res)=>{
     const email = req.params.emailId
@@ -18,9 +20,10 @@ forgetPassRouter.post("/getOtp/:emailId",async(req,res)=>{
     res.status(200).json("OTP Sent successfully");
 })
 
-forgetPassRouter.post("/verifyOtp/:email/:enteredOtp",async(req,res)=>{
-    const email = req.params.email;
-    const otp = req.params.enteredOtp;
+forgetPassRouter.post("/verifyOtp",async(req,res)=>{
+    const email = req.body.email;
+    console.log(email);
+    const otp = req.body.otp;
     const status = await verifyOtp(email,otp);
     if(status){
         res.status(200).json({message:"OTP Verified",resetAccessCode:status});
@@ -29,10 +32,11 @@ forgetPassRouter.post("/verifyOtp/:email/:enteredOtp",async(req,res)=>{
     }
 })
 
-forgetPassRouter.post("/resetPassword/:emailId/:otp/:newPassword",async(req,res)=>{
-    const email = req.params.emailId;
-    const otp = req.params.otp;
-    const newPassword = req.params.newPassword;
+forgetPassRouter.post("/resetPassword",async(req,res)=>{
+    const email = req.body.email;
+    const otp = req.body.otp;
+    const newPassword = req.body.newPassword;
+    console.log(email," ",otp," ",newPassword);
     const result = await verifyCodeAndReset(email,otp,newPassword);
     if(result){
         res.status(200).json("Password changed successfully");
