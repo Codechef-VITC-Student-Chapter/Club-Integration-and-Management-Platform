@@ -64,6 +64,35 @@ contRouter.get("/get/:id", async (req, res) => {
     res.status(404).json({ error: error.message });
   }
 });
+// New POST route to update points
+contRouter.post("/update-points/:id", async (req, res) => {
+  try {
+    const contId = req.params.id;
+    const { pointsToAdd } = req.body; // Points to be added
+
+    // Check if pointsToAdd is provided
+    if (typeof pointsToAdd !== "number" || pointsToAdd <= 0) {
+      return res.status(400).json({ error: "Invalid points to add" });
+    }
+
+    // Find the contribution by ID
+    const contribution = await Contribution.findOne({ id: contId });
+    if (!contribution) {
+      return res.status(404).json({ error: "Contribution not found" });
+    }
+
+    // Add points to the existing points
+    contribution.points += pointsToAdd;
+
+    // Save the updated contribution
+    const updatedContribution = await contribution.save();
+
+    res.status(200).json(updatedContribution);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 contRouter.patch("/update-status/:id", async (req, res) => {
   try {
