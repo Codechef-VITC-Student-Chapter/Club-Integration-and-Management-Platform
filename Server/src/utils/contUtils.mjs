@@ -47,8 +47,8 @@ export const addContribution = async (contributionData) => {
     );
     return newContribution;
   } catch (error) {
-    console.log(error);
-    throw new Error("Failed to add contribution");
+    console.log("Detailed error:", error);
+    throw new Error("Failed to add contribution: " + error.message);
   }
 };
 
