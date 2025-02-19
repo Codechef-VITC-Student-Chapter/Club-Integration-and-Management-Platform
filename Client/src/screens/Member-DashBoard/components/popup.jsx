@@ -17,14 +17,14 @@ const TaskModal = ({
         : status === "rejected"
             ? 'rgba(220, 53, 69, 1)'
             : 'rgba(255, 172, 51, 1)';
-            
+
     const textColor = status === "pending" ? 'black' : taskColor;
     const textColor1 = status === "pending" ? "black" : "white";
 
     return (
         <div
             className="fixed inset-0 flex items-center justify-center z-50 backdrop-blur-sm bg-black/30"
-            onClick={onClose} 
+            onClick={onClose}
         >
             <div
                 className="bg-white rounded-lg p-6 shadow-xl max-w-lg mx-auto w-full relative"
@@ -48,7 +48,7 @@ const TaskModal = ({
                                 <strong>Date:</strong> {date}
                             </div>
                             <div style={{ color: textColor }}>
-                                <strong>Description:</strong> {description}
+                                <strong>{status === "rejected" ? "Reason for Rejection" : "Description"}:</strong> {description}
                             </div>
                             <div style={{ color: textColor }}>
                                 <strong>Points:</strong> {points}

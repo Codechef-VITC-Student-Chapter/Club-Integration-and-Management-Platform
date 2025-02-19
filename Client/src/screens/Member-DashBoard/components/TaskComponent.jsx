@@ -18,8 +18,10 @@ const TaskComponent = ({
     status === "approved"
       ? "rgba(25, 135, 84, 1)"
       : status === "rejected"
-      ? "rgba(220, 53, 69, 1)"
-      : "rgba(255, 172, 51, 1)";
+        ? "rgba(220, 53, 69, 1)"
+        : "rgba(255, 172, 51, 1)";
+
+  const reason_for_rejection = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse non, molestias nemo, iure fugiat quis vel ad quidem quo saepe iusto culpa dolore nisi odio asperiores reiciendis omnis hic harum."
 
   const textColor = status === "pending" ? "black" : taskColor;
   const isPending = status === "pending";
@@ -98,8 +100,21 @@ const TaskComponent = ({
           className="text-sm mb-4 md:text-sm"
           style={{ color: textColor, fontWeight: 500 }}
         >
-          <strong>Task Description:</strong>{" "}
-          {description.length > 50 ? (
+          <strong>{status === "rejected" ? "Reason for Rejection:" : "Task Description:"}</strong>{" "}
+          {status === "rejected" ? (
+            reason_for_rejection.length > 50 ? (
+              <>
+                {reason_for_rejection.slice(0, 50) + "... "}
+                <button
+                  className="underline"
+                  onClick={handleSeeMoreClick}
+                  style={{ color: textColor, fontWeight: 500 }}
+                >
+                  See More
+                </button>
+              </>
+            ) : reason_for_rejection
+          ) : description.length > 50 ? (
             <>
               {description.slice(0, 50) + "... "}
               <button
@@ -116,22 +131,24 @@ const TaskComponent = ({
         </div>
 
         <div className="text-xs text-gray-500 mt-4 md:text-sm">{id}</div>
-      </div>
+      </div >
 
       {/* Render TaskModal conditionally when See More is clicked */}
-      {isModalOpen && (
-        <TaskModal
-          taskName={taskName}
-          target={target}
-          department={department}
-          date={date}
-          description={description}
-          id={id}
-          points={points}
-          status={status}
-          onClose={handleCloseModal}
-        />
-      )}
+      {
+        isModalOpen && (
+          <TaskModal
+            taskName={taskName}
+            target={target}
+            department={department}
+            date={date}
+            description={description}
+            id={id}
+            points={points}
+            status={status}
+            onClose={handleCloseModal}
+          />
+        )
+      }
     </>
   );
 };
