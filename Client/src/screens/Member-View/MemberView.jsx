@@ -1,6 +1,15 @@
+import { Routes, Route } from "react-router-dom";
+import PointsSummary from "../Points-Summary/PointsSummary";
+import MemberTable from "./components/MemberTable";
+
+
 const MemberView = () => {
     return (
-        <div>MemberView</div>
-    )
-}
-export default MemberView
+        <Routes>
+            <Route path="/" element={<MemberTable />} />
+            <Route path="/points-summary/:id" element={<PointsSummary />} />
+        </Routes>
+    );
+};
+
+export default MemberView;
