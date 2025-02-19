@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import { Schema } from "mongoose";
 
 const userSchema = new Schema({
   id: {
@@ -26,6 +26,11 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  otp: {
+    type: String,
+    default: "",
+    required: false,
+  },
   is_lead: {
     type: Boolean,
     default: false,
@@ -45,10 +50,10 @@ const userSchema = new Schema({
     default: [],
     required: false,
   },
-  totalPoints: {
-    type: Number,
-    default: 0,
-    required: true,
+  resetAccessCode: {
+    type: String,
+    default: "",
+    required: false,
   },
 });
 
