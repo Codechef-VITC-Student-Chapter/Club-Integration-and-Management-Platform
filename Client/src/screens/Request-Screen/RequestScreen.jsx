@@ -225,7 +225,6 @@ const RequestScreen = () => {
     <div className="min-h-screen p-5">
       <div className="bg-[#E9F1FE] min-h-screen pt-4">
         <h1 className="text-center text-2xl py-4">SUBMIT A REQUEST</h1>
-
         <div className="mx-4 md:mx-auto max-w-4xl">
           <div className="bg-white rounded-3xl p-6 shadow-md">
             <form onSubmit={handleSubmit}>

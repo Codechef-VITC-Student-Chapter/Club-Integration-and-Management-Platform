@@ -66,6 +66,7 @@ function MemberDashboard() {
       // console.log(donePoints, pPoints);
       // console.log(pending);
       setContributions(done);
+      console.log(done);
       setPendingContributions(pending);
       setClubPoints({ codechefvitc: donePoints });
       setPendingPoints({ codechefvitc: pPoints });
