@@ -5,7 +5,9 @@ import { Routes, Route } from "react-router-dom";
 import LoadingScreen from "./Loading-Screen/LoadingScreen";
 import Navbar from "./Navbar/Navbar";
 import { useRunningContext } from "../contexts/RunningContext";
+import MemberView from "./Member-View/MemberView";
 
+const PointsSummary = React.lazy(() => import("./Points-Summary/PointsSummary"));
 const PageNotFound = React.lazy(() => import("./Page-Not-Found/PageNotFound"));
 const LoginForm = React.lazy(() => import("./Login-Form/LoginForm"));
 const SignUpForm = React.lazy(() => import("./Signup-Form/SignUpForm"));
@@ -38,6 +40,8 @@ function SiteRouter() {
           {isAdmin && <Route path="/adminview" element={<AdminView />} />}
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/dashboard" element={<MemberDashboard />} />
+          <Route path="/memberview" element={<MemberView />} />
+          <Route path="/summary" element={<PointsSummary />} />
           <Route path="/" element={<MemberDashboard />} />
           <Route path="/*" element={<PageNotFound />} />
         </Routes>
