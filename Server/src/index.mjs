@@ -19,8 +19,8 @@ const connectionString = process.env.CONNECTION_STRING;
 const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/CIMP"
 
 mongoose
-  .connect(MONGO_URI)
-  .then(async() => {
+  .connect(connectionString)
+  .then(async () => {
     console.log('Connected to MongoDB');
   })
   .catch((err) => {
@@ -41,14 +41,14 @@ app.use('/clubApi', clubRouter);
 app.use('/authApi', authRouter);
 app.use('/depsApi', depsRouter);
 app.use('/contApi', contRouter);
-app.use('/forgetPassword',forgetPassRouter);
+app.use('/forgetPassword', forgetPassRouter);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 app.get('/apimap', (_req, res) => {
   res.sendFile(join(__dirname, 'sitemap.html'));
 });
-app.listen(3000, async() => {
+app.listen(3000, async () => {
   console.log(`Server is running on port ${3000}`);
 });
 
