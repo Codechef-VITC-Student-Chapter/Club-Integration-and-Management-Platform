@@ -1,6 +1,6 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { FaUser, FaCodeBranch, FaCalendarAlt } from "react-icons/fa";
-import TaskModal from "./popup.jsx"; // Adjust the path if needed
+import TaskModal from "./Popup.jsx"; // Adjust the path if needed
 
 const TaskComponent = ({
   taskName,
@@ -34,17 +34,21 @@ const TaskComponent = ({
 
   return (
     <>
-      <div
-        className="relative max-w-sm border rounded-xl p-4 shadow-lg bg-white font-sans md:min-w-[312px] md:p-6"
-        style={{
-          fontFamily: "Lato, sans-serif",
-          border: `1px solid ${taskColor}`,
-          width: "100%",
-        }}
-        key={id}
-      >
-        <div
-          className="absolute -top-0 left-0 rounded-tl-lg rounded-br-lg px-6 py-3 md:px-8 md:py-2"
+     <div
+  className="relative max-w-sm border rounded-xl p-4 md:p-6 shadow-lg bg-white font-sans w-full"
+  style={{
+    fontFamily: "Lato, sans-serif",
+    border: `1px solid ${taskColor}`,
+    wordWrap: "break-word",
+    overflowWrap: "break-word",
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
+  }}
+  key={id}
+>
+<div
+          className="absolute -top-0 left-0 rounded-tl-lg rounded-br-lg xs:rounded-tr-lg px-6 py-3 md:px-8 md:py-2"
           style={{ backgroundColor: taskColor }}
         >
           <h2
@@ -54,44 +58,55 @@ const TaskComponent = ({
             {taskName}
           </h2>
         </div>
+
         <div className="flex justify-between items-center mt-12 mb-4 md:mt-7 md:mb-3">
-          <div className="space-y-2">
-            <div
-              className="text-sm flex items-center md:text-[15px]"
-              style={{ color: textColor, fontWeight: 500 }}
-            >
-              <FaUser className="mr-2" />
-              <strong>Target:</strong> {target}
-            </div>
+          <div className="space-y-3">
+          <div
+  className="text-sm md:text-[15px] pt-4 max-w-[200px] whitespace-normal break-words"
+  style={{ color: textColor, fontWeight: 500 }}
+>
+  <div className="flex items-center">
+    <FaUser className="p-0" />
+    <strong>Target:</strong>
+  </div>
+  <div>{target}</div>
+</div>
 
-            <div
-              className="text-sm flex items-center md:text-[15px]"
-              style={{ color: textColor, fontWeight: 500 }}
-            >
-              <FaCodeBranch className="mr-2" />
-              <strong>Department:</strong> {department}
-            </div>
 
+<div
+  className="text-sm md:text-[15px] p-0 max-w-[200px] whitespace-normal break-words"
+  style={{ color: textColor, fontWeight: 500 }}
+>
+  <div className="flex items-center">
+    <FaCodeBranch className="p-0" />
+    <strong>Department:</strong>
+  </div>
+  <div>{department}</div>
+</div>
             <div
-              className="text-sm flex items-center md:text-[15px]"
+              className="text-sm md:text-[15px] p-0 max-w-[200px] whitespace-normal break-words"
               style={{ color: textColor, fontWeight: 500 }}
             >
               <FaCalendarAlt className="mr-2" />
-              <strong>Date:</strong> {date}
+              <strong>Date:</strong> 
+              <div>{date}</div>
             </div>
           </div>
 
           {points !== undefined && (
-            <div
-              className="rounded-full size-[60px] flex items-center justify-center md:w-[60px] md:text-xl"
-              style={{
-                backgroundColor: taskColor,
-                color: isPending ? "black" : "white",
-              }}
-            >
-              {points}
-            </div>
-          )}
+  <div
+    className="rounded-full flex items-center justify-center mr-11 p-2  bg-transparent"
+    style={{
+      backgroundColor: taskColor,
+      color: isPending ? "black" : "white",
+    }}
+  >
+    <span className="w-16 h-16 md:w-16 md:h-16 lg:w-20 lg:h-20 flex items-center xs:pr-12 justify-center text-lg">
+      {points}
+    </span>
+  </div>
+)}
+
         </div>
 
         <div
