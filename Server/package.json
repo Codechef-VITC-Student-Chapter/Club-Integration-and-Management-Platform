@@ -1,10 +1,10 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
     "test": "cross-env NODE_ENV=test mocha --experimental-modules --exit --timeout 10000 test/**/*.test.mjs",
-    "start": "cross-env DEBUG=express:* node index.mjs"
+    "start": "cross-env DEBUG=express:* node ./src/index.mjs"
   },
   "type": "module",
   "keywords": [],

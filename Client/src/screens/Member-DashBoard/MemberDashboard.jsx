@@ -118,7 +118,7 @@ function MemberDashboard() {
   // console.log();
 
   return (
-    <div className="min-h-screen bg-[#e8f1fe]">
+    <div className="min-h-screen bg-[#e8f1fe] ">
       <div className="flex md:flex-row flex-col h-full">
         <aside className="w-full xl:w-1/4 md:w-[30%]">
           <div className="flex md:flex-col flex-row md:gap-3 items-center justify-center md:pb-12">
@@ -132,14 +132,14 @@ function MemberDashboard() {
               />
             </div>
 
-            <div className="flex flex-col items-center md:p-4 w-2/3 md:w-full">
+            <div className="mt-4 flex flex-col items-center md:p-4 w-2/3 md:w-full">
               <PointsWidget
                 clubPoints={clubPoints}
                 pendingPoints={pendingPoints}
               />
             </div>
           </div>
-          <div className="bg-[#2E3446] text-white mx-5 rounded-2xl p-3 md:hidden">
+          <div className="mt-2 bg-[#2E3446] text-white mx-5 rounded-2xl p-3 md:hidden">
             <Badge badges={badges} />
           </div>
         </aside>

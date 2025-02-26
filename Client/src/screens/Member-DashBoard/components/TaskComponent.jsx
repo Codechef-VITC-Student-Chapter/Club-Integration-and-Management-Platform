@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FaUser, FaCodeBranch, FaCalendarAlt } from "react-icons/fa";
-import TaskModal from "./popup.jsx"; // Adjust the path if needed
+import TaskModal from "./popup.jsx";
 
 const TaskComponent = ({
   taskName,
@@ -35,90 +35,105 @@ const TaskComponent = ({
   return (
     <>
       <div
-        className="relative max-w-sm border rounded-xl p-4 shadow-lg bg-white font-sans md:min-w-[312px] md:p-6"
+        className="relative border rounded-xl p-2 shadow-lg bg-white w-full font-sans max-w-[300px] md:max-w-sm"
         style={{
           fontFamily: "Lato, sans-serif",
           border: `1px solid ${taskColor}`,
-          width: "100%",
         }}
         key={id}
       >
+        {/* Header Tag */}
         <div
-          className="absolute -top-0 left-0 rounded-tl-lg rounded-br-lg px-6 py-3 md:px-8 md:py-2"
+          className="absolute -top-0 left-0 rounded-tl-lg rounded-br-lg px-2 py-1 md:px-4 md:py-1"
           style={{ backgroundColor: taskColor }}
         >
           <h2
-            className="font-bold text-lg md:text-xl md:px-2"
+            className="font-bold text-[12px] md:text-lg"
             style={{ color: isPending ? "black" : "white" }}
           >
             {taskName}
           </h2>
         </div>
-        <div className="flex justify-between items-center mt-12 mb-4 md:mt-7 md:mb-3">
-          <div className="space-y-2">
-            <div
-              className="text-sm flex items-center md:text-[15px]"
-              style={{ color: textColor, fontWeight: 500 }}
-            >
-              <FaUser className="mr-2" />
-              <strong>Target:</strong> {target}
-            </div>
 
-            <div
-              className="text-sm flex items-center md:text-[15px]"
-              style={{ color: textColor, fontWeight: 500 }}
-            >
-              <FaCodeBranch className="mr-2" />
-              <strong>Department:</strong> {department}
-            </div>
-
-            <div
-              className="text-sm flex items-center md:text-[15px]"
-              style={{ color: textColor, fontWeight: 500 }}
-            >
-              <FaCalendarAlt className="mr-2" />
-              <strong>Date:</strong> {date}
-            </div>
-          </div>
-
-          {points !== undefined && (
-            <div
-              className="rounded-full size-[60px] flex items-center justify-center md:w-[60px] md:text-xl"
-              style={{
-                backgroundColor: taskColor,
-                color: isPending ? "black" : "white",
-              }}
-            >
-              {points}
-            </div>
-          )}
-        </div>
-
-        <div
-          className="text-sm mb-4 md:text-sm"
-          style={{ color: textColor, fontWeight: 500 }}
-        >
-          <strong>Task Description:</strong>{" "}
-          {description.length > 50 ? (
-            <>
-              {description.slice(0, 50) + "... "}
-              <button
-                className="underline"
-                onClick={handleSeeMoreClick}
+        {/* Main Content Area */}
+        <div className="mt-7 md:mt-10 mb-1 md:mb-3">
+          {/* Info and Points Section */}
+          <div className="flex justify-between items-start">
+            {/* Left Side Info */}
+            <div className="space-y-1 w-3/4">
+              <div
+                className="text-[10px] md:text-sm flex items-center"
                 style={{ color: textColor, fontWeight: 500 }}
               >
-                See More
-              </button>
-            </>
-          ) : (
-            <>{description}</>
-          )}
+                <FaUser className="mr-1 flex-shrink-0" />
+                <span><strong>Target:</strong> {target}</span>
+              </div>
+
+              <div
+                className="text-[10px] md:text-sm flex items-center"
+                style={{ color: textColor, fontWeight: 500 }}
+              >
+                <FaCodeBranch className="mr-1 flex-shrink-0" />
+                <span className="break-words"><strong>Department:</strong> {department}</span>
+              </div>
+
+              <div
+                className="text-[10px] md:text-sm flex items-center"
+                style={{ color: textColor, fontWeight: 500 }}
+              >
+                <FaCalendarAlt className="mr-1 flex-shrink-0" />
+                <span><strong>Date:</strong> {date}</span>
+              </div>
+            </div>
+
+            {/* Points Circle - Right Side - Now positioned better */}
+            {points !== undefined && (
+              <div className="w-1/4 flex justify-end">
+                <div
+                  className="rounded-full w-[35px] h-[35px] flex items-center justify-center text-[10px] md:w-[50px] md:h-[50px] md:text-lg flex-shrink-0"
+                  style={{
+                    backgroundColor: taskColor,
+                    color: isPending ? "black" : "white",
+                  }}
+                >
+                  {points}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Description Section */}
+          <div
+            className="text-[10px] md:text-sm mt-2 md:mt-3"
+            style={{ color: textColor, fontWeight: 500 }}
+          >
+            <strong>Task Description:</strong>{" "}
+            <span className="block mt-1">
+              {description.length > 30 ? (
+                <>
+                  {description.slice(0, 30) + "... "}
+                  <button
+                    className="underline"
+                    onClick={handleSeeMoreClick}
+                    style={{ color: taskColor, fontWeight: 500 }}
+                  >
+                    See More
+                  </button>
+                </>
+              ) : (
+                description
+              )}
+            </span>
+          </div>
         </div>
 
-        <div className="text-xs text-gray-500 mt-4 md:text-sm">{id}</div>
+        {/* ID Footer */}
+        <div className="text-[8px] md:text-xs text-gray-500 mt-1">
+          ID: {id}
+        </div>
       </div>
 
-      {/* Render TaskModal conditionally when See More is clicked */}
+      {/* Modal */}
       {isModalOpen && (
         <TaskModal
           taskName={taskName}

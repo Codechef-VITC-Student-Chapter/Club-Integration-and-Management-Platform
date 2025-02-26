@@ -5,8 +5,9 @@ function RecentContributions({ contributions }) {
   return contributions.length === 0 ? (
     <p>No recent contributions.</p>
   ) : (
-    <div className="flex flex-col md:flex-row gap-8 items-center justify-center overflow-scroll">
-      {contributions.map((contribution) => (
+
+    <div className="flex flex-col gap-2 md:flex-row md:gap-4 items-center">
+      {[...contributions].reverse().map((contribution) => (
         <TaskComponent
           key={contribution.id}
           taskName={contribution.title} // Match the prop name expected in TaskComponent

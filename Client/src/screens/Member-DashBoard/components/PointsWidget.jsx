@@ -5,7 +5,7 @@ const CircleProgress = ({ totalPoints, pendingPoints }) => {
   const pendingDash = (pendingPoints / 100) * circumference;
 
   return (
-    <div className="relative flex justify-center items-center">
+    <div className="relative flex justify-center items-center w-20 h-20 sm:w-28 sm:h-28 md:w-36 md:h-36">
       <svg
         width="100%"
         height="100%"
@@ -54,18 +54,18 @@ const CircleProgress = ({ totalPoints, pendingPoints }) => {
 
 // Separate PointsInfo component
 const PointsInfo = ({ totalPoints, pendingPoints }) => (
-  <div className="flex flex-col gap-2 text-center">
+  <div className="flex flex-col gap-1 sm:gap-2 text-center">
     <div>
-      <h2 className="text-green-500 font-bold text-sm md:text-lg">
+      <h2 className="text-green-500 font-bold text-xs sm:text-sm mb-2 p-2 md:text-lg ">
         Total Points Earned
       </h2>
-      <p className="text-green-500 text-sm md:text-base">{totalPoints}/100</p>
+      <p className="text-green-500 text-xs sm:text-xs p-2 mr-3 md:text-base">{totalPoints}/100</p>
     </div>
     <div>
-      <h2 className="text-yellow-400 font-bold text-sm md:text-lg">
+      <h2 className="text-yellow-400 font-bold text-xs sm:text-xs md:text-lg">
         Pending Points
       </h2>
-      <p className="text-yellow-400 text-sm md:text-base">{pendingPoints}</p>
+      <p className="text-yellow-400 text-xs sm:text-sm md:text-base">{pendingPoints}</p>
     </div>
   </div>
 );
@@ -80,15 +80,18 @@ const PointsWidget = ({ clubPoints, pendingPoints }) => {
         const pendingPointsForClub = pendingPoints[club] || 0;
 
         return (
-          <div key={club} className="flex flex-col">
+          <div key={club} className="flex flex-col ">
             <div className="bg-gray-800 rounded-t-3xl py-2">
               <h1 className="text-white text-center text-sm md:text-base">
                 Points Breakdown
               </h1>
             </div>
 
-            <div className="p-6 flex flex-row md:flex-row items-center justify-center gap-6">
-              <div className="w-28 md:w-36">
+            <div 
+              className="p-4 flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6"
+              style={{ padding: '8px' }} // <-- Adjusted for 300px
+            >
+              <div className="w-24 sm:w-28 md:w-36">
                 <CircleProgress
                   totalPoints={totalPoints}
                   pendingPoints={pendingPointsForClub}
@@ -106,5 +109,6 @@ const PointsWidget = ({ clubPoints, pendingPoints }) => {
     </div>
   );
 };
+
 
 export default PointsWidget;
