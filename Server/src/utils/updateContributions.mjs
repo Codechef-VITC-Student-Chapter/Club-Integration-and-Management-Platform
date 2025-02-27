@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import contributionSchema from "../DB/Schemas/contSchema.mjs";
+import contributionSchema, { Contribution } from "../DB/Schemas/contSchema.mjs";
 
 dotenv.config({ path: ".../.env" });
 
@@ -11,9 +11,9 @@ if (!connectionString) {
   process.exit(1);
 }
 
-const Contribution =
-  mongoose.models.Contribution ||
-  mongoose.model("Contribution", contributionSchema);
+// const Contribution =
+//   mongoose.models.Contribution ||
+//   mongoose.model("Contribution", contributionSchema);
 
 const updateContributions = async () => {
   try {

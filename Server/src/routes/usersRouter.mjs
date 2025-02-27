@@ -1,8 +1,8 @@
-import express from 'express';
-import { authenticateToken } from '../middleware/authenticateToken.mjs';
-import { getContributionById } from '../utils/contUtils.mjs';
-import { getClubById } from '../utils/clubUtils.mjs';
-import { getDepartmentById } from '../utils/depsUtils.mjs';
+import express from "express";
+import { authenticateToken } from "../middleware/authenticateToken.mjs";
+import { getContributionById } from "../utils/contUtils.mjs";
+import { getClubById } from "../utils/clubUtils.mjs";
+import { getDepartmentById } from "../utils/depsUtils.mjs";
 import {
   removeUser,
   getUserById,
@@ -13,12 +13,11 @@ import {
   removeClubs,
   addContributions,
   removeContributions,
-  getAllUser,
-  getUserByEmail
-} from '../utils/userUtils.mjs';
+  getUserByEmail,
+} from "../utils/userUtils.mjs";
 
-import { addUserToClub } from '../utils/clubUtils.mjs';
-import { getRequests } from '../utils/contUtils.mjs';
+import { addUserToClub } from "../utils/clubUtils.mjs";
+import { getRequests } from "../utils/contUtils.mjs";
 
 const userRouter = express.Router();
 
@@ -35,7 +34,7 @@ const userRouter = express.Router();
 // });
 
 // Route to get user data
-userRouter.get('/get/:userId', async (req, res) => {
+userRouter.get("/get/:userId", async (req, res) => {
   try {
     const user = await getUserById(req.params.userId);
     res.status(200).json(user);
@@ -43,9 +42,9 @@ userRouter.get('/get/:userId', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-userRouter.get('/getbyEmail/:emailId', async (req, res) => {
+userRouter.get("/getbyEmail/:emailId", async (req, res) => {
   try {
-    console.log("email id:-",req.params.emailId);
+    console.log("email id:-", req.params.emailId);
     const user = await getUserByEmail(req.params.emailId);
     res.status(200).json(user);
   } catch (error) {
@@ -54,16 +53,16 @@ userRouter.get('/getbyEmail/:emailId', async (req, res) => {
 });
 
 //Route to get all Users data
-userRouter.get('/getAllUsers',async(req,res)=>{
-  try{
-    const user = await getAllUser();
-    res.status(200).json(user);
-  }catch(error){
-    res.status(500).json( {error:error.message} )
-  }
-})
+// userRouter.get('/getAllUsers',async(req,res)=>{
+//   try{
+//     const user = await getAllUser();
+//     res.status(200).json(user);
+//   }catch(error){
+//     res.status(500).json( {error:error.message} )
+//   }
+// })
 // Route to get user requests
-userRouter.get('/get-requests/:userId', async (req, res) => {
+userRouter.get("/get-requests/:userId", async (req, res) => {
   try {
     const requests = await getRequests(req.params.userId);
     const answer = [];
@@ -86,6 +85,7 @@ userRouter.get('/get-requests/:userId', async (req, res) => {
         status: request.status,
         club_name: club.name,
         department_name: department.department,
+        reason: request.reason,
       };
       answer.push(temp);
     }
@@ -98,7 +98,7 @@ userRouter.get('/get-requests/:userId', async (req, res) => {
 });
 
 // Route to get user contribution data
-userRouter.post('/get-contribution-data', async (req, res) => {
+userRouter.post("/get-contribution-data", async (req, res) => {
   try {
     // console.log(req.body);
     const user = await getUserById(req.body.user);
@@ -127,12 +127,47 @@ userRouter.post('/get-contribution-data', async (req, res) => {
         created_at: contribution.created_at,
         club_name: club.name,
         department_name: department.department,
+        reason: contribution.reason,
       };
       contributionData.push(temp);
     }
     // console.log(contributionData);
 
     res.status(200).json(contributionData);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+userRouter.get("/get-contribution-summary/:userId", async (req, res) => {
+  const requests = await getRequests(req.params.userId);
+  const answer = [];
+  try {
+    for (const request of requests) {
+      // console.log(request.club_id, request.department);
+      const club = await getClubById(request.club_id);
+      const department = await getDepartmentById(request.department);
+      const temp = {
+        id: request.id,
+        title: request.title,
+        points: request.points,
+        user_id: request.user_id,
+        description: request.description,
+        proof_files: request.proof_files,
+        target: request.target,
+        club_id: request.club_id,
+        department: request.department,
+        created_at: request.created_at,
+        status: request.status,
+        club_name: club.name,
+        department_name: department.department,
+        reason: request.reason,
+      };
+      answer.push(temp);
+    }
+
+    res.status(200).json(answer);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error.message });

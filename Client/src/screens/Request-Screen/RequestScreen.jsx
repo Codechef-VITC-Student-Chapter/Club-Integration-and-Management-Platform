@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import EditLinks from "./components/EditLinks.jsx";
 import { toast } from "react-toastify";
 import { useRunningContext } from "../../contexts/RunningContext.jsx";
@@ -10,6 +10,7 @@ const RequestScreen = () => {
   const [club, setClub] = useState(null);
   const [deps, setDeps] = useState([]);
   const [leads, setLeads] = useState([]);
+  const [selectedLeads, setSelectedLeads] = useState([])
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [depChosen, setDepChosen] = useState("");
@@ -145,6 +146,19 @@ const RequestScreen = () => {
     }
   };
 
+  const handleSetSelectedLead = (leadToRemove) => {
+    setSelectedLeads(prev => prev.filter(lead => lead.user_id !== leadToRemove.user_id));
+    setLeads(prev => [...prev, leadToRemove]);
+    setTarget('');
+  };
+
+  const handleSetLead = (selectedLead) => {
+    if (!selectedLead) return;
+    setSelectedLeads(prev => [...prev, selectedLead]);
+    setLeads(prev => prev.filter(lead => lead.user_id !== selectedLead.user_id));
+    setTarget(selectedLead.user_id);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedPoints && !choseCustom) {
@@ -211,7 +225,6 @@ const RequestScreen = () => {
     <div className="min-h-screen p-5">
       <div className="bg-[#E9F1FE] min-h-screen pt-4">
         <h1 className="text-center text-2xl py-4">SUBMIT A REQUEST</h1>
-
         <div className="mx-4 md:mx-auto max-w-4xl">
           <div className="bg-white rounded-3xl p-6 shadow-md">
             <form onSubmit={handleSubmit}>
@@ -244,19 +257,39 @@ const RequestScreen = () => {
                   </div>
                 </div>
               </div>
+
               <div className="mb-4">
-                <label className="block mb-2">Lead:</label>
+                <div className="flex mb-2">
+                  <span>Lead:</span>
+                  <span className="flex">
+                    {selectedLeads.map((data) => (
+                      <button
+                        key={data.user_id}
+                        type="button"
+                        className="flex items-center justify-between border-black border-2 rounded-xl ml-2 px-2 bg-slate-900 min-w-[80px]"
+                        onClick={() => handleSetSelectedLead(data)}
+                      >
+                        <span className="text-white">{data.name}</span>
+                        <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path opacity="0.6" d="M7.73438 3.5625L3.26562 8.4375M3.26562 3.5625L7.73438 8.4375" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                    ))}
+                  </span>
+                </div>
                 <div className="relative">
                   <select
                     className="w-full p-2 rounded border appearance-none bg-white pr-8"
                     disabled={!depChosen}
                     onChange={(e) => {
-                      setTarget(e.target.value);
+                      const selectedLead = leads.find(lead => lead.user_id === e.target.value);
+                      if (selectedLead) handleSetLead(selectedLead);
                     }}
+                    value=""
                   >
                     <option value="">Select Lead</option>
-                    {leads.map((data, index) => (
-                      <option key={index} value={data.user_id}>
+                    {leads.map((data) => (
+                      <option key={data.user_id} value={data.user_id}>
                         {data.name}
                       </option>
                     ))}
@@ -272,6 +305,7 @@ const RequestScreen = () => {
                   </div>
                 </div>
               </div>
+
               <div className="mb-4">
                 <label className="block mb-2">Title:</label>
                 <div className="relative">

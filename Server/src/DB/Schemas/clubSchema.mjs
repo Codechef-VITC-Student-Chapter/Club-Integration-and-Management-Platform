@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const clubSchema = new mongoose.Schema({
   id: {
@@ -20,4 +20,6 @@ const clubSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model('Club', clubSchema);
+export const Club = mongoose.models.Club || mongoose.model("Club", clubSchema);
+
+// export default mongoose.model('Club', clubSchema);

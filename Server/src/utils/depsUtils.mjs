@@ -1,6 +1,5 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
-import depsSchema from "../DB/Schemas/depsSchema.mjs";
+import { Department } from "../DB/Schemas/depsSchema.mjs";
 
 dotenv.config();
 
@@ -14,9 +13,6 @@ dotenv.config();
 //   .catch((err) => {
 //     console.log(err);
 //   });
-
-const Department =
-  mongoose.models.Department || mongoose.model("Department", depsSchema);
 
 export const addDepartment = async (depsData) => {
   try {

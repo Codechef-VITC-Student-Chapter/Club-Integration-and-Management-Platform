@@ -7,6 +7,7 @@ import {
   getRequests,
 } from "../utils/contUtils.mjs";
 import { authenticateToken } from "../middleware/authenticateToken.mjs";
+import { Contribution } from "../DB/Schemas/contSchema.mjs";
 
 const contRouter = express.Router();
 contRouter.use(authenticateToken);

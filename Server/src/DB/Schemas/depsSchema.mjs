@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const depsSchema = new mongoose.Schema({
   id: {
@@ -37,4 +37,7 @@ const depsSchema = new mongoose.Schema({
   ],
 });
 
-export default depsSchema;
+export const Department =
+  mongoose.models.Department || mongoose.model("Department", depsSchema);
+
+// export default depsSchema;

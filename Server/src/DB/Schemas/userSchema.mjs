@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 const userSchema = new Schema({
   id: {
@@ -55,6 +55,16 @@ const userSchema = new Schema({
     default: "",
     required: false,
   },
+  total_points: {
+    type: Number,
+    default: 0,
+  },
+  last_update: {
+    type: Date,
+    default: Date.now(),
+  },
 });
 
-export default userSchema;
+export const User = mongoose.models.User || mongoose.model("User", userSchema);
+
+// export default userSchema;

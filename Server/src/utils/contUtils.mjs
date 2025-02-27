@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import contributionSchema from "../DB/Schemas/contSchema.mjs";
-import userSchema from "../DB/Schemas/userSchema.mjs";
+import { Contribution } from "../DB/Schemas/contSchema.mjs";
+import { User } from "../DB/Schemas/userSchema.mjs";
 
 dotenv.config();
 
@@ -16,10 +16,10 @@ dotenv.config();
 //     console.log(err);
 //   });
 
-const Contribution =
-  mongoose.models.Contribution ||
-  mongoose.model("Contribution", contributionSchema);
-const User = mongoose.models.User || mongoose.model("User", userSchema);
+// const Contribution =
+//   mongoose.models.Contribution ||
+//   mongoose.model("Contribution", contributionSchema);
+// const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export const addContribution = async (contributionData) => {
   try {
@@ -103,12 +103,23 @@ export const updateContributionStatus = async (
     }
     const updatedContribution = await Contribution.findOneAndUpdate(
       { id: contId },
-      { status: newStatus, reason, description: reason }, //reason added
+      { status: newStatus, reason }, //reason added
       { new: true }
     );
     if (!updatedContribution) {
       throw new Error("Contribution not found");
     }
+    // console.log(updatedContribution);
+    const user_id = updatedContribution.user_id;
+    const user = await User.findOne({ id: user_id });
+    user.last_update = Date.now();
+    if (newStatus === "approved") {
+      user.total_points += updatedContribution.points;
+    } else if (newStatus === "rejected") {
+      user.total_points -= updateContributionStatus.points;
+    }
+    await user.save();
+    // console.log(user.modifiedCount);
     return updatedContribution;
   } catch (error) {
     throw new Error("Failed to update contribution status");

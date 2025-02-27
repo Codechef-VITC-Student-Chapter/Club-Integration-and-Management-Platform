@@ -6,6 +6,7 @@ import LoadingScreen from "./Loading-Screen/LoadingScreen";
 import Navbar from "./Navbar/Navbar";
 import { useRunningContext } from "../contexts/RunningContext";
 import MemberView from "./Member-View/MemberView";
+import DepartmentContributions from "./Department-Contributions/DepartmentContributions";
 
 const PointsSummary = React.lazy(() => import("./Points-Summary/PointsSummary"));
 const PageNotFound = React.lazy(() => import("./Page-Not-Found/PageNotFound"));
@@ -42,6 +43,7 @@ function SiteRouter() {
           <Route path="/dashboard" element={<MemberDashboard />} />
           <Route path="/memberview" element={<MemberView />} />
           <Route path="/summary" element={<PointsSummary />} />
+          <Route path="/department" element={<DepartmentContributions />} />
           <Route path="/" element={<MemberDashboard />} />
           <Route path="/*" element={<PageNotFound />} />
         </Routes>

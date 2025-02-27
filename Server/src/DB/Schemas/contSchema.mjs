@@ -58,4 +58,6 @@ const contSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("Contribution", contSchema);
+// export default mongoose.model("Contribution", contSchema);
+export const Contribution =
+  mongoose.models.Contribution || mongoose.model("Contribution", contSchema);

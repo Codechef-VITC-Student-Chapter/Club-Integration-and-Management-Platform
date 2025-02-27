@@ -1,8 +1,7 @@
 const fs = require("fs");
 const axios = require("axios");
 const csv = require("csv-parser");
-const inputCsv =
-  "C:\\Users\\codew\\Desktop\\Club-Integration-and-Management-Platform\\Server\\src\\DB\\RegNoProfileLink.csv"; // Correct path
+const inputCsv = "./RegNoProfileLink.csv"; //Change the Path of the CSVz
 
 const apiUrl = "http://localhost:3000/contApi/update-points"; // Update this with the actual API URL
 

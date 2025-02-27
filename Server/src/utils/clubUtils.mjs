@@ -1,6 +1,6 @@
-import mongoose from "mongoose";
 import dotenv from "dotenv";
-import clubSchema from "../DB/Schemas/clubSchema.mjs";
+import { Club } from "../DB/Schemas/clubSchema.mjs";
+import { User } from "../DB/Schemas/userSchema.mjs";
 
 dotenv.config();
 
@@ -14,7 +14,25 @@ dotenv.config();
 //     console.log(err);
 //   });
 
-const Club = mongoose.models.Club || mongoose.model("Club", clubSchema);
+// const Club = mongoose.models.Club || mongoose.model("Club", clubSchema);
+
+export const getAllMembersFromClub = async (clubId) => {
+  try {
+    const users = await User.find({ clubs: { $in: [clubId] } });
+    // console.log(users);
+    return users.map((user) => ({
+      id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      reg_number: user.reg_number,
+      total_points: user.total_points,
+      last_update: user.last_update,
+    }));
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to fetch user");
+  }
+};
 
 export const addClub = async (clubData) => {
   try {

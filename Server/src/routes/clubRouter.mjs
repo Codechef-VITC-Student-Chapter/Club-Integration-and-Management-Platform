@@ -7,11 +7,11 @@ import {
   removeDepartmentFromClub,
   addUserToClub,
   removeUserFromClub,
+  getAllMembersFromClub,
 } from "../utils/clubUtils.mjs";
 
 import { getDepartmentById } from "../utils/depsUtils.mjs";
 import { getUserById, getUserByReg } from "../utils/userUtils.mjs";
-import clubSchema from "../DB/Schemas/clubSchema.mjs";
 
 const clubRouter = express.Router();
 
@@ -47,6 +47,18 @@ clubRouter.get("/get/:id", async (req, res) => {
     res.status(200).json(club);
   } catch (error) {
     res.status(404).json({ error: error.message });
+  }
+});
+
+clubRouter.get("/get-all-members/:id", async (req, res) => {
+  try {
+    const clubId = req.params.id;
+    const members = await getAllMembersFromClub(clubId);
+    // console.log(members);
+    return res.json(members).status(200);
+  } catch (error) {
+    console.log("Error while fetching all members from the club");
+    res.status(500).json(error);
   }
 });
 
