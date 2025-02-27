@@ -7,6 +7,9 @@ import dash from "./assets/Dashboard.png";
 import lead from "./assets/Leaderboard.png";
 import req from "./assets/Request.png";
 import signout from "./assets/Signout.png";
+import defPic from "./assets/user.png";
+import members from "./assets/members.png";
+import { Menu, X } from "lucide-react";
 
 function Navbar() {
   const { setToken, isAdmin, currentUser } = useRunningContext();
@@ -32,19 +35,28 @@ function Navbar() {
 
   const menuItems = [
     { name: "Dashboard", path: "/dashboard", logo: dash },
-    { name: "Leaderboard", path: "/leaderboard", logo: lead },
+    // { name: "Leaderboard", path: "/leaderboard", logo: lead },
     { name: "Request", path: "/upload", logo: req },
   ];
   if (isAdmin) {
-    menuItems.push({
-      name: "Admin View",
-      path: "/adminview",
-      logo: lead,
-    });
+    menuItems.push(
+      ...[
+        {
+          name: "Inbox",
+          path: "/adminview",
+          logo: lead,
+        },
+        {
+          name: "Members",
+          path: "/memberview",
+          logo: members,
+        },
+      ]
+    );
   }
 
   return (
-    <nav className="bg-gray-800  text-white p-3 rounded-lg mx-auto my-2 w-11/12 lg:w-full lg:my-0 lg:py-0 lg:pt-2 lg:font-lato lg:rounded-none h-[70px]">
+    <nav className="bg-gray-800  text-white p-2 rounded-lg mx-auto my-2 w-11/12 lg:w-full lg:my-0 lg:py-0 lg:pt-2 lg:font-lato lg:rounded-none h-[70px]">
       <div className="w-full flex items-center justify-between">
         {/* Mobile Menu Button */}
         <div className="flex items-center justify-start lg:hidden">
@@ -52,24 +64,12 @@ function Navbar() {
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="text-white focus:outline-none"
           >
-            <svg
-              className="w-6 h-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
+            <Menu />
           </button>
         </div>
 
         {/* Logo and Title */}
-        <div className="flex items-center justify-evenly lg:justify-normal lg:mx-6">
+        <div className="flex items-center justify-evenly lg:justify-normal relative">
           <img
             src={logo}
             alt="CodeChef-VITC"
@@ -77,12 +77,17 @@ function Navbar() {
           />
           <a
             href="/dashboard"
-            className="text-2xl font-mooli lg:font-lato lg:font-extralight"
+            className="text-xl font-mooli lg:font-lato lg:font-extralight"
             onClick={() => handleMenuItemClick("dashboard")}
           >
             <span className="lg:hidden">CodeChef</span>
             <span className="hidden lg:inline">CodeChef VIT-C</span>
           </a>
+          {isAdmin && (
+            <span className="-translate-x-1 sm:-translate-x-3 -translate-y-2 text-white font-semibold px-2 py-1 rounded-xl ml-1 sm:ml-3 text-sm ">
+              Admin
+            </span>
+          )}
         </div>
         <div></div>
 
@@ -90,17 +95,20 @@ function Navbar() {
         <div className="hidden lg:flex lg:items-center lg:w-auto">
           <ul className="flex flex-col lg:flex-row lg:space-x-2">
             {menuItems.map((item) => (
-              <li key={item.name}>
+              <li
+                key={item.name}
+                className={
+                  selectedMenuItem === item.name.toLowerCase()
+                    ? "border-b-4 border-orange-500"
+                    : ""
+                }
+              >
                 <a
                   href={item.path}
-                  className={`flex gap-1 py-3 px-4 ${
-                    selectedMenuItem === item.name.toLowerCase()
-                      ? "border-b-4 border-orange-500"
-                      : ""
-                  }`}
+                  className="flex gap-1 py-3 px-4 items-center"
                   onClick={() => handleMenuItemClick(item.name.toLowerCase())}
                 >
-                  <img src={item.logo} />
+                  <img src={item.logo} className="size-5" />
                   {item.name}
                 </a>
               </li>
@@ -108,17 +116,15 @@ function Navbar() {
             <li>
               <button
                 onClick={signOut}
-                className="mt-2 lg:mt-0 text-white px-4 py-3 rounded"
+                className="mt-2 lg:mt-0 text-white px-4 py-3 rounded flex items-center justify-center gap-2"
               >
-                Sign out
+                <p>Sign out</p>
+                <img
+                  src={signout}
+                  alt="Signout"
+                  className="size-5 rounded-full flex items-center"
+                />
               </button>
-            </li>
-            <li>
-              <img
-                src={signout}
-                alt="Signout"
-                className="w-8 h-8 rounded-full mb-3 flex items-center justify-start -translate-x-4 translate-y-2"
-              />
             </li>
           </ul>
         </div>
@@ -136,21 +142,11 @@ function Navbar() {
               isMenuOpen ? "translate-x-0" : "-translate-x-full"
             }`}
           >
-            <div className="block items-center justify-start mb-6">
-              <svg
-                className="w-8 h-8 mr-2"
-                onClick={() => setIsMenuOpen(false)}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
-              </svg>
+            <div
+              className="block items-center justify-start mb-6"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <X />
             </div>
 
             {/* Profile Picture and Name */}

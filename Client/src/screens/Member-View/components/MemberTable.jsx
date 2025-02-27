@@ -1,126 +1,182 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
 import styles from "../MemberView.module.css";
 import { useNavigate } from "react-router-dom";
+import members from "../assets/members.svg";
+import { useRunningContext } from "../../../contexts/RunningContext";
 
-const membersData = Array.from({ length: 60 }, (_, i) => ({
-    id: i + 1,
-    name: `Member Name ${i + 1000}`,
-    registerNumber: `23XXX10${i}0`,
-    points: Math.floor(Math.random() * 500) + 100,
-    lastUpdated: `10/${i + 1}/2024`,
-}));
+// const membersData = Array.from({ length: 60 }, (_, i) => ({
+//   id: i + 1,
+//   name: `Member Name ${i + 1000}`,
+//   registerNumber: `23XXX10${i}0`,
+//   points: Math.floor(Math.random() * 500) + 100,
+//   lastUpdated: `10/${i + 1}/2024`,
+// }));
 
-const totalcount = membersData.length;
+// const totalcount = membersData.length;
 
-
+const clubId = "codechefvitc";
 const MemberTable = () => {
-    const [searchTerm, setSearchTerm] = useState("");
-    const [sortedField, setSortedField] = useState(null);
-    const [isAscending, setIsAscending] = useState(true);
-    const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [membersData, setMembersData] = useState([]);
+  const navigate = useNavigate();
+  const [sortedField, setSortedField] = useState(null);
+  const [sortOrder, setSortOrder] = useState("asc");
 
-    const sortedMembers = sortedField
-        ? [...membersData].sort((a, b) => {
-            return isAscending
-                ? String(a[sortedField]).localeCompare(String(b[sortedField]))
-                : String(b[sortedField]).localeCompare(String(a[sortedField]));
-        })
-        : membersData;
+  const handleSort = (field) => {
+    setMembersData((prevData) => {
+      const newSortOrder =
+        sortedField === field && sortOrder === "asc" ? "desc" : "asc"; // Determine next order
 
-    const filteredMembers = sortedMembers.filter((member) =>
-        Object.values(member).some((value) =>
-            value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
-    );
+      const sortedData = [...prevData].sort((a, b) => {
+        let aValue = a[field];
+        let bValue = b[field];
 
-    const handleSort = (field) => {
-        if (sortedField === field) {
-            if (!isAscending) {
-                setSortedField(null);
-            } else {
-                setIsAscending(false);
-            }
-        } else {
-            setSortedField(field);
-            setIsAscending(true);
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          aValue = aValue.toLowerCase();
+          bValue = bValue.toLowerCase();
         }
-    };
 
-    return (
-        <div className="min-h-screen bg-[#EAF1FD] flex justify-center items-start mt-14 px-4 py-6">
-            <div className="w-full max-w-5xl">
-                <h1 className="text-2xl sm:text-3xl font-bold mb-4 pt-2 text-left">
-                    👥 All Members
-                </h1>
+        if (aValue < bValue) return newSortOrder === "asc" ? -1 : 1;
+        if (aValue > bValue) return newSortOrder === "asc" ? 1 : -1;
+        return 0;
+      });
 
-                {/* Search Bar & Total Count */}
-                <div className="flex flex-col sm:flex-row justify-between items-center my-4">
-                    <div className="relative w-full sm:w-1/2 lg:w-1/3 mb-4 sm:mb-0">
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            className="border p-3 w-full focus:outline-none rounded-full bg-white pl-10"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                        <Search className="w-4 h-4 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    </div>
-                    <h1 className="text-lg font-semibold text-center sm:text-right">
-                        Total Members: {totalcount}
-                    </h1>
-                </div>
+      setSortedField(field);
+      setSortOrder(newSortOrder);
+      return sortedData;
+    });
+  };
 
-                {/* Table Header - FIXED */}
-                <div className="bg-[#333333] text-white text-sm font-bold grid grid-cols-4 p-4 sticky top-0 mb-2 rounded-xl min-w-0 whitespace-nowrap">
-                    <h1
-                        className="text-center cursor-pointer"
-                        onClick={() => handleSort("name")}
-                    >
-                        Member Name
-                    </h1>
-                    <h1
-                        className="text-center cursor-pointer"
-                        onClick={() => handleSort("registerNumber")}
-                    >
-                        Register Number
-                    </h1>
-                    <h1
-                        className="text-center cursor-pointer"
-                        onClick={() => handleSort("points")}
-                    >
-                        Points
-                    </h1>
-                    <h1
-                        className="text-center cursor-pointer"
-                        onClick={() => handleSort("lastUpdated")}
-                    >
-                        Last Updated
-                    </h1>
-                </div>
-
-                {/* Member List - FIXED */}
-                <div
-                    className={`overflow-y-auto max-h-[440px] rounded-lg shadow-md pr-2 ${styles.scrollbarCustom}`}
-                >
-                    <div className="flex flex-col gap-2">
-                        {filteredMembers.map((member) => (
-                            <div
-                                key={member.id}
-                                className="bg-[#2F3445] text-white grid grid-cols-4 p-4 cursor-pointer hover:bg-gray-200 hover:text-black rounded-xl min-w-0 whitespace-nowrap"
-                                onClick={() => navigate(`/points-summary/${member.id}`)}
-                            >
-                                <h2 className="text-center">{member.name}</h2>
-                                <p className="text-center">{member.registerNumber}</p>
-                                <p className="text-center font-bold">{member.points} Points</p>
-                                <p className="text-center">{member.lastUpdated}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </div>
+  const handleSearch = () => {
+    setMembersData((prev) =>
+      prev.filter((member) =>
+        Object.values(member).some((value) =>
+          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      )
     );
+  };
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchTerm]);
+
+  const { baseURL, token } = useRunningContext();
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const response = await fetch(
+          `${baseURL}/clubApi/get-all-members/${clubId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!response.ok) throw new Error("Failed to fetch requests");
+        const data = await response.json();
+        // console.log(data);
+        setMembersData(data);
+      } catch (error) {
+        console.error("Error fetching requests: ", error);
+      }
+    };
+    fetchRequests();
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-skyblue flex flex-col items-start px-4 py-6">
+      <h1 className="text-2xl sm:text-3xl font-bold pt-2 text-left px-6 flex gap-2">
+        <img src={members} alt="" className="size-8 sm:size-10" />
+        All Members
+      </h1>
+      <div className="w-full p-6">
+        <div className="flex flex-col sm:flex-row justify-between items-center my-4">
+          <div className="relative w-full sm:w-1/2 lg:w-1/3 mb-4 sm:mb-0 border-2 border-secondary rounded-full">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="border p-3 w-full focus:outline-none rounded-full bg-white pl-10"
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <Search className="w-4 h-4 absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          </div>
+          <h1 className="text-lg font-semibold text-center sm:text-right">
+            Total Members: {membersData.length}
+          </h1>
+        </div>
+
+        <div
+          className={`overflow-y-auto max-h-[440px] rounded-lg shadow-md ${styles.scrollbarCustom}`}
+        >
+          <table className="w-full border-collapse">
+            <thead className="sticky top-0">
+              <tr className="bg-black text-white text-sm font-bold rounded-xl">
+                <th
+                  className="p-4 cursor-pointer text-center"
+                  onClick={() => handleSort("first_name")}
+                >
+                  Member Name{" "}
+                  {sortedField === "first_name" &&
+                    (sortOrder === "asc" ? "▲" : "▼")}
+                </th>
+                <th
+                  className="p-4 cursor-pointer text-center"
+                  onClick={() => handleSort("reg_number")}
+                >
+                  Register Number{" "}
+                  {sortedField === "reg_number" &&
+                    (sortOrder === "asc" ? "▲" : "▼")}
+                </th>
+                <th
+                  className="p-4 cursor-pointer text-center"
+                  onClick={() => handleSort("total_points")}
+                >
+                  Points{" "}
+                  {sortedField === "total_points" &&
+                    (sortOrder === "asc" ? "▲" : "▼")}
+                </th>
+                <th
+                  className="p-4 cursor-pointer text-center"
+                  onClick={() => handleSort("last_update")}
+                >
+                  Last Updated{" "}
+                  {sortedField === "last_update" &&
+                    (sortOrder === "asc" ? "▲" : "▼")}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y-2 divide-[#EAF1FD]">
+              {membersData &&
+                membersData.map((member) => (
+                  <tr
+                    key={member.id}
+                    className="bg-secondary text-white hover:bg-gray-200 hover:text-black cursor-pointer"
+                    onClick={() => navigate(`points-summary/${member.id}`)}
+                  >
+                    <td className="p-4 text-center whitespace-nowrap">
+                      {member.first_name + " " + member.last_name || "-"}
+                    </td>
+                    <td className="p-4 text-center whitespace-nowrap">
+                      {member.reg_number || "-"}
+                    </td>
+                    <td className="p-4 text-center whitespace-nowrap font-bold">
+                      {member.total_points || "0"} Points
+                    </td>
+                    <td className="p-4 text-center whitespace-nowrap">
+                      {member.last_update.slice(0, 10) || "-"}
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
 };
 
-export default MemberTable
+export default MemberTable;

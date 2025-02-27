@@ -10,11 +10,10 @@ const RequestScreen = () => {
   const [club, setClub] = useState(null);
   const [deps, setDeps] = useState([]);
   const [leads, setLeads] = useState([]);
-  const [selectedLeads, setSelectedLeads] = useState([])
+  const [selectedLeads, setSelectedLeads] = useState([]);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [depChosen, setDepChosen] = useState("");
-  const [target, setTarget] = useState("");
   const [availablePoints, setAvailablePoints] = useState([]);
   const [selectedPoints, setSelectedPoints] = useState(0); // For points dropdown
   const [customPoints, setCustomPoints] = useState(0);
@@ -147,16 +146,16 @@ const RequestScreen = () => {
   };
 
   const handleSetSelectedLead = (leadToRemove) => {
-    setSelectedLeads(prev => prev.filter(lead => lead.user_id !== leadToRemove.user_id));
-    setLeads(prev => [...prev, leadToRemove]);
-    setTarget('');
+    setSelectedLeads((prev) => prev.filter((lead) => lead !== leadToRemove));
+    setLeads((prev) => [...prev, leadToRemove]);
   };
 
   const handleSetLead = (selectedLead) => {
     if (!selectedLead) return;
-    setSelectedLeads(prev => [...prev, selectedLead]);
-    setLeads(prev => prev.filter(lead => lead.user_id !== selectedLead.user_id));
-    setTarget(selectedLead.user_id);
+    setSelectedLeads((prev) => [...prev, selectedLead]);
+    setLeads((prev) =>
+      prev.filter((lead) => lead.user_id !== selectedLead.user_id)
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -170,7 +169,7 @@ const RequestScreen = () => {
       toast.warn("Please select the department!");
       return;
     }
-    if (!target) {
+    if (selectedLeads.length == 0) {
       toast.warn("Please select the lead");
       return;
     }
@@ -192,7 +191,7 @@ const RequestScreen = () => {
           points: finalPoints,
           description: desc,
           proof_files: links,
-          target,
+          target: selectedLeads.map((lead) => lead.user_id),
           club_id: club.id,
           department: depChosen,
           status: "pending",
@@ -266,12 +265,25 @@ const RequestScreen = () => {
                       <button
                         key={data.user_id}
                         type="button"
-                        className="flex items-center justify-between border-black border-2 rounded-xl ml-2 px-2 bg-slate-900 min-w-[80px]"
+                        className="flex items-center gap-1 justify-between border-black border-2 rounded-xl ml-2 px-2 bg-slate-900 min-w-[80px]"
                         onClick={() => handleSetSelectedLead(data)}
                       >
                         <span className="text-white">{data.name}</span>
-                        <svg width="11" height="12" viewBox="0 0 11 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path opacity="0.6" d="M7.73438 3.5625L3.26562 8.4375M3.26562 3.5625L7.73438 8.4375" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        <svg
+                          width="11"
+                          height="12"
+                          viewBox="0 0 11 12"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            opacity="0.6"
+                            d="M7.73438 3.5625L3.26562 8.4375M3.26562 3.5625L7.73438 8.4375"
+                            stroke="white"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
                         </svg>
                       </button>
                     ))}
@@ -282,7 +294,9 @@ const RequestScreen = () => {
                     className="w-full p-2 rounded border appearance-none bg-white pr-8"
                     disabled={!depChosen}
                     onChange={(e) => {
-                      const selectedLead = leads.find(lead => lead.user_id === e.target.value);
+                      const selectedLead = leads.find(
+                        (lead) => lead.user_id === e.target.value
+                      );
                       if (selectedLead) handleSetLead(selectedLead);
                     }}
                     value=""
@@ -399,7 +413,7 @@ const RequestScreen = () => {
                   Edit Links
                 </button>
               </div>
-              <div className="mb-4 flex flex-col gap-3">
+              <div className="mb-4 flex flex-col gap-3 justify-center">
                 <div className="relative">
                   <label className="block mb-2">Points Requested:</label>
                   <select
@@ -423,7 +437,7 @@ const RequestScreen = () => {
                       ))}
                     <option value="-1">Custom Points</option>
                   </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <div className="pointer-events-none absolute inset-y-0 right-0 top-8 flex items-center px-2">
                     <svg
                       className="fill-current h-4 w-4"
                       xmlns="http://www.w3.org/2000/svg"

@@ -3,6 +3,9 @@ export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      screens: {
+        xs: "450px",
+      },
       backgroundImage: {
         "desktop-login": "url('./assets/desktop_login.png')",
         "mobile-login": "url('./assets/mobile_login.png')",
@@ -22,6 +25,7 @@ export default {
         negative: "#DC3545",
         neutral: "#FFC107",
         positive: "#198754",
+        skyblue: "#E8F1FE",
       },
     },
   },

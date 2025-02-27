@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import AdminViewCard from "./components/AdminViewCard";
+import AdminInboxCard from "./components/AdminInboxCard";
 import dot from "./assets/Admin_view_dot.png";
 import tick from "./assets/Admin_view_tick.png";
 import file from "./assets/Admin_view_file.png";
 import { useRunningContext } from "../../contexts/RunningContext";
 
-function AdminView() {
+function AdminInbox() {
   const [requests, setRequests] = useState([]);
   const { baseURL, currentUser, token, isAdmin } = useRunningContext();
   useEffect(() => {
@@ -23,7 +23,7 @@ function AdminView() {
         );
         if (!response.ok) throw new Error("Failed to fetch requests");
         const data = await response.json();
-        // console.log(data);
+        console.log(data);
         setRequests(data);
       } catch (error) {
         console.error("Error fetching requests: ", error);
@@ -31,8 +31,9 @@ function AdminView() {
     };
     fetchRequests();
   }, []);
-  const updateStatus = async (id, newStatus) => {
+  const updateStatus = async (id, newStatus, reason = "") => {
     try {
+      console.log(reason);
       const response = await fetch(`${baseURL}/contApi/update-status/${id}`, {
         method: "PATCH",
         headers: {
@@ -42,6 +43,7 @@ function AdminView() {
         body: JSON.stringify({
           status: newStatus,
           is_lead: isAdmin,
+          reason,
         }),
       });
       // console.log(response);
@@ -62,10 +64,10 @@ function AdminView() {
   const completedRequests = requests.filter((req) => req.status !== "pending");
 
   return (
-    <div className="p-[40px] min-h-[100vh] bg-[#E9F1FE]">
+    <div className="p-8 min-h-[100vh] bg-[#E9F1FE]">
       <div className="flex mb-4">
         <img src={file} alt="FileImage" className="h-10" />
-        <p className="text-4xl ml-3">Review Request</p>
+        <p className="text-4xl ml-3 underline">Requests Inbox</p>
       </div>
 
       <div className="mb-4 px-4">
@@ -80,7 +82,7 @@ function AdminView() {
             </div>
           )}
           {pendingRequests.map((request) => (
-            <AdminViewCard
+            <AdminInboxCard
               key={request.id}
               request={request}
               onUpdateStatus={updateStatus}
@@ -95,13 +97,13 @@ function AdminView() {
           <p>Completed Requests</p>
         </div>
         <div className="space-y-4">
-          {pendingRequests.length === 0 && (
+          {completedRequests.length === 0 && (
             <div className="text-xl font-bold text-center">
               No Completed Requests
             </div>
           )}
           {completedRequests.map((request) => (
-            <AdminViewCard
+            <AdminInboxCard
               key={request.id}
               request={request}
               onUpdateStatus={updateStatus}
@@ -113,4 +115,4 @@ function AdminView() {
   );
 }
 
-export default AdminView;
+export default AdminInbox;
