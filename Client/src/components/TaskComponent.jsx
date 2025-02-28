@@ -38,7 +38,7 @@ const TaskComponent = ({
   return (
     <>
       <div
-        className="relative max-w-sm border rounded-xl p-4 shadow-lg bg-white font-sans md:min-w-[312px] md:p-6"
+        className="relative max-w-sm border rounded-xl p-4 shadow-lg bg-white font-sans md:min-w-[312px] md:p-6 h-[275x]"
         style={{
           fontFamily: "Lato, sans-serif",
           border: `1px solid ${taskColor}`,

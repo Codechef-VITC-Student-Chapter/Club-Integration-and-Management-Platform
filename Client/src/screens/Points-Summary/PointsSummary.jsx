@@ -9,7 +9,7 @@ import img6 from "./assets/MarketingIcon.png";
 import img7 from "./assets/SocialMediaIcon.png";
 import img8 from "./assets/FinanceIcon.png";
 import { useRunningContext } from "../../contexts/RunningContext.jsx";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const defaultContributions = {
   clubleads: {
@@ -17,61 +17,62 @@ const defaultContributions = {
     dept: "clubleads",
     conts: 0,
     points: 0,
-    icon: img
+    icon: img,
   },
   cp: {
     title: "Competetive Programming",
     dept: "cp",
     conts: 0,
     points: 0,
-    icon: img2
+    icon: img2,
   },
   webdev: {
     title: "Web Development",
     dept: "webdev",
     conts: 0,
     points: 0,
-    icon: img3
+    icon: img3,
   },
   em: {
     title: "Event Management",
     dept: "em",
     conts: 0,
     points: 0,
-    icon: img4
+    icon: img4,
   },
   mands: {
     title: "Marketing & Sponsorship",
     dept: "mands",
     conts: 0,
     points: 0,
-    icon: img5
+    icon: img5,
   },
   design: {
     title: "Design",
     dept: "design",
     conts: 0,
     points: 0,
-    icon: img6
+    icon: img6,
   },
   smandc: {
     title: "Social Media & Content",
     dept: "smandc",
     conts: 0,
     points: 0,
-    icon: img7
+    icon: img7,
   },
   finance: {
     title: "Finance",
     dept: "finance",
     conts: 0,
     points: 0,
-    icon: img8
+    icon: img8,
   },
 };
 
 function PointsSummary() {
-  const { baseURL, isAdmin, currentUser } = useRunningContext();
+  const { baseURL, currentUser, isAdmin } = useRunningContext();
+  const navigate = useNavigate();
   const [contributions, setContributions] = useState({
     ...defaultContributions,
   });
@@ -108,10 +109,8 @@ function PointsSummary() {
         total_points: userData.total_points,
       });
 
-      // Create a fresh copy of default contributions
       const newContributions = JSON.parse(JSON.stringify(defaultContributions));
 
-      // Process each contribution once
       contributionsData.forEach((cont) => {
         const department = cont.department;
         if (newContributions[department]) {
@@ -129,6 +128,7 @@ function PointsSummary() {
   };
 
   useEffect(() => {
+    if (!isAdmin && currentUser !== id) navigate("/");
     fetchData();
   }, []);
 
@@ -176,6 +176,7 @@ function PointsSummary() {
                   point={contributions[key].points}
                   contributionsNumber={contributions[key].conts}
                   text1={key === "smandc" && "Social"}
+                  member_name={userInfo.name}
                 />
               </div>
             ))}

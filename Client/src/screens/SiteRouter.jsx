@@ -5,8 +5,8 @@ import { Routes, Route } from "react-router-dom";
 import LoadingScreen from "./Loading-Screen/LoadingScreen";
 import Navbar from "./Navbar/Navbar";
 import { useRunningContext } from "../contexts/RunningContext";
-import MemberView from "./Member-View/MemberView";
 import DepartmentContributions from "./Department-Contributions/DepartmentContributions";
+import MemberTable from "./Member-View/MemberTable";
 
 const PointsSummary = React.lazy(() =>
   import("./Points-Summary/PointsSummary")
@@ -43,9 +43,13 @@ function SiteRouter() {
           {isAdmin && <Route path="/adminview" element={<AdminInbox />} />}
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/dashboard" element={<MemberDashboard />} />
-          <Route path="/memberview/*" element={<MemberView />} />
-          <Route path="/summary" element={<PointsSummary />} />
-          <Route path="/department/:id/:dept" element={<DepartmentContributions />} />
+          {isAdmin && <Route path="/memberview" element={<MemberTable />} />}
+          {/* <Route path="/memberview" element={<MemberTable />} /> */}
+          <Route path="/summary/:id" element={<PointsSummary />} />
+          <Route
+            path="/department/:id/:dept"
+            element={<DepartmentContributions />}
+          />
           <Route path="/" element={<MemberDashboard />} />
           <Route path="/*" element={<PageNotFound />} />
         </Routes>

@@ -1,5 +1,5 @@
 import TaskComponent from "../../../components/TaskComponent"; // Assuming TaskCard is in the same directory
-import faceicon from "../assets/pleading-face.png";
+import faceicon from "../../../assets/empty-box.png";
 
 function PendingContributions({ pendingContributions }) {
   return pendingContributions.length === 0 ? (

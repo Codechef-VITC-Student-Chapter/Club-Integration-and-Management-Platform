@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import TaskComponent from "../../components/TaskComponent";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { useRunningContext } from "../../contexts/RunningContext";
+import faceicon from "../../assets/empty-box.png";
 
 const deptMapping = {
   clubleads: "Club Leads",
@@ -11,12 +12,15 @@ const deptMapping = {
   mands: "Marketing & Sponsorship",
   design: "Design",
   smandc: "Social Media & Content",
-  finance: "Finance"
-}
+  finance: "Finance",
+};
 
 const DepartmentContributions = () => {
-  const { baseURL } = useRunningContext()
+  const [searchParams] = useSearchParams();
+  const { baseURL } = useRunningContext();
   const { id, dept } = useParams();
+  const member_name = searchParams.get("name");
+
   const [contributions, setContributions] = useState([]);
   const [points, setPoints] = useState(0);
 
@@ -33,15 +37,19 @@ const DepartmentContributions = () => {
       });
 
       const allContributions = await res.json();
-      const filteredContributions = allContributions.filter((cont) => cont.department === dept);
-      const totalPoints = filteredContributions.map((cont) => cont.points).reduce((sum, num) => sum + num, 0)
+      const filteredContributions = allContributions.filter(
+        (cont) => cont.department === dept
+      );
+      const totalPoints = filteredContributions
+        .map((cont) => cont.points)
+        .reduce((sum, num) => sum + num, 0);
 
       setPoints(totalPoints);
       setContributions(filteredContributions);
     } catch (e) {
       console.log("Error: ", e);
     }
-  }
+  };
 
   useEffect(() => {
     fetchData();
@@ -61,21 +69,31 @@ const DepartmentContributions = () => {
           <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mt-7">
             {/* Total Points */}
             <p className="text-md md:text-lg text-black font ml-8">
-              Total Points: <span className="font">{points} | {contributions.length} Contributions</span>
+              Total Points:{" "}
+              <span className="font">
+                {points} | {contributions.length} Contributions
+              </span>
             </p>
 
             {/* Member Box (Position Adjusted) */}
             <div className="bg-[#1E1E1E] text-white py-3 px-10 flex items-center rounded-md w-full md:w-96 h-14 justify-between mt-4 md:mt-0">
-              <span className="font-bold text-md md:text-lg">Member name</span>
+              <span className="font-bold text-md md:text-lg">
+                {member_name}
+              </span>
               <div className="h-10 w-0.5 bg-gray-400 mx-4"></div>
-              <span className="font-bold text-md md:text-lg">{id.slice(3)}</span>
+              <span className="font-bold text-md md:text-lg">
+                {id.slice(3)}
+              </span>
             </div>
           </div>
         </div>
       </div>
       <div className="h-full w-full overflow-scroll flex p-5">
         {contributions.length === 0 ? (
-          <p>No recent contributions.</p>
+          <p className="flex flex-col justify-center items-center w-full font-semibold text-xl">
+            <img src={faceicon} alt="" />
+            No contributions.
+          </p>
         ) : (
           <div className="flex flex-wrap md:flex-row gap-8 items-start justify-center overflow-scroll">
             {contributions.map((contribution) => (

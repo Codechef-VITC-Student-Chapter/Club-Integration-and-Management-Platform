@@ -9,6 +9,7 @@ import req from "./assets/Request.png";
 import signout from "./assets/Signout.png";
 import defPic from "./assets/user.png";
 import members from "./assets/members.png";
+import coins from "./assets/Coins.png";
 import { Menu, X } from "lucide-react";
 
 function Navbar() {
@@ -37,6 +38,7 @@ function Navbar() {
     { name: "Dashboard", path: "/dashboard", logo: dash },
     // { name: "Leaderboard", path: "/leaderboard", logo: lead },
     { name: "Request", path: "/upload", logo: req },
+    { name: "Points", path: `/summary/${currentUser}`, logo: coins },
   ];
   if (isAdmin) {
     menuItems.push(

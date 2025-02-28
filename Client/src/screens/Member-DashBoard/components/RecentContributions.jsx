@@ -1,6 +1,5 @@
-import React from "react";
 import TaskComponent from "../../../components/TaskComponent"; // Adjusting import path to match actual component name
-import faceicon from "../assets/pleading-face.png";
+import faceicon from "../../../assets/empty-box.png";
 
 function RecentContributions({ contributions }) {
   return contributions.length === 0 ? (

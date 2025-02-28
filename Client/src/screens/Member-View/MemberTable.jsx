@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Search } from "lucide-react";
-import styles from "../MemberView.module.css";
+import styles from "./MemberView.module.css";
 import { useNavigate } from "react-router-dom";
-import members from "../assets/members.svg";
-import { useRunningContext } from "../../../contexts/RunningContext";
+import members from "./assets/members.svg";
+import { useRunningContext } from "../../contexts/RunningContext";
 
 // const membersData = Array.from({ length: 60 }, (_, i) => ({
 //   id: i + 1,
@@ -155,7 +155,7 @@ const MemberTable = () => {
                   <tr
                     key={member.id}
                     className="bg-secondary text-white hover:bg-gray-200 hover:text-black cursor-pointer"
-                    onClick={() => navigate(`points-summary/${member.id}`)}
+                    onClick={() => navigate(`/summary/${member.id}`)}
                   >
                     <td className="p-4 text-center whitespace-nowrap">
                       {member.first_name + " " + member.last_name || "-"}

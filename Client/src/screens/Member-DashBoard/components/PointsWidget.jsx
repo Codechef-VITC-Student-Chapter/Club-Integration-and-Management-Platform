@@ -46,7 +46,9 @@ const CircleProgress = ({ totalPoints, pendingPoints }) => {
         />
       </svg>
       <div className="absolute">
-        <span className="font-bold text-2xl md:text-3xl">{totalPoints}</span>
+        <span className="font-bold text-2xl md:text-3xl truncate">
+          {totalPoints}
+        </span>
       </div>
     </div>
   );

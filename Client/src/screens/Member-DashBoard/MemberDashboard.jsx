@@ -14,7 +14,6 @@ function MemberDashboard() {
     token,
     handleError,
     badges = ["Member"],
-    isAdmin,
   } = useRunningContext();
 
   const [userDetails, setUserDetails] = useState(null);
@@ -138,7 +137,7 @@ function MemberDashboard() {
                   <span className="truncate">Recent Contributions</span>
                 </h2>
                 {contributions && (
-                  <div className="overflow-x-auto overflow-y-auto p-2 sm:p-6">
+                  <div className="overflow-x-auto overflow-y-auto p-2 sm:p-6 max-h-[300px] md:max-h-full">
                     <RecentContributions contributions={contributions} />
                   </div>
                 )}
@@ -152,7 +151,7 @@ function MemberDashboard() {
                   <span className="truncate">Pending Contributions</span>
                 </h2>
                 {pendingContributions && (
-                  <div className="overflow-x-auto overflow-y-auto p-2 sm:p-6 min-h-[300px]">
+                  <div className="overflow-x-auto overflow-y-auto p-2 sm:p-6 min-h-[300px] ">
                     <PendingContributions
                       pendingContributions={pendingContributions}
                     />
