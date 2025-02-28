@@ -8,7 +8,6 @@ const MemberView = () => {
     <Routes>
       <Route index element={<MemberTable />} />
       <Route path="points-summary/:id" element={<PointsSummary />} />
-      <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };

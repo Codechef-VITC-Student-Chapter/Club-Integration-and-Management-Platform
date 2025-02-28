@@ -1,135 +1,51 @@
+import { useEffect, useState } from "react";
 import TaskComponent from "../../components/TaskComponent";
+import { useParams } from "react-router-dom";
+import { useRunningContext } from "../../contexts/RunningContext";
+
+const deptMapping = {
+  clubleads: "Club Leads",
+  cp: "Competetive Programming",
+  webdev: "Web Development",
+  em: "Event Management",
+  mands: "Marketing & Sponsorship",
+  design: "Design",
+  smandc: "Social Media & Content",
+  finance: "Finance"
+}
 
 const DepartmentContributions = () => {
-  const contributions = [
-    {
-      id: "CID22DUM12341737042980386",
-      title: "Hdsjnakf",
-      points: 1231231,
-      user: "UID22DUM1234",
-      description: "jksdnklafd",
-      proof_files: [""],
-      target: "UID23BAI6969",
-      club: "codechefvitcc",
-      department: "webdevelopment",
-      status: "rejected",
-      created_at: "2025-01-16T15:56:20.367Z",
-      club_name: "CodeChef VIT-C",
-    },
-    {
-      id: "CID22DUM12341737042980386",
-      title: "Hdsjnakf",
-      points: 1231231,
-      user: "UID22DUM1234",
-      description: "jksdnklafd",
-      proof_files: [""],
-      target: "UID23BAI6969",
-      club: "codechefvitcc",
-      department: "webdevelopment",
-      status: "rejected",
-      created_at: "2025-01-16T15:56:20.367Z",
-      club_name: "CodeChef VIT-C",
-    },
-    {
-      id: "CID22DUM12341737042980386",
-      title: "Hdsjnakf",
-      points: 1231231,
-      user: "UID22DUM1234",
-      description: "jksdnklafd",
-      proof_files: [""],
-      target: "UID23BAI6969",
-      club: "codechefvitcc",
-      department: "webdevelopment",
-      status: "rejected",
-      created_at: "2025-01-16T15:56:20.367Z",
-      club_name: "CodeChef VIT-C",
-    },
-    {
-      id: "CID22DUM12341737042980386",
-      title: "Hdsjnakf",
-      points: 1231231,
-      user: "UID22DUM1234",
-      description: "jksdnklafd",
-      proof_files: [""],
-      target: "UID23BAI6969",
-      club: "codechefvitcc",
-      department: "webdevelopment",
-      status: "rejected",
-      created_at: "2025-01-16T15:56:20.367Z",
-      club_name: "CodeChef VIT-C",
-    },
-    {
-      id: "CID22DUM12341737042980387",
-      title: "Bug Fix Contribution",
-      points: 500,
-      user: "UID22DUM5678",
-      description: "Fixed a critical security vulnerability.",
-      proof_files: ["fix_patch.png"],
-      target: "UID23BAI7001",
-      club: "codechefvitcc",
-      department: "cybersecurity",
-      status: "approved",
-      created_at: "2025-02-01T10:20:15.120Z",
-      club_name: "CodeChef VIT-C",
-    },
-    {
-      id: "CID22DUM12341737042980388",
-      title: "AI Model Implementation",
-      points: 2000,
-      user: "UID22DUM9101",
-      description: "Developed an AI model for handwritten digit recognition.",
-      proof_files: ["model_accuracy.pdf"],
-      target: "UID23BAI7050",
-      club: "ai_club_vitcc",
-      department: "machinelearning",
-      status: "pending",
-      created_at: "2025-02-05T18:45:30.567Z",
-      club_name: "AI Club VIT-C",
-    },
-    {
-      id: "CID22DUM12341737042980389",
-      title: "Open Source Contribution",
-      points: 1500,
-      user: "UID22DUM1122",
-      description: "Contributed to an open-source blockchain project.",
-      proof_files: ["github_commit_log.txt"],
-      target: "UID23BAI7105",
-      club: "oss_club_vitcc",
-      department: "blockchain",
-      status: "approved",
-      created_at: "2025-02-10T12:00:45.890Z",
-      club_name: "Open Source Club VIT-C",
-    },
-    {
-      id: "CID22DUM12341737042980390",
-      title: "UI/UX Design for App",
-      points: 750,
-      user: "UID22DUM3344",
-      description: "Designed a mobile app UI for a college event.",
-      proof_files: ["ui_mockup.png"],
-      target: "UID23BAI7150",
-      club: "design_club_vitcc",
-      department: "uiux",
-      status: "pending",
-      created_at: "2025-02-15T09:30:10.234Z",
-      club_name: "Design Club VIT-C",
-    },
-    {
-      id: "CID22DUM12341737042980391",
-      title: "Database Optimization",
-      points: 1800,
-      user: "UID22DUM5566",
-      description:
-        "Optimized a large-scale SQL database to improve query efficiency.",
-      proof_files: ["query_performance_report.pdf"],
-      target: "UID23BAI7200",
-      club: "data_club_vitcc",
-      department: "databases",
-      status: "approved",
-      created_at: "2025-02-20T14:15:55.678Z",
-      club_name: "Data Science Club VIT-C",
-    },
-  ];
+  const { baseURL } = useRunningContext()
+  const { id, dept } = useParams();
+  const [contributions, setContributions] = useState([]);
+  const [points, setPoints] = useState(0);
+
+  const fetchData = async () => {
+    try {
+      const res = await fetch(`${baseURL}/userApi/get-contribution-data`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user: id,
+        }),
+      });
+
+      const allContributions = await res.json();
+      const filteredContributions = allContributions.filter((cont) => cont.department === dept);
+      const totalPoints = filteredContributions.map((cont) => cont.points).reduce((sum, num) => sum + num, 0)
+
+      setPoints(totalPoints);
+      setContributions(filteredContributions);
+    } catch (e) {
+      console.log("Error: ", e);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-col gap-5 h-[91.4vh] w-full overflow-hidden">
@@ -138,21 +54,21 @@ const DepartmentContributions = () => {
           {/* Title - Points Summary */}
           <div className="flex items-center text-black text-xl md:text-2xl font-bold">
             {/* <FaCoins className="mr-2 text-black" /> */}
-            Web Development
+            {deptMapping[dept]}
           </div>
 
           {/* Total Points + Member Box */}
           <div className="flex flex-col md:flex-row md:justify-between items-start md:items-center mt-7">
             {/* Total Points */}
             <p className="text-md md:text-lg text-black font ml-8">
-              Total Points: <span className="font">100 | 6 Contributions</span>
+              Total Points: <span className="font">{points} | {contributions.length} Contributions</span>
             </p>
 
             {/* Member Box (Position Adjusted) */}
             <div className="bg-[#1E1E1E] text-white py-3 px-10 flex items-center rounded-md w-full md:w-96 h-14 justify-between mt-4 md:mt-0">
               <span className="font-bold text-md md:text-lg">Member name</span>
               <div className="h-10 w-0.5 bg-gray-400 mx-4"></div>
-              <span className="font-bold text-md md:text-lg">23XXX1000</span>
+              <span className="font-bold text-md md:text-lg">{id.slice(3)}</span>
             </div>
           </div>
         </div>
@@ -161,7 +77,7 @@ const DepartmentContributions = () => {
         {contributions.length === 0 ? (
           <p>No recent contributions.</p>
         ) : (
-          <div className="flex flex-wrap md:flex-row gap-8 items-center justify-center overflow-scroll">
+          <div className="flex flex-wrap md:flex-row gap-8 items-start justify-center overflow-scroll">
             {contributions.map((contribution) => (
               <TaskComponent
                 key={contribution.id}

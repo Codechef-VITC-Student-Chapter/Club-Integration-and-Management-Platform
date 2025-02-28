@@ -45,7 +45,7 @@ function SiteRouter() {
           <Route path="/dashboard" element={<MemberDashboard />} />
           <Route path="/memberview/*" element={<MemberView />} />
           <Route path="/summary" element={<PointsSummary />} />
-          <Route path="/department" element={<DepartmentContributions />} />
+          <Route path="/department/:id/:dept" element={<DepartmentContributions />} />
           <Route path="/" element={<MemberDashboard />} />
           <Route path="/*" element={<PageNotFound />} />
         </Routes>

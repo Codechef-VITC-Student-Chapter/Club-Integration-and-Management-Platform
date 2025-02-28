@@ -12,33 +12,61 @@ import { useRunningContext } from "../../contexts/RunningContext.jsx";
 import { useParams } from "react-router-dom";
 
 const defaultContributions = {
-  clubleads: { title: "Club Leads", conts: 0, points: 0, icon: img },
-  cp: { title: "Competetive Programming", conts: 0, points: 0, icon: img2 },
+  clubleads: {
+    title: "Club Leads",
+    dept: "clubleads",
+    conts: 0,
+    points: 0,
+    icon: img
+  },
+  cp: {
+    title: "Competetive Programming",
+    dept: "cp",
+    conts: 0,
+    points: 0,
+    icon: img2
+  },
   webdev: {
     title: "Web Development",
+    dept: "webdev",
     conts: 0,
     points: 0,
-    icon: img3,
+    icon: img3
   },
-  em: { title: "Event Management", conts: 0, points: 0, icon: img4 },
+  em: {
+    title: "Event Management",
+    dept: "em",
+    conts: 0,
+    points: 0,
+    icon: img4
+  },
   mands: {
     title: "Marketing & Sponsorship",
+    dept: "mands",
     conts: 0,
     points: 0,
-    icon: img5,
+    icon: img5
   },
-  design: { title: "Design", conts: 0, points: 0, icon: img6 },
+  design: {
+    title: "Design",
+    dept: "design",
+    conts: 0,
+    points: 0,
+    icon: img6
+  },
   smandc: {
     title: "Social Media & Content",
+    dept: "smandc",
     conts: 0,
     points: 0,
-    icon: img7,
+    icon: img7
   },
   finance: {
     title: "Finance",
+    dept: "finance",
     conts: 0,
     points: 0,
-    icon: img8,
+    icon: img8
   },
 };
 
@@ -141,10 +169,12 @@ function PointsSummary() {
             Object.keys(contributions).map((key) => (
               <div key={key}>
                 <CardCreation
+                  id={id}
+                  dept={contributions[key].dept}
                   img1={contributions[key].icon}
                   text={contributions[key].title}
                   point={contributions[key].points}
-                  contributions={contributions[key].conts}
+                  contributionsNumber={contributions[key].conts}
                   text1={key === "smandc" && "Social"}
                 />
               </div>
