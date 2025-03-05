@@ -42,7 +42,12 @@ export const addContribution = async (contributionData) => {
     await newContribution.save();
     await User.findOneAndUpdate(
       { id: contributionData.user_id },
-      { $push: { contributions: newContribution.id } },
+      {
+        $push: { contributions: newContribution.id },
+        ...(contributionData.status === "approved" && {
+          $inc: { total_points: contributionData.points },
+        }),
+      },
       { new: true }
     );
     return newContribution;
