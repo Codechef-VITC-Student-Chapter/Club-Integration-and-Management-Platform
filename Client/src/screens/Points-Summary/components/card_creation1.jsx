@@ -1,12 +1,98 @@
 import Plus from "./plus";
 import Cross from "./Cross";
 import { Link } from "react-router-dom";
+import { useRunningContext } from "../../../contexts/RunningContext";
+import { useState } from "react";
+import AddPoints from "./AddPoints/AddPoints";
+import ConfirmPoints from "./ConfirmPoints/ConfirmPoints";
+import { club_id, departmentMap } from "../../../lib/keys";
+import { toast } from "react-toastify";
 
 const CardCreation = (props) => {
+  const { baseURL, currentUser, isAdmin, token } = useRunningContext();
+
+  const [showAdd, setShowAdd] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [description, setDescription] = useState("");
+  const [points, setPoints] = useState(0);
+  const [title, setTitle] = useState("");
+
+  const handleAddContribution = async () => {
+    try {
+      setLoading(true);
+      // console.log(token);
+      const response = await fetch(`${baseURL}/contApi/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          user_id: props.id,
+          title,
+          points,
+          description,
+          proof_files: [],
+          target: [currentUser],
+          club_id: club_id,
+          department: props.dept,
+          status: "approved",
+          created_at: new Date().toLocaleString(),
+        }),
+      });
+
+      if (!response.ok) {
+        // console.log(response);
+        toast.error("Failed to add contribution");
+        return;
+      }
+      toast.success("Contribution added successfully!");
+
+      // Reset form
+      setTitle("");
+      setDescription("");
+      setPoints(0);
+    } catch (error) {
+      console.error("Error submitting request:", error);
+      toast.error("Error submitting request");
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="w-[230px] h-[260px] max-md:w-[120px] max-md:h-[150px] bg-white border-[#2E3446] border-[6px] max-md:border-[3px] rounded-xl overflow-hidden">
+      {showAdd && (
+        <AddPoints
+          name={props.member_name}
+          reg_no={props.id.slice(3)}
+          dept={departmentMap[props.dept]}
+          setShowAdd={setShowAdd}
+          setShowConfirm={setShowConfirm}
+          setDescription={setDescription}
+          setPoints={setPoints}
+          setTitle={setTitle}
+        />
+      )}
+      {showConfirm && (
+        <ConfirmPoints
+          department={props.dept}
+          description={description}
+          points={points}
+          id={props.id}
+          handleSubmit={handleAddContribution}
+          setShowConfirm={setShowConfirm}
+          taskName={title}
+        />
+      )}
       <div className="flex flex-col h-full">
-        <div className="flex justify-end">
+        <div className={`flex ${isAdmin ? "justify-between" : "justify-end"}`}>
+          {isAdmin && (
+            <button onClick={() => setShowAdd(true)}>
+              <Plus />
+            </button>
+          )}
           <Link
             to={`/department/${props.id}/${props.dept}?name=${props.member_name}`}
           >

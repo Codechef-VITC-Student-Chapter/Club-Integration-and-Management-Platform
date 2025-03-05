@@ -3,17 +3,7 @@ import TaskComponent from "../../components/TaskComponent";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useRunningContext } from "../../contexts/RunningContext";
 import faceicon from "../../assets/empty-box.png";
-
-const deptMapping = {
-  clubleads: "Club Leads",
-  cp: "Competetive Programming",
-  webdev: "Web Development",
-  em: "Event Management",
-  mands: "Marketing & Sponsorship",
-  design: "Design",
-  smandc: "Social Media & Content",
-  finance: "Finance",
-};
+import { departmentMap } from "../../lib/keys";
 
 const DepartmentContributions = () => {
   const [searchParams] = useSearchParams();
@@ -57,12 +47,12 @@ const DepartmentContributions = () => {
 
   return (
     <div className="flex flex-col gap-5 h-[91.4vh] w-full overflow-hidden">
-      <div className="bg-[#E9F0FA] px-4 md:px-10 pt-6">
+      <div className="bg-skyblue px-4 md:px-10 pt-6">
         <div className="max-w-6xl mx-auto">
           {/* Title - Points Summary */}
           <div className="flex items-center text-black text-xl md:text-2xl font-bold">
             {/* <FaCoins className="mr-2 text-black" /> */}
-            {deptMapping[dept]}
+            {departmentMap[dept]}
           </div>
 
           {/* Total Points + Member Box */}

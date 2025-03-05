@@ -77,9 +77,9 @@ function PointsSummary() {
     ...defaultContributions,
   });
   const [userInfo, setUserInfo] = useState({
-    name: "",
-    reg_number: "",
-    total_points: "",
+    name: "loading...",
+    reg_number: "loading...",
+    total_points: "loading...",
   });
   const [loading, setLoading] = useState(false);
   const { id } = useParams() || currentUser;
@@ -180,6 +180,7 @@ function PointsSummary() {
                 />
               </div>
             ))}
+          {loading && <div>Loading...</div>}
         </div>
       </div>
     </div>

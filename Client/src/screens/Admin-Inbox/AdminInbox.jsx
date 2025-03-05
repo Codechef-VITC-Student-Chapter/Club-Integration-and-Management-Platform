@@ -23,7 +23,7 @@ function AdminInbox() {
         );
         if (!response.ok) throw new Error("Failed to fetch requests");
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
         setRequests(data);
       } catch (error) {
         console.error("Error fetching requests: ", error);
