@@ -71,7 +71,7 @@ const defaultContributions = {
 };
 
 function PointsSummary() {
-  const { baseURL, currentUser, isAdmin } = useRunningContext();
+  const { baseURL, currentUser, isAdmin, token } = useRunningContext();
   const navigate = useNavigate();
   const [contributions, setContributions] = useState({
     ...defaultContributions,
@@ -88,20 +88,27 @@ function PointsSummary() {
     setLoading(true);
     try {
       const [userRes, contributionsRes] = await Promise.all([
-        fetch(`${baseURL}/userApi/get/${id}`),
-        fetch(`${baseURL}/userApi/get-contribution-data`, {
-          method: "POST",
+        fetch(`${baseURL}/user/info/${id}`, {
           headers: {
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            user: id,
-          }),
+        }),
+        fetch(`${baseURL}/user/contributions/${id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }),
       ]);
 
-      const userData = await userRes.json();
-      const contributionsData = await contributionsRes.json();
+      const userJson = await userRes.json();
+      const contributionJson = await contributionsRes.json();
+
+      const userData = userJson.user;
+      const contributionsData = contributionJson.contributions;
+      console.log(userData, contributionsData);
 
       setUserInfo({
         name: userData.first_name + " " + userData.last_name,
@@ -111,7 +118,12 @@ function PointsSummary() {
 
       const newContributions = JSON.parse(JSON.stringify(defaultContributions));
 
-      contributionsData.forEach((cont) => {
+      const flattened = contributionsData.map((item) => ({
+        ...item.contribution,
+        clubName: item.club_name,
+        departmentName: item.department_name,
+      }));
+      flattened.forEach((cont) => {
         const department = cont.department;
         if (newContributions[department]) {
           newContributions[department].conts += 1;

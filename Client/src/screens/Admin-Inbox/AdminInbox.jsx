@@ -8,11 +8,14 @@ import { useRunningContext } from "../../contexts/RunningContext";
 function AdminInbox() {
   const [requests, setRequests] = useState([]);
   const { baseURL, currentUser, token, isAdmin } = useRunningContext();
+
   useEffect(() => {
     const fetchRequests = async () => {
+      if (!currentUser || !token) return;
+
       try {
         const response = await fetch(
-          `${baseURL}/userApi/get-requests/${currentUser}`,
+          `${baseURL}/user/lead/requests/${currentUser}`,
           {
             method: "GET",
             headers: {
@@ -21,47 +24,60 @@ function AdminInbox() {
             },
           }
         );
+
         if (!response.ok) throw new Error("Failed to fetch requests");
+
         const data = await response.json();
-        // console.log(data);
-        setRequests(data);
+        const parsedRequests =
+          data.requests?.map((item) => ({
+            ...item.contribution,
+            clubName: item.club_name,
+            departmentName: item.department_name,
+          })) || [];
+        console.log(parsedRequests);
+
+        setRequests(parsedRequests);
       } catch (error) {
-        console.error("Error fetching requests: ", error);
+        console.error("Error fetching requests:", error.message);
       }
     };
+
     fetchRequests();
-  }, []);
+  }, [baseURL, currentUser, token]);
+
   const updateStatus = async (id, newStatus, reason = "") => {
     try {
-      console.log(reason);
-      const response = await fetch(`${baseURL}/contApi/update-status/${id}`, {
+      const response = await fetch(`${baseURL}/contribution/update/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
+          cont_id: id,
+          lead_user_id: currentUser,
           status: newStatus,
-          is_lead: isAdmin,
           reason,
         }),
       });
-      // console.log(response);
+
       if (!response.ok) throw new Error("Failed to update request");
-      const data = await response.json();
-      // console.log(data);
-      setRequests((prevRequests) =>
-        prevRequests.map((request) =>
-          request.id === id ? { ...request, status: newStatus } : request
+
+      // Update local state after status change
+      setRequests((prev) =>
+        prev.map((req) =>
+          req.id === id ? { ...req, status: newStatus, reason } : req
         )
       );
     } catch (error) {
-      console.error("Error fetching requests: ", error);
+      console.error("Error updating status:", error.message);
     }
   };
 
-  const pendingRequests = requests.filter((req) => req.status === "pending");
-  const completedRequests = requests.filter((req) => req.status !== "pending");
+  const pendingRequests =
+    requests.filter((req) => req.status === "pending") || [];
+  const completedRequests =
+    requests.filter((req) => req.status !== "pending") || [];
 
   return (
     <div className="p-8 min-h-[100vh] bg-[#E9F1FE]">
@@ -76,18 +92,19 @@ function AdminInbox() {
           <p>Pending Requests</p>
         </div>
         <div className="space-y-4">
-          {pendingRequests.length === 0 && (
+          {pendingRequests.length === 0 ? (
             <div className="text-xl font-bold text-center">
               No Pending Requests
             </div>
+          ) : (
+            pendingRequests.map((request) => (
+              <AdminInboxCard
+                key={request.id}
+                request={request}
+                onUpdateStatus={updateStatus}
+              />
+            ))
           )}
-          {pendingRequests.map((request) => (
-            <AdminInboxCard
-              key={request.id}
-              request={request}
-              onUpdateStatus={updateStatus}
-            />
-          ))}
         </div>
       </div>
 
@@ -97,18 +114,19 @@ function AdminInbox() {
           <p>Completed Requests</p>
         </div>
         <div className="space-y-4">
-          {completedRequests.length === 0 && (
+          {completedRequests.length === 0 ? (
             <div className="text-xl font-bold text-center">
               No Completed Requests
             </div>
+          ) : (
+            completedRequests.map((request) => (
+              <AdminInboxCard
+                key={request.id}
+                request={request}
+                onUpdateStatus={updateStatus}
+              />
+            ))
           )}
-          {completedRequests.map((request) => (
-            <AdminInboxCard
-              key={request.id}
-              request={request}
-              onUpdateStatus={updateStatus}
-            />
-          ))}
         </div>
       </div>
     </div>

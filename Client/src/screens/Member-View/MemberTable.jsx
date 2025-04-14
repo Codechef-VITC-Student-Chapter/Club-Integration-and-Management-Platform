@@ -15,10 +15,19 @@ import { useRunningContext } from "../../contexts/RunningContext";
 
 // const totalcount = membersData.length;
 
+const formatDate = (isoString) => {
+  const date = new Date(isoString);
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const year = date.getUTCFullYear();
+  return `${day}-${month}-${year}`;
+};
+
 const clubId = "codechefvitc";
 const MemberTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [membersData, setMembersData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
   const navigate = useNavigate();
   const [sortedField, setSortedField] = useState(null);
   const [sortOrder, setSortOrder] = useState("asc");
@@ -49,13 +58,12 @@ const MemberTable = () => {
   };
 
   const handleSearch = () => {
-    setMembersData((prev) =>
-      prev.filter((member) =>
-        Object.values(member).some((value) =>
-          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
+    const filtered = membersData.filter((member) =>
+      Object.values(member).some((value) =>
+        value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
+    setFilteredData(filtered);
   };
 
   useEffect(() => {
@@ -67,7 +75,7 @@ const MemberTable = () => {
     const fetchRequests = async () => {
       try {
         const response = await fetch(
-          `${baseURL}/clubApi/get-all-members/${clubId}`,
+          `${baseURL}/club/info/all/members/${clubId}`,
           {
             method: "GET",
             headers: {
@@ -78,8 +86,9 @@ const MemberTable = () => {
         );
         if (!response.ok) throw new Error("Failed to fetch requests");
         const data = await response.json();
-        // console.log(data);
-        setMembersData(data);
+        console.log(data.members);
+        setMembersData(data.members);
+        setFilteredData(data.members);
       } catch (error) {
         console.error("Error fetching requests: ", error);
       }
@@ -150,8 +159,8 @@ const MemberTable = () => {
               </tr>
             </thead>
             <tbody className="divide-y-2 divide-[#EAF1FD]">
-              {membersData &&
-                membersData.map((member) => (
+              {filteredData &&
+                filteredData.map((member) => (
                   <tr
                     key={member.id}
                     className="bg-secondary text-white hover:bg-gray-200 hover:text-black cursor-pointer"
@@ -167,7 +176,9 @@ const MemberTable = () => {
                       {member.total_points || "0"} Points
                     </td>
                     <td className="p-4 text-center whitespace-nowrap">
-                      {member.last_update.slice(0, 10) || "-"}
+                      {member.last_updated
+                        ? formatDate(member.last_updated)
+                        : "-"}{" "}
                     </td>
                   </tr>
                 ))}

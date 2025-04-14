@@ -19,7 +19,7 @@ const RequestScreen = () => {
   const [customPoints, setCustomPoints] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
   const [choseCustom, setChoseCustom] = useState(false);
-  const id = "codechefvitcc";
+  const id = "codechefvitc";
 
   const departmentPoints = {
     smandc: [
@@ -86,10 +86,15 @@ const RequestScreen = () => {
     const fetchClubDetails = async () => {
       try {
         console.log("Fetching Club Details");
-        const response = await fetch(`${baseURL}/clubApi/get/${id}`);
+        const response = await fetch(`${baseURL}/club/info/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!response.ok) throw new Error("Failed to fetch club details");
         const data = await response.json();
-        setClub(data);
+        // console.log(data);
+        setClub(data.club);
       } catch (error) {
         console.error("Error fetching club details:", error);
       }
@@ -101,18 +106,19 @@ const RequestScreen = () => {
     const fetchDepsDetails = async () => {
       if (!club) return;
       try {
-        const response = await fetch(`${baseURL}/clubApi/get-departments`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            clubId: club.id,
-          }),
-        });
+        const response = await fetch(
+          `${baseURL}/club/info/all/departments/${id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) throw new Error("Failed to fetch deps details");
         const data = await response.json();
-        setDeps(data);
+        // console.log(data.departments);
+        setDeps(data.departments);
       } catch (error) {
         console.error("Error fetching club details:", error);
       }
@@ -126,18 +132,15 @@ const RequestScreen = () => {
       setDepChosen(dep_id);
       setAvailablePoints(departmentPoints[dep_id] || []);
       console.log("Fetching Department Leads");
-      const response = await fetch(`${baseURL}/depsApi/get-leads`, {
-        method: "POST",
+      const response = await fetch(`${baseURL}/department/leads/${dep_id}`, {
+        method: "GET",
         headers: {
-          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          depId: dep_id,
-        }),
       });
       if (!response.ok) throw new Error("Failed to fetch dep_leads details");
       const data = await response.json();
-      setLeads(data);
+      setLeads(data.leads);
       // console.log(data);
       setAvailablePoints(departmentPoints[dep_id]);
     } catch (error) {
@@ -179,7 +182,7 @@ const RequestScreen = () => {
       : Number(customPoints);
 
     try {
-      const response = await fetch(`${baseURL}/contApi/add`, {
+      const response = await fetch(`${baseURL}/contribution/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -191,11 +194,12 @@ const RequestScreen = () => {
           points: finalPoints,
           description: desc,
           proof_files: links,
-          target: selectedLeads.map((lead) => lead.user_id),
+          target: selectedLeads.map((lead) => lead.user_id)[0],
+          sec_targets: selectedLeads.map((lead) => lead.user_id).slice(1) || [],
           club_id: club.id,
           department: depChosen,
           status: "pending",
-          created_at: Date.now(),
+          created_at: new Date().toISOString(),
         }),
       });
 

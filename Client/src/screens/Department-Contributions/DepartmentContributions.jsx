@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import TaskComponent from "../../components/TaskComponent";
 import { useParams, useSearchParams } from "react-router-dom";
 import { useRunningContext } from "../../contexts/RunningContext";
@@ -7,27 +7,31 @@ import { departmentMap } from "../../lib/keys";
 
 const DepartmentContributions = () => {
   const [searchParams] = useSearchParams();
-  const { baseURL } = useRunningContext();
+  const { baseURL, token } = useRunningContext();
   const { id, dept } = useParams();
   const member_name = searchParams.get("name");
 
   const [contributions, setContributions] = useState([]);
   const [points, setPoints] = useState(0);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
-      const res = await fetch(`${baseURL}/userApi/get-contribution-data`, {
-        method: "POST",
+      const res = await fetch(`${baseURL}/user/contributions/${id}`, {
+        method: "GET",
         headers: {
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          user: id,
-        }),
       });
 
       const allContributions = await res.json();
-      const filteredContributions = allContributions.filter(
+      const contributions = allContributions.contributions.map((item) => ({
+        ...item.contribution,
+        clubName: item.club_name,
+        departmentName: item.department_name,
+      }));
+      console.log(contributions);
+      const filteredContributions = contributions.filter(
         (cont) => cont.department === dept
       );
       const totalPoints = filteredContributions
@@ -39,15 +43,15 @@ const DepartmentContributions = () => {
     } catch (e) {
       console.log("Error: ", e);
     }
-  };
+  }, [dept, id, baseURL, token]);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   return (
     <div className="flex flex-col gap-5 h-[91.4vh] w-full overflow-hidden">
-      <div className="bg-skyblue px-4 md:px-10 pt-6">
+      <div className="bg-skyblue px-4 md:px-10 pt-6 w-full">
         <div className="max-w-6xl mx-auto">
           {/* Title - Points Summary */}
           <div className="flex items-center text-black text-xl md:text-2xl font-bold">
@@ -78,14 +82,14 @@ const DepartmentContributions = () => {
           </div>
         </div>
       </div>
-      <div className="h-full w-full overflow-scroll flex p-5">
+      <div className="h-full w-full overflow-auto flex p-5">
         {contributions.length === 0 ? (
           <p className="flex flex-col justify-center items-center w-full font-semibold text-xl">
             <img src={faceicon} alt="" />
             No contributions.
           </p>
         ) : (
-          <div className="flex flex-wrap md:flex-row gap-8 items-start justify-center overflow-scroll">
+          <div className="flex flex-wrap md:flex-row gap-8 items-start justify-center overflow-auto w-full">
             {contributions.map((contribution) => (
               <TaskComponent
                 key={contribution.id}

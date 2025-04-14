@@ -26,7 +26,7 @@ function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`${baseURL}/authApi/login`, {
+      const response = await fetch(`${baseURL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -36,10 +36,10 @@ function LoginForm() {
           password: hashPassword(password),
         }),
       });
-      // console.log(response);
+      console.log(response);
 
       const data = await response.json();
-      // console.log(data);
+      console.log(data);
       if (data.token) {
         localStorage.setItem("token", data.token);
         var payload = JSON.parse(window.atob(data.token.split(".")[1]));

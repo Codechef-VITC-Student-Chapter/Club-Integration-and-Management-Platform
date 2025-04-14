@@ -9,4 +9,4 @@ export const departmentMap = {
   finance: "Finance",
 };
 
-export const club_id = "codechefvitcc";
+export const club_id = "codechefvitc";

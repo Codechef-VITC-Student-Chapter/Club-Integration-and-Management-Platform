@@ -23,7 +23,7 @@ const CardCreation = (props) => {
     try {
       setLoading(true);
       // console.log(token);
-      const response = await fetch(`${baseURL}/contApi/add`, {
+      const response = await fetch(`${baseURL}/contribution/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,7 +39,7 @@ const CardCreation = (props) => {
           club_id: club_id,
           department: props.dept,
           status: "approved",
-          created_at: new Date().toLocaleString(),
+          created_at: new Date().toISOString(),
         }),
       });
 
