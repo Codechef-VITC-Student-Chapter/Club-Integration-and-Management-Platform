@@ -1,25 +1,45 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+# Binaries and build artifacts
+*.exe
+*.out
+*.a
+*.so
+*.dll
+*.dylib
+
+# Compiled object files
+*.o
+*.obj
+
+# Go modules and dependencies
+/go/
+vendor/
+bin/
+pkg/
+
+# Secrets and environment variables
 .env
+.env.local
+.env.*.local
 
-node_modules
-dist
-dist-ssr
-*.local
+# Logs
+*.log
+*.log.*
+logs/
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# VSCode
+.vscode/
+
+# Temporary files
+*.tmp
+*.swp
+*.swo
+*.bak
+
+# Cache files
+__pycache__/
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+
+
+#Air
+tmp/
