@@ -7,6 +7,7 @@ import Navbar from "./Navbar/Navbar";
 import { useRunningContext } from "../contexts/RunningContext";
 import DepartmentContributions from "./Department-Contributions/DepartmentContributions";
 import MemberTable from "./Member-View/MemberTable";
+import ForgotPassword from "./Forgot-Password/Forgot-Password";
 
 const PointsSummary = React.lazy(() =>
   import("./Points-Summary/PointsSummary")
@@ -30,6 +31,7 @@ function SiteRouter() {
       <Routes>
         <Route path="/loginform" element={<LoginForm />} />
         <Route path="/signup" element={<SignUpForm />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/*" element={<LoginForm />} />
       </Routes>
     );
@@ -44,7 +46,6 @@ function SiteRouter() {
           <Route path="/loading" element={<LoadingScreen />} />
           <Route path="/dashboard" element={<MemberDashboard />} />
           {isAdmin && <Route path="/memberview" element={<MemberTable />} />}
-          {/* <Route path="/memberview" element={<MemberTable />} /> */}
           <Route path="/summary/:id" element={<PointsSummary />} />
           <Route
             path="/department/:id/:dept"
