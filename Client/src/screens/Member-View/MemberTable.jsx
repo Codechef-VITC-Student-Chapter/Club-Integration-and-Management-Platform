@@ -86,7 +86,7 @@ const MemberTable = () => {
         );
         if (!response.ok) throw new Error("Failed to fetch requests");
         const data = await response.json();
-        console.log(data.members);
+        // console.log(data.members);
         setMembersData(data.members);
         setFilteredData(data.members);
       } catch (error) {

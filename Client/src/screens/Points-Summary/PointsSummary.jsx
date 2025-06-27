@@ -108,7 +108,7 @@ function PointsSummary() {
 
       const userData = userJson.user;
       const contributionsData = contributionJson.contributions;
-      console.log(userData, contributionsData);
+      // console.log(userData, contributionsData);
 
       setUserInfo({
         name: userData.first_name + " " + userData.last_name,

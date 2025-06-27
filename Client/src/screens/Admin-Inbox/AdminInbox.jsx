@@ -34,7 +34,7 @@ function AdminInbox() {
             clubName: item.club_name,
             departmentName: item.department_name,
           })) || [];
-        console.log(parsedRequests);
+        // console.log(parsedRequests);
 
         setRequests(parsedRequests);
       } catch (error) {
