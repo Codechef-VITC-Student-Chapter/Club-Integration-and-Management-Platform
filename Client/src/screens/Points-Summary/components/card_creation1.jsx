@@ -1,4 +1,4 @@
-import Plus from "./plus";
+import Plus from "./Plus";
 import Cross from "./Cross";
 import { Link } from "react-router-dom";
 import { useRunningContext } from "../../../contexts/RunningContext";
