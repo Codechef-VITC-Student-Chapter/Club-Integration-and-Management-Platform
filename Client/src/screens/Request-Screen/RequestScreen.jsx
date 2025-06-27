@@ -3,10 +3,11 @@ import EditLinks from "./components/EditLinks.jsx";
 import { toast } from "react-toastify";
 import { useRunningContext } from "../../contexts/RunningContext.jsx";
 
+
 const RequestScreen = () => {
   const { baseURL, currentUser, token } = useRunningContext();
   const [isELopen, setisELopen] = useState(false);
-  const [links, setLinks] = useState([""]);
+  const [links, setLinks] = useState(['']);
   const [club, setClub] = useState(null);
   const [deps, setDeps] = useState([]);
   const [leads, setLeads] = useState([]);
@@ -24,61 +25,61 @@ const RequestScreen = () => {
   const departmentPoints = {
     smandc: [
       {
-        label: "Technical Writing for CodeChef Newsletter - 3 Points/Publish",
+        label: 'Technical Writing for CodeChef Newsletter - 3 Points/Publish',
         value: 3,
       },
       {
-        label: "Providing Reel Script that gets implemented - 4 Points/Reel",
+        label: 'Providing Reel Script that gets implemented - 4 Points/Reel',
         value: 4,
       },
-      { label: "Acting in Reels - 5 Points/Reel", value: 5 },
+      { label: 'Acting in Reels - 5 Points/Reel', value: 5 },
       {
-        label: "Resharing Reels (claim within 24 hours) - 1 Point/Reel",
+        label: 'Resharing Reels (claim within 24 hours) - 1 Point/Reel',
         value: 1,
       },
     ],
     design: [
-      { label: "Poster Design - 7 Points/Accepted Poster", value: 7 },
-      { label: "Story Design - 7 points/Accepted Story", value: 7 },
+      { label: 'Poster Design - 7 Points/Accepted Poster', value: 7 },
+      { label: 'Story Design - 7 points/Accepted Story', value: 7 },
     ],
     mands: [
       {
         label:
-          "Offline Event Registrations (Referral) - 2 Points/Reg (max 20 Points/event)",
+          'Offline Event Registrations (Referral) - 2 Points/Reg (max 20 Points/event)',
         value: 2,
       },
       {
         label:
-          "Online Event Registrations (Referral) - 1 Point/Reg (max 5 Points/event)",
+          'Online Event Registrations (Referral) - 1 Point/Reg (max 5 Points/event)',
         value: 1,
       },
       {
-        label: "Participation in Physical/ Hostel Marketing - 8 Points/session",
+        label: 'Participation in Physical/ Hostel Marketing - 8 Points/session',
         value: 8,
       },
-      { label: "Cold Mails to Sponsors - 1 Point/2 Mails", value: 1 },
+      { label: 'Cold Mails to Sponsors - 1 Point/2 Mails', value: 1 },
     ],
     cp: [
-      { label: "Attending Weekly Online Discussions - 1 Point/Meet", value: 1 },
+      { label: 'Attending Weekly Online Discussions - 1 Point/Meet', value: 1 },
       {
-        label: "Attempting Online CodeChef Contest - 3 Points/Contest",
+        label: 'Attempting Online CodeChef Contest - 3 Points/Contest',
         value: 3,
       },
       {
-        label: "Attempting Weekly Tasks/ Questions - 2 Points/Que Solved",
+        label: 'Attempting Weekly Tasks/ Questions - 2 Points/Que Solved',
         value: 2,
       },
     ],
     em: [
-      { label: "Registration Desk - 10 Points", value: 10 },
-      { label: "Disciplinary Committee - 10 Points", value: 10 },
-      { label: "Backstage duty -10 Points", value: 10 },
-      { label: "Entry/Exit duty -10 Points", value: 10 },
-      { label: "Miscellaneous Management Tasks (Will be notified)", value: 0 },
+      { label: 'Registration Desk - 10 Points', value: 10 },
+      { label: 'Disciplinary Committee - 10 Points', value: 10 },
+      { label: 'Backstage duty -10 Points', value: 10 },
+      { label: 'Entry/Exit duty -10 Points', value: 10 },
+      { label: 'Miscellaneous Management Tasks (Will be notified)', value: 0 },
     ],
     clubleads: [
-      { label: "Attending events - 4 Points/Event (min 4 events)", value: 4 },
-      { label: "Attending FFCS meets - 1 Point/meet (mandatory)", value: 1 },
+      { label: 'Attending events - 4 Points/Event (min 4 events)', value: 4 },
+      { label: 'Attending FFCS meets - 1 Point/meet (mandatory)', value: 1 },
     ],
   };
 
@@ -96,7 +97,7 @@ const RequestScreen = () => {
         // console.log(data);
         setClub(data.club);
       } catch (error) {
-        console.error("Error fetching club details:", error);
+        console.error('Error fetching club details:', error);
       }
     };
     fetchClubDetails();
@@ -120,7 +121,7 @@ const RequestScreen = () => {
         // console.log(data.departments);
         setDeps(data.departments);
       } catch (error) {
-        console.error("Error fetching club details:", error);
+        console.error('Error fetching club details:', error);
       }
     };
     fetchDepsDetails();
@@ -138,13 +139,13 @@ const RequestScreen = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      if (!response.ok) throw new Error("Failed to fetch dep_leads details");
+      if (!response.ok) throw new Error('Failed to fetch dep_leads details');
       const data = await response.json();
       setLeads(data.leads);
       // console.log(data);
       setAvailablePoints(departmentPoints[dep_id]);
     } catch (error) {
-      console.error("Error fetching club details:", error);
+      console.error('Error fetching club details:', error);
     }
   };
 
@@ -164,12 +165,12 @@ const RequestScreen = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedPoints && !choseCustom) {
-      toast.warn("Please select the points requested!");
+      toast.warn('Please select the points requested!');
       return;
     }
 
     if (!depChosen) {
-      toast.warn("Please select the department!");
+      toast.warn('Please select the department!');
       return;
     }
     if (selectedLeads.length == 0) {
@@ -185,7 +186,7 @@ const RequestScreen = () => {
       const response = await fetch(`${baseURL}/contribution/add`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
@@ -205,22 +206,22 @@ const RequestScreen = () => {
 
       if (!response.ok) {
         // console.log(response);
-        toast.error("Failed to submit the request");
+        toast.error('Failed to submit the request');
         return;
       }
-      toast.success("Request submitted successfully!");
+      toast.success('Request submitted successfully!');
 
       // Reset form
-      setTitle("");
-      setDesc("");
-      setLinks([""]);
-      setSelectedPoints("");
-      setCustomPoints("");
+      setTitle('');
+      setDesc('');
+      setLinks(['']);
+      setSelectedPoints('');
+      setCustomPoints('');
       setMultiplier(1);
       setChoseCustom(false);
     } catch (error) {
-      console.error("Error submitting request:", error);
-      toast.error("Error submitting request");
+      console.error('Error submitting request:', error);
+      toast.error('Error submitting request');
     }
   };
 
@@ -232,7 +233,7 @@ const RequestScreen = () => {
           <div className="bg-white rounded-3xl p-6 shadow-md">
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                Club: <b>{club?.name || "Loading..."}</b>
+                Club: <b>{club?.name || 'Loading...'}</b>
               </div>
               <div className="mb-4">
                 <label className="block mb-2">Department:</label>
@@ -386,7 +387,7 @@ const RequestScreen = () => {
                   </span>
                   <input
                     type="text"
-                    value={links[0] || ""}
+                    value={links[0] || ''}
                     onChange={(e) => {
                       const newLinks = [...links];
                       newLinks[0] = e.target.value;
@@ -424,7 +425,7 @@ const RequestScreen = () => {
                     className="w-full p-2 rounded border appearance-none bg-white pr-8"
                     disabled={!depChosen}
                     onChange={(e) => {
-                      if (e.target.value === "-1") {
+                      if (e.target.value === '-1') {
                         setChoseCustom(true);
                         return;
                       } else setChoseCustom(false);
