@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/Sasank-V/CIMP-Golang-Backend/api/controllers"
 	"github.com/Sasank-V/CIMP-Golang-Backend/api/routes"
@@ -26,8 +27,13 @@ func main() {
 	controllers.ConnectContributionCollection()
 	controllers.ConnectUserCollection()
 
+	clientURL := "http://localhost:5173" // default fallback
+	if envURL := os.Getenv("CLIENT_URL"); envURL != "" {
+		clientURL = envURL
+	}
+
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowOrigins:     []string{clientURL},
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		AllowCredentials: true,
