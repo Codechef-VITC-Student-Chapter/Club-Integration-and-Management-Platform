@@ -4,6 +4,7 @@ import { PiUserCircle, PiLockLight } from "react-icons/pi";
 import { useRunningContext } from "../../contexts/RunningContext";
 import loginImage from "./assets/loginScreen_Background.png";
 import mobileLoginImage from "./assets/mobileLoginScreen_Background.png";
+import { useNavigate } from "react-router-dom";
 
 import SHA256 from "crypto-js/sha256";
 import { toast } from "react-toastify";
@@ -12,14 +13,8 @@ function hashPassword(password) {
 }
 
 function LoginForm() {
-  const {
-    baseURL,
-    setCurrentUser,
-    currentUser,
-    setToken,
-    setIsAdmin,
-    isAdmin,
-  } = useRunningContext();
+  const { baseURL, setCurrentUser, setToken, setIsAdmin } = useRunningContext();
+  const navigate = useNavigate();
 
   const [regNo, setregNo] = useState("");
   const [password, setPassword] = useState("");
@@ -49,6 +44,7 @@ function LoginForm() {
         // console.log(currentUser);
 
         setToken(data.token);
+        navigate("/dashboard");
       }
     } catch (error) {
       toast.error("Error in logging in!");
@@ -138,7 +134,7 @@ function LoginForm() {
                 </div>
                 <div className="text-sm">
                   <a
-                    href="#"
+                    href="/forgot-password"
                     className="font-medium  text-[10px] md:text-sm text-custom-blue-darker hover:text-blue-500"
                   >
                     Forgot Password?
