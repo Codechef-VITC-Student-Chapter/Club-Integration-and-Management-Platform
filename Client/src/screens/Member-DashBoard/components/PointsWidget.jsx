@@ -27,7 +27,7 @@ const CircleProgress = ({ totalPoints, pendingPoints }) => {
           cx="60"
           cy="60"
           r={radius}
-          className="stroke-yellow-400"
+          className="stroke-acc-secondary"
           fill="none"
           strokeWidth="10"
           strokeDasharray={`${pendingDash} ${circumference}`}
@@ -38,7 +38,7 @@ const CircleProgress = ({ totalPoints, pendingPoints }) => {
           cx="60"
           cy="60"
           r={radius}
-          className="stroke-green-500"
+          className="stroke-positive"
           fill="none"
           strokeWidth="10"
           strokeDasharray={`${completedDash} ${circumference}`}
@@ -46,7 +46,9 @@ const CircleProgress = ({ totalPoints, pendingPoints }) => {
         />
       </svg>
       <div className="absolute">
-        <span className="font-bold text-2xl md:text-3xl">{totalPoints}</span>
+        <span className="font-bold text-2xl md:text-3xl truncate">
+          {totalPoints}
+        </span>
       </div>
     </div>
   );
@@ -54,18 +56,18 @@ const CircleProgress = ({ totalPoints, pendingPoints }) => {
 
 // Separate PointsInfo component
 const PointsInfo = ({ totalPoints, pendingPoints }) => (
-  <div className="flex flex-col gap-2 text-center">
+  <div className="flex flex-col gap-1 text-center">
     <div>
-      <h2 className="text-green-500 font-bold text-sm md:text-lg">
-        Total Points Earned
-      </h2>
-      <p className="text-green-500 text-sm md:text-base">{totalPoints}/100</p>
+      <h2 className="text-positive font-bold text-base ">Points Earned</h2>
+      <p className="text-positive text-sm md:text-base font-semibold">
+        <span className="font-bold text-xl">{totalPoints}</span>/100
+      </p>
     </div>
     <div>
-      <h2 className="text-yellow-400 font-bold text-sm md:text-lg">
-        Pending Points
-      </h2>
-      <p className="text-yellow-400 text-sm md:text-base">{pendingPoints}</p>
+      <h2 className="text-acc-secondary font-bold text-base">Pending Points</h2>
+      <p className="text-acc-secondary text-sm md:text-base font-bold">
+        {pendingPoints}
+      </p>
     </div>
   </div>
 );
@@ -82,13 +84,13 @@ const PointsWidget = ({ clubPoints, pendingPoints }) => {
         return (
           <div key={club} className="flex flex-col">
             <div className="bg-gray-800 rounded-t-3xl py-2">
-              <h1 className="text-white text-center text-sm md:text-base">
+              <h1 className="text-white text-center text-md md:text-base font-semibold">
                 Points Breakdown
               </h1>
             </div>
 
-            <div className="p-6 flex flex-row md:flex-row items-center justify-center gap-6">
-              <div className="w-28 md:w-36">
+            <div className="p-2 flex flex-row md:flex-row items-center justify-center gap-2">
+              <div className="w-28 md:w-30">
                 <CircleProgress
                   totalPoints={totalPoints}
                   pendingPoints={pendingPointsForClub}

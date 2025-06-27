@@ -5,6 +5,7 @@ import PendingContributions from "./components/PendingContributions";
 import { useRunningContext } from "../../contexts/RunningContext";
 import ProfileCard from "./components/ProfileCard";
 import Badge from "./components/Badge";
+import { Coins } from "lucide-react";
 
 function MemberDashboard() {
   const {
@@ -13,7 +14,6 @@ function MemberDashboard() {
     token,
     handleError,
     badges = ["Member"],
-    isAdmin,
   } = useRunningContext();
 
   const [userDetails, setUserDetails] = useState(null);
@@ -22,67 +22,11 @@ function MemberDashboard() {
   const [contributions, setContributions] = useState([]);
   const [pendingContributions, setPendingContributions] = useState([]);
 
-  const fetchContributions = async () => {
-    // console.log(userDetails);
-    if (!userDetails?.id) return;
-
-    try {
-      const response = await fetch(`${baseURL}/userApi/get-contribution-data`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ user: userDetails.id }),
-      });
-
-      const data = await response.json();
-      // console.log(data);
-      if (response.status === 403) {
-        handleError("Fetching contributions", data.error);
-        return;
-      }
-
-      const {
-        done,
-        pending,
-        donePoints,
-        pendingPoints: pPoints,
-      } = data.reduce(
-        (acc, curr) => {
-          if (curr.status === "pending") {
-            acc.pendingPoints += curr.points;
-            acc.pending.push(curr);
-          } else {
-            if (curr.status === "approved") {
-              acc.donePoints += curr.points;
-            }
-            acc.done.push(curr);
-          }
-          return acc;
-        },
-        { done: [], pending: [], donePoints: 0, pendingPoints: 0 }
-      );
-      // console.log(donePoints, pPoints);
-      // console.log(pending);
-      setContributions(done);
-      setPendingContributions(pending);
-      setClubPoints({ codechefvitc: donePoints });
-      setPendingPoints({ codechefvitc: pPoints });
-    } catch (error) {
-      handleError("Error fetching contributions", error.message);
-      // Fallback to mock data on error
-      // setContributions(MOCK_CONTRIBUTIONS);
-      // setPendingContributions(MOCK_PENDING);
-    }
-  };
-
   const fetchUserDetails = async () => {
-    // console.log(currentUser);
-    if (!currentUser) return;
+    if (!currentUser || !token) return;
 
     try {
-      const response = await fetch(`${baseURL}/userApi/get/${currentUser}`, {
+      const response = await fetch(`${baseURL}/user/info/${currentUser}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -90,87 +34,142 @@ function MemberDashboard() {
         },
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to fetch user details");
+        throw new Error(data?.error || "Failed to fetch user details");
       }
 
-      const userData = await response.json();
-      // console.log(userData);
-      setUserDetails(userData);
+      setUserDetails(data.user);
     } catch (error) {
       handleError("Error fetching user details", error.message);
     }
   };
 
-  useEffect(() => {
-    console.log("Fetching User Details");
-    fetchUserDetails();
-  }, [currentUser, baseURL, token]);
+  const fetchContributions = async () => {
+    if (!userDetails?.id || !token) return;
+
+    try {
+      const response = await fetch(
+        `${baseURL}/user/contributions/${currentUser}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        handleError(
+          "Fetching contributions",
+          result?.message || "Unknown error"
+        );
+        return;
+      }
+
+      const data = result.contributions || [];
+      // console.log(data);
+      // Map data into the expected flat format
+      const flattened = data.map((item) => ({
+        ...item.contribution,
+        clubName: item.club_name,
+        departmentName: item.department_name,
+      }));
+
+      const {
+        done,
+        pending,
+        donePoints,
+        pendingPoints: pPoints,
+      } = flattened.reduce(
+        (acc, curr) => {
+          if (curr.status === "pending") {
+            acc.pending.push(curr);
+            acc.pendingPoints += curr.points;
+          } else {
+            acc.done.push(curr);
+            if (curr.status === "approved") {
+              acc.donePoints += curr.points;
+            }
+          }
+          return acc;
+        },
+        { done: [], pending: [], donePoints: 0, pendingPoints: 0 }
+      );
+
+      setContributions(done);
+      setPendingContributions(pending);
+      setClubPoints({ codechefvitc: donePoints });
+      setPendingPoints({ codechefvitc: pPoints });
+    } catch (error) {
+      handleError("Error fetching contributions", error.message);
+    }
+  };
 
   useEffect(() => {
-    if (userDetails) {
-      console.log("Fetching User Contributions");
-      fetchContributions();
-    }
+    fetchUserDetails();
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (userDetails) fetchContributions();
   }, [userDetails]);
-  // console.log(isAdmin);
-  // console.log();
 
   return (
-    <div className="min-h-screen bg-[#e8f1fe]">
-      <div className="flex md:flex-row flex-col h-full">
-        <aside className="w-full xl:w-1/4 md:w-[30%]">
-          <div className="flex md:flex-col flex-row md:gap-3 items-center justify-center md:pb-12">
-            <div className="md:w-full xl:px-10 lg: md:px-1 px-2 flex items-center flex-col">
-              <ProfileCard
-                isAdmin={isAdmin}
-                badges={badges}
-                first_name={userDetails?.first_name}
-                last_name={userDetails?.last_name}
-                reg_number={userDetails?.reg_number}
-              />
-            </div>
-
-            <div className="flex flex-col items-center md:p-4 w-2/3 md:w-full">
-              <PointsWidget
-                clubPoints={clubPoints}
-                pendingPoints={pendingPoints}
-              />
+    <div className="min-h-screen bg-skyblue">
+      <div className="flex md:flex-row flex-col h-full md:justify-around">
+        {/* Sidebar Section */}
+        <section className="p-2 md:ml-3 flex flex-col xs:flex-row gap-3 xs:justify-center md:flex-col md:pt-2 md:justify-start lg:pt-5">
+          <div className="xs:w-full xs:max-w-[300px]">
+            <ProfileCard
+              badges={badges}
+              first_name={userDetails?.first_name}
+              last_name={userDetails?.last_name}
+              reg_number={userDetails?.reg_number}
+            />
+          </div>
+          <div className="flex flex-col gap-3">
+            <PointsWidget
+              clubPoints={clubPoints}
+              pendingPoints={pendingPoints}
+            />
+            <div className="bg-secondary text-white rounded-2xl p-3 md:hidden w-full">
+              <Badge badges={badges} />
             </div>
           </div>
-          <div className="bg-[#2E3446] text-white mx-5 rounded-2xl p-3 md:hidden">
-            <Badge badges={badges} />
-          </div>
-        </aside>
+        </section>
 
-        <main className="xl:w-3/4 md:w-[70%] p-8">
-          <div className="flex flex-col gap-8 bg-[#e8f1fe] md:bg-white rounded-[45px] md:border-2 md:border-zinc-800 p-6">
-            <section className="flex-1">
-              <div className="md:bg-[#e8f1fe] bg-white min-h-[400px] md:min-h-min shadow-md rounded-[30px] border-2 border-[#1a8755]">
-                <h2 className="text-xl bg-[#1a8755] rounded-t-[25px] md:px-[90px] px-[30px] py-[15px] text-white font-semibold">
-                  Recent Contributions
+        {/* Main Section */}
+        <main className="xl:w-3/4 md:w-[70%] w-full sm:px-4 sm:pb-4 sm:pt-2 md:pt-2 lg:pt-5">
+          <div className="flex flex-col gap-8 bg-skyblue md:bg-white rounded-[45px] md:border-2 md:border-zinc-800 p-2 sm:p-6">
+            {/* Recent Contributions */}
+            <section className="flex-1 w-full overflow-hidden">
+              <div className="md:bg-skyblue bg-white min-h-[400px] md:min-h-min shadow-md rounded-[30px] border-2 border-positive">
+                <h2 className="sm:text-xl text-base bg-positive rounded-t-[25px] px-4 sm:px-[30px] py-[15px] text-white font-semibold flex gap-2 items-center">
+                  <Coins size={20} />
+                  <span className="truncate">Recent Contributions</span>
                 </h2>
-                {contributions && (
-                  <div className="overflow-y-auto p-6">
-                    <RecentContributions contributions={contributions} />
-                  </div>
-                )}
+                <div className="overflow-x-auto overflow-y-auto p-2 sm:p-6 max-h-[300px] md:max-h-full">
+                  <RecentContributions contributions={contributions || []} />
+                </div>
               </div>
             </section>
 
-            <section className="flex-1">
-              <div className="md:bg-[#e8f1fe] bg-white min-h-[400px] md:min-h-min shadow-md rounded-[30px] border-2 border-[#ffac32]">
-                <h2 className="text-xl bg-[#ffac32] rounded-t-[25px] md:px-[90px] px-[30px] py-[15px] font-semibold">
-                  Pending Contributions
+            {/* Pending Contributions */}
+            <section className="flex-1 w-full overflow-hidden">
+              <div className="md:bg-skyblue bg-white min-h-[400px] md:min-h-min shadow-md rounded-[30px] border-2 border-[#ffac32]">
+                <h2 className="text-base sm:text-xl bg-[#ffac32] rounded-t-[25px] px-4 sm:px-[30px] py-[15px] font-semibold flex gap-2 items-center">
+                  <Coins size={20} />
+                  <span className="truncate">Pending Contributions</span>
                 </h2>
-                {pendingContributions && (
-                  <div className="overflow-y-auto p-6">
-                    <PendingContributions
-                      pendingContributions={pendingContributions}
-                    />
-                  </div>
-                )}
+                <div className="overflow-x-auto overflow-y-auto p-2 sm:p-6 min-h-[300px]">
+                  <PendingContributions
+                    pendingContributions={pendingContributions || []}
+                  />
+                </div>
               </div>
             </section>
           </div>

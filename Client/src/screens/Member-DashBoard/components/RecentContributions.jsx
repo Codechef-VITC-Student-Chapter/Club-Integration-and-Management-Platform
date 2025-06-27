@@ -1,9 +1,12 @@
-import React from "react";
-import TaskComponent from "./TaskComponent"; // Adjusting import path to match actual component name
+import TaskComponent from "../../../components/TaskComponent"; // Adjusting import path to match actual component name
+import faceicon from "../../../assets/empty-box.png";
 
 function RecentContributions({ contributions }) {
   return contributions.length === 0 ? (
-    <p>No recent contributions.</p>
+    <div className="flex justify-center items-center flex-col h-full">
+      <img src={faceicon} alt="" />
+      No Recent Contributions.
+    </div>
   ) : (
     <div className="flex flex-col md:flex-row gap-8 items-center justify-center overflow-scroll">
       {contributions.map((contribution) => (

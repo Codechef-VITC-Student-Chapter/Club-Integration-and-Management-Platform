@@ -1,7 +1,8 @@
-import { useState, useEffect, useContext } from 'react';
-import EditLinks from './components/EditLinks.jsx';
-import { toast } from 'react-toastify';
-import { useRunningContext } from '../../contexts/RunningContext.jsx';
+import { useState, useEffect } from "react";
+import EditLinks from "./components/EditLinks.jsx";
+import { toast } from "react-toastify";
+import { useRunningContext } from "../../contexts/RunningContext.jsx";
+
 
 const RequestScreen = () => {
   const { baseURL, currentUser, token } = useRunningContext();
@@ -10,16 +11,16 @@ const RequestScreen = () => {
   const [club, setClub] = useState(null);
   const [deps, setDeps] = useState([]);
   const [leads, setLeads] = useState([]);
-  const [title, setTitle] = useState('');
-  const [desc, setDesc] = useState('');
-  const [depChosen, setDepChosen] = useState('');
-  const [target, setTarget] = useState('');
+  const [selectedLeads, setSelectedLeads] = useState([]);
+  const [title, setTitle] = useState("");
+  const [desc, setDesc] = useState("");
+  const [depChosen, setDepChosen] = useState("");
   const [availablePoints, setAvailablePoints] = useState([]);
   const [selectedPoints, setSelectedPoints] = useState(0); // For points dropdown
   const [customPoints, setCustomPoints] = useState(0);
   const [multiplier, setMultiplier] = useState(1);
   const [choseCustom, setChoseCustom] = useState(false);
-  const id = 'codechefvitc';
+  const id = "codechefvitc";
 
   const departmentPoints = {
     smandc: [
@@ -85,11 +86,16 @@ const RequestScreen = () => {
   useEffect(() => {
     const fetchClubDetails = async () => {
       try {
-        console.log('Fetching Club Details');
-        const response = await fetch(`${baseURL}/clubApi/get/${id}`);
-        if (!response.ok) throw new Error('Failed to fetch club details');
+        console.log("Fetching Club Details");
+        const response = await fetch(`${baseURL}/club/info/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!response.ok) throw new Error("Failed to fetch club details");
         const data = await response.json();
-        setClub(data);
+        // console.log(data);
+        setClub(data.club);
       } catch (error) {
         console.error('Error fetching club details:', error);
       }
@@ -101,18 +107,19 @@ const RequestScreen = () => {
     const fetchDepsDetails = async () => {
       if (!club) return;
       try {
-        const response = await fetch(`${baseURL}/clubApi/get-departments`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            clubId: club.id,
-          }),
-        });
-        if (!response.ok) throw new Error('Failed to fetch deps details');
+        const response = await fetch(
+          `${baseURL}/club/info/all/departments/${id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!response.ok) throw new Error("Failed to fetch deps details");
         const data = await response.json();
-        setDeps(data);
+        // console.log(data.departments);
+        setDeps(data.departments);
       } catch (error) {
         console.error('Error fetching club details:', error);
       }
@@ -125,24 +132,34 @@ const RequestScreen = () => {
       const dep_id = e.target.value;
       setDepChosen(dep_id);
       setAvailablePoints(departmentPoints[dep_id] || []);
-      console.log('Fetching Department Leads');
-      const response = await fetch(`${baseURL}/depsApi/get-leads`, {
-        method: 'POST',
+      console.log("Fetching Department Leads");
+      const response = await fetch(`${baseURL}/department/leads/${dep_id}`, {
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          depId: dep_id,
-        }),
       });
       if (!response.ok) throw new Error('Failed to fetch dep_leads details');
       const data = await response.json();
-      setLeads(data);
+      setLeads(data.leads);
       // console.log(data);
       setAvailablePoints(departmentPoints[dep_id]);
     } catch (error) {
       console.error('Error fetching club details:', error);
     }
+  };
+
+  const handleSetSelectedLead = (leadToRemove) => {
+    setSelectedLeads((prev) => prev.filter((lead) => lead !== leadToRemove));
+    setLeads((prev) => [...prev, leadToRemove]);
+  };
+
+  const handleSetLead = (selectedLead) => {
+    if (!selectedLead) return;
+    setSelectedLeads((prev) => [...prev, selectedLead]);
+    setLeads((prev) =>
+      prev.filter((lead) => lead.user_id !== selectedLead.user_id)
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -156,8 +173,8 @@ const RequestScreen = () => {
       toast.warn('Please select the department!');
       return;
     }
-    if (!target) {
-      toast.warn('Please select the lead');
+    if (selectedLeads.length == 0) {
+      toast.warn("Please select the lead");
       return;
     }
 
@@ -166,8 +183,8 @@ const RequestScreen = () => {
       : Number(customPoints);
 
     try {
-      const response = await fetch(`${baseURL}/contApi/add`, {
-        method: 'POST',
+      const response = await fetch(`${baseURL}/contribution/add`, {
+        method: "POST",
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -178,11 +195,12 @@ const RequestScreen = () => {
           points: finalPoints,
           description: desc,
           proof_files: links,
-          target,
+          target: selectedLeads.map((lead) => lead.user_id)[0],
+          sec_targets: selectedLeads.map((lead) => lead.user_id).slice(1) || [],
           club_id: club.id,
           department: depChosen,
-          status: 'pending',
-          created_at: Date.now(),
+          status: "pending",
+          created_at: new Date().toISOString(),
         }),
       });
 
@@ -211,7 +229,6 @@ const RequestScreen = () => {
     <div className="min-h-screen p-5">
       <div className="bg-[#E9F1FE] min-h-screen pt-4">
         <h1 className="text-center text-2xl py-4">SUBMIT A REQUEST</h1>
-
         <div className="mx-4 md:mx-auto max-w-4xl">
           <div className="bg-white rounded-3xl p-6 shadow-md">
             <form onSubmit={handleSubmit}>
@@ -244,19 +261,54 @@ const RequestScreen = () => {
                   </div>
                 </div>
               </div>
+
               <div className="mb-4">
-                <label className="block mb-2">Lead:</label>
+                <div className="flex mb-2">
+                  <span>Lead:</span>
+                  <span className="flex">
+                    {selectedLeads.map((data) => (
+                      <button
+                        key={data.user_id}
+                        type="button"
+                        className="flex items-center gap-1 justify-between border-black border-2 rounded-xl ml-2 px-2 bg-slate-900 min-w-[80px]"
+                        onClick={() => handleSetSelectedLead(data)}
+                      >
+                        <span className="text-white">{data.name}</span>
+                        <svg
+                          width="11"
+                          height="12"
+                          viewBox="0 0 11 12"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            opacity="0.6"
+                            d="M7.73438 3.5625L3.26562 8.4375M3.26562 3.5625L7.73438 8.4375"
+                            stroke="white"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+                    ))}
+                  </span>
+                </div>
                 <div className="relative">
                   <select
                     className="w-full p-2 rounded border appearance-none bg-white pr-8"
                     disabled={!depChosen}
                     onChange={(e) => {
-                      setTarget(e.target.value);
+                      const selectedLead = leads.find(
+                        (lead) => lead.user_id === e.target.value
+                      );
+                      if (selectedLead) handleSetLead(selectedLead);
                     }}
+                    value=""
                   >
                     <option value="">Select Lead</option>
-                    {leads.map((data, index) => (
-                      <option key={index} value={data.user_id}>
+                    {leads.map((data) => (
+                      <option key={data.user_id} value={data.user_id}>
                         {data.name}
                       </option>
                     ))}
@@ -272,6 +324,7 @@ const RequestScreen = () => {
                   </div>
                 </div>
               </div>
+
               <div className="mb-4">
                 <label className="block mb-2">Title:</label>
                 <div className="relative">
@@ -365,7 +418,7 @@ const RequestScreen = () => {
                   Edit Links
                 </button>
               </div>
-              <div className="mb-4 flex flex-col gap-3">
+              <div className="mb-4 flex flex-col gap-3 justify-center">
                 <div className="relative">
                   <label className="block mb-2">Points Requested:</label>
                   <select
@@ -389,7 +442,7 @@ const RequestScreen = () => {
                       ))}
                     <option value="-1">Custom Points</option>
                   </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <div className="pointer-events-none absolute inset-y-0 right-0 top-8 flex items-center px-2">
                     <svg
                       className="fill-current h-4 w-4"
                       xmlns="http://www.w3.org/2000/svg"
