@@ -30,7 +30,7 @@ const DepartmentContributions = () => {
         clubName: item.club_name,
         departmentName: item.department_name,
       }));
-      console.log(contributions);
+      // console.log(contributions);
       const filteredContributions = contributions.filter(
         (cont) => cont.department === dept
       );

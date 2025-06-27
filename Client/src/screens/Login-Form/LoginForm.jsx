@@ -31,10 +31,10 @@ function LoginForm() {
           password: hashPassword(password),
         }),
       });
-      console.log(response);
+      // console.log(response);
 
       const data = await response.json();
-      console.log(data);
+      // console.log(data);
       if (data.token) {
         localStorage.setItem("token", data.token);
         var payload = JSON.parse(window.atob(data.token.split(".")[1]));

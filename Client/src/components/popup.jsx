@@ -17,11 +17,12 @@ const TaskModal = ({
   onClose,
 }) => {
   const taskColor =
-    status === "accepted"
+    status === "approved"
       ? "rgba(25, 135, 84, 1)"
       : status === "rejected"
       ? "rgba(220, 53, 69, 1)"
       : "rgba(255, 172, 51, 1)";
+  // console.log(status);
 
   const textColor = status === "pending" ? "black" : taskColor;
   const textColor1 = status === "pending" ? "black" : "white";
