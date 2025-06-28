@@ -7,6 +7,7 @@ const TaskComponent = ({
   target,
   department,
   date,
+  reason,
   description,
   id,
   points,
@@ -20,9 +21,6 @@ const TaskComponent = ({
       : status === "rejected"
       ? "rgba(220, 53, 69, 1)"
       : "rgba(255, 172, 51, 1)";
-
-  const reason_for_rejection =
-    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse non, molestias nemo, iure fugiat quis vel ad quidem quo saepe iusto culpa dolore nisi odio asperiores reiciendis omnis hic harum.";
 
   const textColor = status === "pending" ? "black" : taskColor;
   const isPending = status === "pending";
@@ -107,9 +105,9 @@ const TaskComponent = ({
               : "Task Description:"}
           </strong>{" "}
           {status === "rejected" ? (
-            reason_for_rejection.length > 50 ? (
+            reason.length > 50 ? (
               <>
-                {reason_for_rejection.slice(0, 50) + "... "}
+                {reason.slice(0, 50) + "... "}
                 <button
                   className="underline"
                   onClick={handleSeeMoreClick}
@@ -119,7 +117,7 @@ const TaskComponent = ({
                 </button>
               </>
             ) : (
-              reason_for_rejection
+              reason
             )
           ) : description.length > 50 ? (
             <>
@@ -148,6 +146,7 @@ const TaskComponent = ({
           department={department}
           date={date}
           description={description}
+          reason={reason}
           id={id}
           points={points}
           status={status}
