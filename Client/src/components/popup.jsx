@@ -12,6 +12,7 @@ const TaskModal = ({
   date,
   description,
   id,
+  reason,
   points,
   status,
   onClose,
@@ -64,7 +65,7 @@ const TaskModal = ({
                     : "Description"}
                   :
                 </strong>{" "}
-                {description}
+                {status === "rejected" ? reason : description}
               </div>
               <div style={{ color: textColor }}>
                 <strong>Points:</strong> {points}
