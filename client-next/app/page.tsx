@@ -21,6 +21,5 @@ export default function HomePage() {
     }
   }, [session, status, router]);
 
-  // Show loading while checking session or redirecting
   return <LoadingScreen />;
 }
