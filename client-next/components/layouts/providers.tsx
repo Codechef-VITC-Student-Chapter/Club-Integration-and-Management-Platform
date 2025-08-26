@@ -14,7 +14,7 @@ export const Providers = ({ children }: ProvidersProps) => {
     <SessionProvider>
       <StoreProvider>
         {children}
-        <Toaster />
+        <Toaster richColors duration={3000} />
       </StoreProvider>
     </SessionProvider>
   );
