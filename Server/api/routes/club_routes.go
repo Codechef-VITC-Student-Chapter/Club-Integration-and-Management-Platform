@@ -3,6 +3,7 @@ package routes
 import (
 	"fmt"
 	"net/http"
+	"sort"
 	"sync"
 
 	"github.com/Sasank-V/CIMP-Golang-Backend/api/controllers"
@@ -18,9 +19,42 @@ var ClubConnect sync.Once
 
 func SetupClubRoutes(r *gin.RouterGroup) {
 	r.Use(middlewares.VerifyValidTokenPresence())
+	r.GET("/info/leaderboard/:id", getClubLeaderboardData)
 	r.GET("/info/:id", getClubInfo)
 	r.GET("/info/all/members/:id", middlewares.VerifyLeadUser(), getAllClubMemebers)
 	r.GET("/info/all/departments/:id", getAllClubDepartments)
+}
+
+func getClubLeaderboardData(c *gin.Context) {
+	clubID := c.Param("id")
+	members, err := controllers.GetAllUserInClub(clubID)
+	if err != nil {
+		fmt.Printf("Here")
+		c.JSON(http.StatusInternalServerError, types.AllClubMemebersResponse{
+			Message: "Error fetching all club members",
+			Members: []schemas.User{},
+		})
+		return
+	}
+
+	leaderboardData := make([]types.LeaderboardEntry, 0, len(members))
+
+	for _, member := range members {
+		leaderboardData = append(leaderboardData, types.LeaderboardEntry{
+			FirstName:   member.FirstName,
+			LastName:    member.LastName,
+			TotalPoints: member.TotalPoints,
+		})
+	}
+
+	sort.Slice(leaderboardData, func(i, j int) bool {
+		return leaderboardData[i].TotalPoints > leaderboardData[j].TotalPoints
+	})
+
+	c.JSON(http.StatusOK, types.LeaderboardInfoResponse{
+		Message: "Leaderboard data fetched successfully",
+		Data:    leaderboardData,
+	})
 }
 
 func getClubInfo(c *gin.Context) {
