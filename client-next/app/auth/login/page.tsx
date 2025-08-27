@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -16,8 +16,10 @@ import { LoadingSpinner } from "@/components/fallbacks";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
+  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
   const [formData, setFormData] = useState({
     reg_number: "",
     password: "",
@@ -35,9 +37,9 @@ export default function LoginPage() {
     }
 
     if (session) {
-      router.push("/dashboard");
+      router.push(callbackUrl);
     }
-  }, [session, status, router]);
+  }, [session, status, router, callbackUrl]);
 
   // Show loading while checking session
   if (status === "loading") {
@@ -102,7 +104,7 @@ export default function LoginPage() {
         toast.error("Invalid credentials. Please try again.");
       } else if (result?.ok) {
         toast.success("Login successful!");
-        router.push("/dashboard");
+        router.push(callbackUrl);
       }
     } catch (error) {
       console.error("Login error:", error);

@@ -118,7 +118,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem onClick={() => signOut()}>
+          <SidebarMenuItem
+            onClick={() => signOut({ callbackUrl: "/auth/login" })}
+          >
             <SidebarMenuButton tooltip={"logout"}>
               <LogOut className="h-4 w-4" />
               <span>Logout</span>

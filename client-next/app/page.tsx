@@ -1,25 +1,14 @@
-"use client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../lib/auth";
+import { redirect } from "next/navigation";
 
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import LoadingScreen from "@/components/fallbacks/loading-screen";
+export default async function HomePage() {
+  const session = await getServerSession(authOptions);
 
-export default function HomePage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (status === "loading") {
-      return;
-    }
-
-    if (session) {
-      router.push("/dashboard");
-    } else {
-      router.push("/auth/login");
-    }
-  }, [session, status, router]);
-
-  return <LoadingScreen />;
+  // Middleware will handle the redirects, but we can also do it here for clarity
+  if (session) {
+    redirect("/dashboard");
+  } else {
+    redirect("/auth/login");
+  }
 }

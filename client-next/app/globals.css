@@ -16,7 +16,8 @@
   --color-sidebar-primary: var(--sidebar-primary);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6); 
+  --color-chart-5: var(--chart-5); 
   --color-chart-4: var(--chart-4);
   --color-chart-3: var(--chart-3);
   --color-chart-2: var(--chart-2);
@@ -71,6 +72,8 @@
   --chart-3: #20614C; /* other-green */
   --chart-4: #198754; /* positive */
   --chart-5: #FFC107; /* neutral */
+  --chart-6: #8B0836;   /* bronxe */
+
 
   /* Sidebar colors - Modern Dark Theme */
   --sidebar: #1e293b; /* Modern dark slate */
@@ -110,6 +113,7 @@
   --chart-3: #20614C; /* other-green */
   --chart-4: #198754; /* positive */
   --chart-5: #FFC107; /* neutral */
+  --chart-6: #8b0836    /* bronxe */
 
   /* Sidebar dark mode colors - Consistent Dark Theme */
   --sidebar: #0f172a; /* Even darker slate for dark mode */
@@ -127,6 +131,19 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground ;
   }
+}
+
+::-webkit-scrollbar{
+    width: 10px;
+}
+::-webkit-scrollbar-track{
+    background: var(--color-secondary);
+    border-radius: 100vw;
+    margin-block: 3em;
+}
+::-webkit-scrollbar-thumb{
+    background-color: white;
+    border-radius: 100vw;
 }

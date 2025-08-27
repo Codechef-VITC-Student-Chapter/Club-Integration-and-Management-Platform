@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { getSession } from "next-auth/react";
 import {
   // Auth types
   UserSignUpInfo,
@@ -11,12 +12,13 @@ import {
   GetUserContributionsResponse,
   GetLeadUserRequestsResponse,
   UploadMembersHandlesInfo,
-  MakeUserLeadResponse,
+  // MakeUserLeadResponse,
 
   // Club types
   ClubInfoResponse,
   AllClubMembersResponse,
   AllClubDepartmentsResponse,
+  LeaderboardInfoResponse,
 
   // Department types
   DepartmentInfoResponse,
@@ -35,12 +37,14 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_URL,
-    prepareHeaders: (headers, { getState }) => {
-      // Add auth token if available
-      const token = localStorage.getItem("token");
-      if (token) {
-        headers.set("authorization", `Bearer ${token}`);
+    prepareHeaders: async (headers) => {
+      const session = await getSession();
+      if (session?.user?.accessToken) {
+        headers.set("authorization", `Bearer ${session.user.accessToken}`);
+        console.log("Bearer", session.user.accessToken);
       }
+
+      headers.set("Content-Type", "application/json");
       return headers;
     },
   }),
@@ -116,6 +120,14 @@ export const api = createApi({
     getClubInfo: builder.query<ClubInfoResponse, string>({
       query: (clubId) => `/club/info/${clubId}`,
       providesTags: (result, error, clubId) => [{ type: "Club", id: clubId }],
+    }),
+
+    getClubLeaderboard: builder.query<LeaderboardInfoResponse, string>({
+      query: (clubId) => `/club/info/leaderboard/${clubId}`,
+      providesTags: (result, error, clubId) => [
+        { type: "Club", id: clubId },
+        { type: "User", id: "LIST" },
+      ],
     }),
 
     getAllClubMembers: builder.query<AllClubMembersResponse, string>({
@@ -228,6 +240,7 @@ export const {
 
   // Club hooks
   useGetClubInfoQuery,
+  useGetClubLeaderboardQuery,
   useGetAllClubMembersQuery,
   useGetAllClubDepartmentsQuery,
 
