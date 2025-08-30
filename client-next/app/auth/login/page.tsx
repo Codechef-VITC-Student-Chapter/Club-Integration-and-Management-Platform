@@ -13,6 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { User, Lock } from "lucide-react";
 import LoadingScreen from "@/components/fallbacks/loading-screen";
 import { LoadingSpinner } from "@/components/fallbacks";
+import { hashPassword } from "@/lib/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -94,6 +95,7 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      const hashedPassword = hashPassword(formData.password);
       const result = await signIn("credentials", {
         reg_number: formData.reg_number,
         password: formData.password,

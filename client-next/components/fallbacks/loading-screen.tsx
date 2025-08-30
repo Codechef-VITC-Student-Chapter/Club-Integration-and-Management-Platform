@@ -38,16 +38,13 @@ const LoadingScreen = ({
           <p className="text-foreground text-lg font-medium">{message}</p>
           <div className="flex justify-center space-x-1">
             <div
-              className="w-2 h-2 bg-primary rounded-full animate-bounce"
-              style={{ animationDelay: "0ms" }}
+              className="w-2 h-2 bg-primary rounded-full animate-bounce bounce-delay-0"
             ></div>
             <div
-              className="w-2 h-2 bg-primary rounded-full animate-bounce"
-              style={{ animationDelay: "150ms" }}
+              className="w-2 h-2 bg-primary rounded-full animate-bounce bounce-delay-150"
             ></div>
             <div
-              className="w-2 h-2 bg-primary rounded-full animate-bounce"
-              style={{ animationDelay: "300ms" }}
+              className="w-2 h-2 bg-primary rounded-full animate-bounce bounce-delay-300"
             ></div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -12,6 +13,12 @@ var smtpSender gomail.SendCloser
 var err error
 
 func SetUpEmailDialer() {
+	email := os.Getenv("CLUB_EMAIL")
+	pass := os.Getenv("CLUB_EMAIL_APP_PASSWORD")
+	fmt.Printf("App Password raw bytes: %q\n", os.Getenv("CLUB_EMAIL_APP_PASSWORD"))
+
+	fmt.Println("CLUB_EMAIL:", email)
+	fmt.Println("CLUB_EMAIL_APP_PASSWORD:", pass)
 	dialer = gomail.NewDialer("smtp.gmail.com", 465, os.Getenv("CLUB_EMAIL"), os.Getenv("CLUB_EMAIL_APP_PASSWORD"))
 	dialer.SSL = true
 	smtpSender, err = dialer.Dial()
