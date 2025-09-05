@@ -103,3 +103,25 @@ func GetDepartmentLeadsByID(id string) ([]types.LeadsInfo, error) {
 	}
 	return leadsData, nil
 }
+
+func GetDepartmentByLeadsID(leadID string) (schemas.Department, error) {
+	ctx, cancel := database.GetContext()
+	defer cancel()
+
+	filter := bson.D{
+		{"leads", bson.M{"$in": bson.A{leadID}}},
+	}
+
+	var dept schemas.Department
+	err := DeptColl.FindOne(ctx, filter).Decode(&dept)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			log.Printf("No department found for lead ID: %s", leadID)
+			return schemas.Department{}, err
+		}
+		log.Printf("Error fetching department by lead ID: %v", err)
+		return schemas.Department{}, err
+	}
+
+	return dept, nil
+}

@@ -24,6 +24,7 @@ func main() {
 	controllers.ConnectDepartmentCollection()
 	controllers.ConnectContributionCollection()
 	controllers.ConnectUserCollection()
+	controllers.ConnectTaskCollection()
 
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3001"},
@@ -37,12 +38,14 @@ func main() {
 	contApi := r.Group("/api/contribution")
 	clubApi := r.Group("/api/club")
 	deptApi := r.Group("/api/department")
+	taskApi := r.Group("/api/task")
 
 	routes.SetupUserRoutes(userApi)
 	routes.SetupAuthRoutes(authApi)
 	routes.SetupContributionRoutes(contApi)
 	routes.SetupClubRoutes(clubApi)
 	routes.SetupDepartmentRoutes(deptApi)
+	routes.SetupTaskRoutes(taskApi)
 
 	if err := r.Run(":3000"); err != nil {
 		log.Fatal("Failed to start the server", err)

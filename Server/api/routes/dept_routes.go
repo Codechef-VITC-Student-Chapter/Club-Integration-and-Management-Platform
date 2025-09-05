@@ -23,20 +23,20 @@ func getDepartmentInfo(c *gin.Context) {
 	dept, err := controllers.GetDepartmentByID(deptID)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			c.JSON(http.StatusNotFound, types.DepartmetInfoResponse{
+			c.JSON(http.StatusNotFound, types.DepartmentInfoResponse{
 				Message:    "No Department found with the given ID",
 				Department: schemas.Department{},
 			})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, types.DepartmetInfoResponse{
+		c.JSON(http.StatusInternalServerError, types.DepartmentInfoResponse{
 			Message:    "Error fetching department Data",
 			Department: schemas.Department{},
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, types.DepartmetInfoResponse{
+	c.JSON(http.StatusOK, types.DepartmentInfoResponse{
 		Message:    "Department Info Fetched Successfully",
 		Department: dept,
 	})
