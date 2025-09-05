@@ -24,7 +24,7 @@ export default function SidebarWrapper({
           <Separator orientation="vertical" className="mr-2 h-4" />
           <h1 className="text-xl font-semibold text-foreground">{pageTitle}</h1>
         </div>
-        <div className="flex flex-1 flex-col gap-4 p-4">{children}</div>
+        <div className="flex flex-1 flex-col gap-4 w-full h-full">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );
