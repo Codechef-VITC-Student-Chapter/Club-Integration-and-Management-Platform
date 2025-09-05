@@ -1,21 +1,21 @@
 "use client";
 
 import React, { useState } from "react";
-import { Search, ChevronDown, List, Grid, Calendar } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Search, Calendar } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Contribution } from "@/types";
 
 export const ContributionsSection = ({ contributions }: {contributions: Contribution[]}) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedDate, setSelectedDate] = useState("Date");
 
   const filteredContributions = (contributions ?? []).filter((c: Contribution) => {
-    const matchesStatus = selectedStatus === "All" || 
+    const matchesStatus = selectedStatus === "all" || 
     c.status?.toLowerCase() === selectedStatus.toLowerCase();
 
     const matchesSearch =
@@ -47,36 +47,20 @@ export const ContributionsSection = ({ contributions }: {contributions: Contribu
         <h2 className="text-xl font-semibold">Contributions</h2>
 
         {/* Filters */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            {/* Status Filter */}
-            <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-              <SelectTrigger className="w-[120px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All</SelectItem>
-                <SelectItem value="Pending">Pending</SelectItem>
-                <SelectItem value="Approved">Approved</SelectItem>
-                <SelectItem value="Rejected">Rejected</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {/* Date Filter */}
-            <Select value={selectedDate} onValueChange={setSelectedDate}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Date">Date</SelectItem>
-                <SelectItem value="This Week">This Week</SelectItem>
-                <SelectItem value="This Month">This Month</SelectItem>
-                <SelectItem value="This Year">This Year</SelectItem>
-              </SelectContent>
-            </Select>
+        <div className="flex items-center justify-between w-full">
+          <div className="flex md:flex-row flex-col gap-4 items-center space-x-4 w-full justify-between">
+            {/* Status Filter with Tabs */}
+            <Tabs value={selectedStatus} onValueChange={setSelectedStatus}>
+              <TabsList>
+                <TabsTrigger value="all">All</TabsTrigger>
+                <TabsTrigger value="pending">Pending</TabsTrigger>
+                <TabsTrigger value="approved">Approved</TabsTrigger>
+                <TabsTrigger value="rejected">Rejected</TabsTrigger>
+              </TabsList>
+            </Tabs>
 
             {/* Search */}
-            <div className="relative flex-1 max-w-md">
+            <div className="relative flex-1 max-w-md w-full">
               <Search
                 size={20}
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"

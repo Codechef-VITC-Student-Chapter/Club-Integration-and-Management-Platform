@@ -1,57 +1,124 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
+import { RadialBarChart, RadialBar, ResponsiveContainer } from "recharts"
+import { Contribution } from "@/types";
 
 interface IPointsBreakdown {
-  points: number;
+  contributions: Contribution[];
   maxPoints?: number;
 }
 
-export const PointsBreakdownCard = ({ points, maxPoints = 100 }: IPointsBreakdown) => {
-  const percentage = Math.min((points / maxPoints) * 100, 100);
-  const circumference = 2 * Math.PI * 15.9155;
-  const strokeDasharray = `${(percentage / 100) * circumference}, ${circumference}`;
+export const PointsBreakdownCard = ({ contributions, maxPoints = 100 }: IPointsBreakdown) => {
+  const approvedContributions = contributions.filter(c => c.status.toLowerCase() === 'approved');
+  const pendingContributions = contributions.filter(c => c.status.toLowerCase() === 'pending');
+  const rejectedContributions = contributions.filter(c => c.status.toLowerCase() === 'rejected');
+
+  // Calculate points for each status
+  const approvedPoints = contributions
+    .filter(c => c.status.toLowerCase() === 'approved')
+    .reduce((sum, c) => sum + c.points, 0);
+    
+  const pendingPoints = contributions
+    .filter(c => c.status.toLowerCase() === 'pending')
+    .reduce((sum, c) => sum + c.points, 0);
+    
+  const rejectedPoints = contributions
+    .filter(c => c.status.toLowerCase() === 'rejected')
+    .reduce((sum, c) => sum + c.points, 0);
+    
+  const totalPoints = approvedPoints + pendingPoints + rejectedPoints;
+
+  // Calculate percentages for the progress bar
+  const approvedPercentage = totalPoints > 0 ? (approvedPoints / totalPoints) * 100 : 0;
+  const pendingPercentage = totalPoints > 0 ? (pendingPoints / totalPoints) * 100 : 0;
+  const rejectedPercentage = totalPoints > 0 ? (rejectedPoints / totalPoints) * 100 : 0;
+
+  // Calculate circular progress
+  const overallPercentage = (approvedPoints / maxPoints) * 100;
+
+  // Data for radial chart
+  const chartData = [
+    {
+      name: "points",
+      value: overallPercentage,
+      fill: "#3b82f6"
+    }
+  ];
 
   return (
     <Card className="w-full">
-      <CardHeader className="pb-4">
-        <CardTitle className="text-xl font-semibold">Points Breakdown</CardTitle>
+      <CardHeader>
+        <CardTitle className="text-xl font-semibold">Breakdown</CardTitle>
       </CardHeader>
-      <CardContent className="flex items-center gap-4">
-        <div className="relative w-24 h-24">
-          <svg className="w-24 h-24 transform -rotate-90" viewBox="0 0 36 36">
-            {/* Background circle */}
-            <path
-              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none"
-              stroke="#e5e7eb"
-              strokeWidth="3"
-            />
-            {/* Progress circle */}
-            <path
-              d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-              fill="none"
-              stroke="#3b82f6"
-              strokeWidth="3"
-              strokeDasharray={strokeDasharray}
-              strokeLinecap="round"
-              style={{
-                transition: 'stroke-dasharray 0.3s ease-in-out'
-              }}
-            />
-          </svg>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-xl font-bold text-blue-600">{points}</span>
+      <CardContent className="flex flex-col items-start gap-4">
+        <div className="relative h-24 flex gap-10 items-center w-full">
+          <div className="relative">
+            <ResponsiveContainer width={96} height={96}>
+              <RadialBarChart
+                cx={48}
+                cy={48}
+                innerRadius="70%"
+                outerRadius="90%"
+                startAngle={0}
+                endAngle={approvedPoints / maxPoints * 360}
+                data={chartData}
+              >
+                <RadialBar
+                  dataKey="value"
+                  cornerRadius={10}
+                  fill="#3b82f6"
+                />
+              </RadialBarChart>
+            </ResponsiveContainer>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-xl font-bold text-blue-600">{approvedPoints}</span>
+            </div>
           </div>
+          <p className="font-bold text-xl w-full">Points Earned</p>
         </div>
-        <div className="flex-1">
-          <p className="font-bold text-xl">Points Earned</p>
-          <p className="text-lg text-gray-600">{points} / {maxPoints}</p>
-          <div className="mt-2">
-            <Progress 
-              value={percentage} 
-              className="h-2"
-            />
-            <p className="text-sm text-gray-500 mt-1">{percentage.toFixed(1)}% Complete</p>
+        <div className="flex-1 w-full">          
+          {/* Multi-colored Progress Bar */}
+          <div className="mt-3">
+            <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
+              {/* Approved section (Green) */}
+              <div 
+                className="absolute left-0 top-0 h-full bg-green-600 transition-all duration-300"
+                style={{ width: `${approvedPercentage}%` }}
+              />
+              {/* Pending section (Yellow) */}
+              <div 
+                className="absolute top-0 h-full bg-yellow-500 transition-all duration-300"
+                style={{ 
+                  left: `${approvedPercentage}%`,
+                  width: `${pendingPercentage}%` 
+                }}
+              />
+              {/* Rejected section (Red) */}
+              <div 
+                className="absolute top-0 h-full bg-red-600 transition-all duration-300"
+                style={{ 
+                  left: `${approvedPercentage + pendingPercentage}%`,
+                  width: `${rejectedPercentage}%` 
+                }}
+              />
+            </div>
+            
+            {/* Legend */}
+            <div className="flex justify-between items-center mt-2 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-green-600 rounded-full"></div>
+                <span className="text-gray-600">Approved: {approvedContributions.length}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <span className="text-gray-600">Pending: {pendingContributions.length}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-red-600 rounded-full"></div>
+                <span className="text-gray-600">Rejected: {rejectedContributions.length}</span>
+              </div>
+            </div>
+            
+            <p className="text-sm text-gray-500 mt-2">{overallPercentage.toFixed(1)}% of target reached</p>
           </div>
         </div>
       </CardContent>

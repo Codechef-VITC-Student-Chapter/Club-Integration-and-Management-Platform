@@ -31,12 +31,11 @@ export default function ContributionsPage() {
 
   return (
     <SidebarWrapper pageTitle='Contributions'>
-      <div className="bg-gray-100 h-full w-full">
+      <div className="h-full w-full">
         <div className="p-6 flex flex-col gap-4 w-full h-full">
-          <div className="flex gap-6 w-full">
-            <ProfileCard name={name} regno={regNo} type={role} />
-            <OverviewCard points={points} total_contributions={contributions?.length} />
-            <PointsBreakdownCard points={points} />
+          <div className="flex flex-col md:flex-row gap-6 w-full">
+            <OverviewCard points={points} contributions={contributions} />
+            <PointsBreakdownCard contributions={contributions} />
           </div>
           <div className='overflow-hidden relative h-full w-full'>
             <ContributionsSection contributions={contributions} />
