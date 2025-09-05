@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import SidebarWrapper from "@/components/layouts/sidebar/sidebar-wrapper";
-import { useGetClubLeaderboardQuery } from "@/lib/redux/api";
+import { useGetClubLeaderboardQuery } from "@/lib/redux";
 import { LeaderboardList, TopScore } from "@/components/app";
 import { useSession } from "next-auth/react";
+import { SidebarWrapper } from "@/components/layouts";
 
 const LeaderBoardPage = () => {
   const { data: session, status } = useSession();

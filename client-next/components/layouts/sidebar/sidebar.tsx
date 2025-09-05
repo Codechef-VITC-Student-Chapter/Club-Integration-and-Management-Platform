@@ -9,6 +9,7 @@ import {
   FileText,
   TrendingUp,
   LogOut,
+  Coins,
 } from "lucide-react";
 
 import { NavMain } from "./nav-main";
@@ -43,6 +44,11 @@ const data = {
       title: "Members",
       url: "/dashboard/members",
       icon: Users,
+    },
+    {
+      title: "Tasks",
+      url: "/dashboard/tasks",
+      icon: Coins,
     },
     {
       title: "Requests",
@@ -91,7 +97,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     : null;
 
   const navItems = data.navMain.filter((item) => {
-    if (!session?.user?.is_lead && item.title === "Members") {
+    if (
+      !session?.user?.is_lead &&
+      (item.title === "Members" || item.title === "Tasks")
+    ) {
       return false;
     }
     return true;

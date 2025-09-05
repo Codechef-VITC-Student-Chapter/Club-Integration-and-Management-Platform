@@ -1,5 +1,5 @@
-import { Target, TrendingUp, CheckCircle, Clock, XCircle } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Target, TrendingUp, CheckCircle, Clock, XCircle } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Contribution } from "@/types";
 
 interface IOverview {
@@ -12,17 +12,32 @@ export const OverviewCard = ({ points, contributions }: IOverview) => {
   const totalContributions = contributions.length;
   const totalPoints = points;
 
-  const approvedContributions = contributions.filter(c => c.status.toLowerCase() === 'approved');
+  const approvedContributions = contributions.filter(
+    (c) => c.status.toLowerCase() === "approved"
+  );
   const approvedCount = approvedContributions.length;
-  const approvedPoints = approvedContributions.reduce((sum, c) => sum + c.points, 0);
+  const approvedPoints = approvedContributions.reduce(
+    (sum, c) => sum + c.points,
+    0
+  );
 
-  const pendingContributions = contributions.filter(c => c.status.toLowerCase() === 'pending');
+  const pendingContributions = contributions.filter(
+    (c) => c.status.toLowerCase() === "pending"
+  );
   const pendingCount = pendingContributions.length;
-  const pendingPoints = pendingContributions.reduce((sum, c) => sum + c.points, 0);
+  const pendingPoints = pendingContributions.reduce(
+    (sum, c) => sum + c.points,
+    0
+  );
 
-  const rejectedContributions = contributions.filter(c => c.status.toLowerCase() === 'rejected');
+  const rejectedContributions = contributions.filter(
+    (c) => c.status.toLowerCase() === "rejected"
+  );
   const rejectedCount = rejectedContributions.length;
-  const rejectedPoints = rejectedContributions.reduce((sum, c) => sum + c.points, 0);
+  const rejectedPoints = rejectedContributions.reduce(
+    (sum, c) => sum + c.points,
+    0
+  );
 
   return (
     <Card className="w-full">
@@ -37,8 +52,12 @@ export const OverviewCard = ({ points, contributions }: IOverview) => {
               <Target className="text-blue-600" size={28} />
               <div>
                 <p className="text-sm text-gray-600 mb-1">TOTAL</p>
-                <p className="text-lg font-bold">{totalContributions} requests</p>
-                <p className="text-sm font-semibold text-blue-600">{totalPoints} points</p>
+                <p className="text-lg font-bold">
+                  {totalContributions} requests
+                </p>
+                <p className="text-sm font-semibold text-blue-600">
+                  {totalPoints} points
+                </p>
               </div>
             </div>
           </Card>
@@ -50,7 +69,9 @@ export const OverviewCard = ({ points, contributions }: IOverview) => {
               <div>
                 <p className="text-sm text-gray-600 mb-1">APPROVED</p>
                 <p className="text-lg font-bold">{approvedCount} requests</p>
-                <p className="text-sm font-semibold text-green-600">{approvedPoints} points</p>
+                <p className="text-sm font-semibold text-green-600">
+                  {approvedPoints} points
+                </p>
               </div>
             </div>
           </Card>
@@ -62,7 +83,9 @@ export const OverviewCard = ({ points, contributions }: IOverview) => {
               <div>
                 <p className="text-sm text-gray-600 mb-1">PENDING</p>
                 <p className="text-lg font-bold">{pendingCount} requests</p>
-                <p className="text-sm font-semibold text-yellow-600">{pendingPoints} points</p>
+                <p className="text-sm font-semibold text-yellow-600">
+                  {pendingPoints} points
+                </p>
               </div>
             </div>
           </Card>
@@ -74,12 +97,14 @@ export const OverviewCard = ({ points, contributions }: IOverview) => {
               <div>
                 <p className="text-sm text-gray-600 mb-1">REJECTED</p>
                 <p className="text-lg font-bold">{rejectedCount} requests</p>
-                <p className="text-sm font-semibold text-red-600">{rejectedPoints} points</p>
+                <p className="text-sm font-semibold text-red-600">
+                  {rejectedPoints} points
+                </p>
               </div>
             </div>
           </Card>
-          </div>
+        </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};

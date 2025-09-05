@@ -99,7 +99,6 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          // Hash the password with SHA-256 using crypto-js before sending to backend
           const hashedPassword = hashPassword(credentials.password);
 
           const loginData: UserLoginInfo = {

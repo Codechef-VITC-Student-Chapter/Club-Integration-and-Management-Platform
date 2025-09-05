@@ -14,10 +14,11 @@ export interface ContributionObj {
   points: number;
   status: string;
 }
+
 export interface DashboardContribution {
-    contribution: ContributionObj;
-    club_name: string;
-    department_name: string;
+  contribution: ContributionObj;
+  club_name: string;
+  department_name: string;
 }
 
 export interface Activity {

@@ -59,6 +59,8 @@ export interface Task {
   department_id: string;
   title: string;
   points: number;
+  created_by: string;
+  is_active: boolean;
 }
 
 export interface FullContribution {

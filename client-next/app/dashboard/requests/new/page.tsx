@@ -1,491 +1,599 @@
 "use client";
 
-import { useEffect } from "react";
-import {
-  useForm,
-  FormProvider,
-  SubmitHandler,
-} from "react-hook-form";
+import { useEffect, useState, useMemo } from "react";
+import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Toaster, toast } from "sonner";
-import EditLinks from "./EditLinks";
-import SidebarWrapper from "@/components/layouts/sidebar/sidebar-wrapper";
+import { toast } from "sonner";
+import { SidebarWrapper } from "@/components/layouts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  Plus,
+  X,
+  Link,
+  Send,
+  Users,
+  Building2,
+  Target,
+  FileText,
+  Group,
+} from "lucide-react";
+import {
+  useGetClubInfoQuery,
+  useGetAllClubDepartmentsQuery,
+  useGetDepartmentLeadsQuery,
+  useGetTasksByDepartmentIDQuery,
+  useAddContributionMutation,
+} from "@/lib/redux/api";
 
 type Lead = { user_id: string; name: string };
-type Department = { id: string; name: string };
-type PointOption = { label: string; value: number };
 
 interface FormValues {
-  // visible inputs
   department: string;
-  lead: string; // transient select value for adding a lead
+  selectedTask: string; // Task ID
   title: string;
   description: string;
   links: { url: string }[];
   selectedPoints: string;
   customPoints: number;
   multiplier: number;
-
-  // UI flags kept in form state (no useState)
-  isELopen: boolean;
-  choseCustom: boolean;
-
-  // fetched data kept in form state (no useState)
-  clubId: string;
-  clubName: string;
-  departments: Department[];
-  leadsList: Lead[];
   selectedLeads: Lead[];
-  availablePoints: PointOption[];
+  isCustomTask: boolean; // Whether user wants to enter custom title/points
 }
-
-const departmentPoints: Record<string, PointOption[]> = {
-  smandc: [
-    { label: "Technical Writing - 3 Points/Publish", value: 3 },
-    { label: "Reel Script Implemented - 4 Points", value: 4 },
-  ],
-  design: [
-    { label: "Poster Design - 7 Points", value: 7 },
-    { label: "Story Design - 7 Points", value: 7 },
-  ],
-};
 
 const RequestScreen = () => {
   const { data: session } = useSession();
   const router = useRouter();
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>("");
+  const [availableLeads, setAvailableLeads] = useState<Lead[]>([]);
+  const [selectedLead, setSelectedLead] = useState<string>("");
+  const [isCustomPoints, setIsCustomPoints] = useState(false);
+  const [isCustomTask, setIsCustomTask] = useState(false);
 
-  const baseURL = process.env.NEXT_PUBLIC_API_URL || "";
-  const token = session?.user?.accessToken || "";
-  const currentUser =
-    session?.user?.first_name && session?.user?.last_name
-      ? `${session.user.first_name}${session.user.last_name}`
-      : "Loading....";
+  const clubId = "codechefvitc"; // Hard-coded club ID
 
-  const methods = useForm<FormValues>({
+  // Redux API queries
+  const { data: clubInfo, isLoading: isClubLoading } =
+    useGetClubInfoQuery(clubId);
+  const { data: departmentsData, isLoading: isDepartmentsLoading } =
+    useGetAllClubDepartmentsQuery(clubId);
+  const { data: leadsData, isLoading: isLeadsLoading } =
+    useGetDepartmentLeadsQuery(selectedDepartmentId, {
+      skip: !selectedDepartmentId,
+    });
+  const { data: tasksData, isLoading: isTasksLoading } =
+    useGetTasksByDepartmentIDQuery(selectedDepartmentId, {
+      skip: !selectedDepartmentId,
+    });
+  const [addContribution, { isLoading: isSubmitting }] =
+    useAddContributionMutation();
+
+  const form = useForm<FormValues>({
     defaultValues: {
-      // visible inputs
       department: "",
-      lead: "",
+      selectedTask: "",
       title: "",
       description: "",
       links: [{ url: "" }],
       selectedPoints: "",
       customPoints: 0,
       multiplier: 1,
-
-      // UI flags
-      isELopen: false,
-      choseCustom: false,
-
-      // fetched data
-      clubId: "",
-      clubName: "",
-      departments: [],
-      leadsList: [],
       selectedLeads: [],
-      availablePoints: [],
+      isCustomTask: false,
     },
   });
 
+  const { control, handleSubmit, setValue, watch, reset, register } = form;
   const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    reset,
-    getValues,
-  } = methods;
+    fields: linkFields,
+    append: appendLink,
+    remove: removeLink,
+  } = useFieldArray({
+    control,
+    name: "links",
+  });
 
-  const depChosen = watch("department");
-  const selectedPoints = watch("selectedPoints");
-  const choseCustom = watch("choseCustom");
-  const availablePoints = watch("availablePoints") || [];
-  const leadsList = watch("leadsList") || [];
-  const selectedLeads = watch("selectedLeads") || [];
-  const isELopen = watch("isELopen");
+  const watchedSelectedLeads = watch("selectedLeads");
+  const selectedLeads = useMemo(
+    () => watchedSelectedLeads || [],
+    [watchedSelectedLeads]
+  );
+  const selectedTask = watch("selectedTask");
 
-  // Fetch club details
+  // Update available leads when department or leads data changes
   useEffect(() => {
-    const fetchClubDetails = async () => {
-      if (!baseURL || !token) return;
-      try {
-        const id = "codechefvitc";
-        const response = await fetch(`${baseURL}/club/info/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (!response.ok) throw new Error("Failed to fetch club details");
-        const data = await response.json();
-        setValue("clubId", data.club?.id ?? "codechefvitc");
-        setValue("clubName", data.club?.name ?? "");
-      } catch (error) {
-        toast.error("Unable to load club details"); // notify failure
-      }
-    };
-    fetchClubDetails();
-  }, [baseURL, token, setValue]);
- 
-  // Fetch departments
-  useEffect(() => {
-    const fetchDepsDetails = async () => {
-      if (!baseURL || !token || !getValues("clubId")) {
-        console.log("Missing baseURL, token, or clubId");
-        return;
-      };
-      try {
-        const id = "codechefvitc";
-        const response = await fetch(
-          `${baseURL}/club/info/all/departments/${id}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (!response.ok) throw new Error("Failed to fetch departments");
-        const data = await response.json();
-        setValue("departments", data.departments ?? []);
-      } catch (error) {
-        toast.error("Unable to load departments"); // notify failure
-      }
-    };
-    fetchDepsDetails();
-  }, [baseURL, token, setValue, getValues("clubId")]);
-
-  const getDepartmentLeads = async (dep_id: string) => {
-    try {
-      const response = await fetch(`${baseURL}/department/leads/${dep_id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) throw new Error("Failed to fetch department leads");
-      const data = await response.json();
-      setValue("leadsList", data.leads ?? []);
-      setValue("selectedLeads", []); // reset selection on department change
-      setValue("availablePoints", departmentPoints[dep_id] || []);
-      setValue("selectedPoints", "");
-      setValue("customPoints", 0);
-      setValue("multiplier", 1);
-      setValue("choseCustom", false);
-    } catch (error) {
-      toast.error("Unable to load department leads"); // notify failure
+    if (leadsData?.leads) {
+      const filteredLeads = leadsData.leads.filter(
+        (lead) =>
+          !selectedLeads.some((selected) => selected.user_id === lead.user_id)
+      );
+      setAvailableLeads(filteredLeads);
     }
+  }, [leadsData?.leads, selectedLeads]);
+
+  const addLead = () => {
+    if (!selectedLead) {
+      toast.error("Please select a lead to add");
+      return;
+    }
+
+    const leadToAdd = availableLeads.find(
+      (lead) => lead.user_id === selectedLead
+    );
+    if (!leadToAdd) {
+      toast.error("Lead not found");
+      return;
+    }
+
+    setValue("selectedLeads", [...selectedLeads, leadToAdd]);
+    setSelectedLead("");
+    toast.success("Lead added successfully");
   };
 
-  const addSelectedLead = () => {
-    const chosenId = getValues("lead");
-    if (!chosenId) {
-      toast.error("Select a lead to add");
-      return;
-    }
-    const allLeads = getValues("leadsList") || [];
-    const selLeads = getValues("selectedLeads") || [];
-    const found = allLeads.find((l: Lead) => l.user_id === chosenId);
-    if (!found) {
-      toast.error("Lead not found or already selected");
-      return;
-    }
+  const removeLead = (leadId: string) => {
     setValue(
       "selectedLeads",
-      [...selLeads, found].filter(
-        (v, i, arr) => arr.findIndex((x) => x.user_id === v.user_id) === i
-      ),
-      { shouldDirty: true }
+      selectedLeads.filter((lead) => lead.user_id !== leadId)
     );
-    setValue(
-      "leadsList",
-      allLeads.filter((l: Lead) => l.user_id !== chosenId),
-      { shouldDirty: true }
-    );
-    setValue("lead", "");
-    toast.success("Lead added");
+    toast.success("Lead removed successfully");
   };
 
-  const removeSelectedLead = (user_id: string) => {
-    const allLeads = getValues("leadsList") || [];
-    const selLeads = getValues("selectedLeads") || [];
-    const removed = selLeads.find((l: Lead) => l.user_id === user_id);
-    if (!removed) return;
-    setValue("selectedLeads", selLeads.filter((l: Lead) => l.user_id !== user_id), { shouldDirty: true });
-    setValue("leadsList", [...allLeads, removed], { shouldDirty: true });
-    toast.success("Lead removed");
+  const handleDepartmentChange = (value: string) => {
+    setValue("department", value);
+    setSelectedDepartmentId(value);
+    setValue("selectedLeads", []); // Reset selected leads
+    setValue("selectedTask", ""); // Reset selected task
+    setValue("title", ""); // Reset title
+    setValue("selectedPoints", ""); // Reset selected points
+    setValue("isCustomTask", false); // Reset custom task flag
+    setIsCustomPoints(false);
+    setIsCustomTask(false);
+  };
+
+  const handleTaskChange = (value: string) => {
+    if (value === "custom") {
+      setValue("isCustomTask", true);
+      setValue("selectedTask", "");
+      setValue("title", "");
+      setValue("selectedPoints", "");
+      setIsCustomTask(true);
+    } else {
+      setValue("isCustomTask", false);
+      setValue("selectedTask", value);
+      setIsCustomTask(false);
+
+      // Find the selected task and auto-fill title and points
+      const selectedTaskData = tasksData?.tasks?.find(
+        (task) => task.task.id === value
+      );
+      if (selectedTaskData) {
+        setValue("title", selectedTaskData.task.title);
+        setValue("selectedPoints", selectedTaskData.task.points.toString());
+      }
+    }
   };
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    console.log("Form data:", data);
-    // validations
+    // Validation
     if (!data.department) {
-      toast.error("Please select the department");
+      toast.error("Please select a department");
       return;
     }
-    if ((data.selectedLeads || []).length === 0) {
+    if (data.selectedLeads.length === 0) {
       toast.error("Please select at least one lead");
       return;
     }
     if (!data.title.trim()) {
-      toast.error("Please enter the title");
+      toast.error("Please enter a title");
       return;
     }
     if (!data.description.trim()) {
-      toast.error("Please enter the description");
+      toast.error("Please enter a description");
       return;
     }
-    if (!data.selectedPoints && !data.choseCustom) {
-      toast.error("Please select the points requested");
-      return;
+
+    // Validation for custom tasks
+    if (isCustomTask) {
+      if (!data.customPoints || data.customPoints <= 0) {
+        toast.error("Please enter valid custom points");
+        return;
+      }
+      if (data.customPoints > 100) {
+        toast.error("Custom points cannot exceed 100");
+        return;
+      }
+    } else if (!selectedTask) {
+      // For non-custom tasks, validate points selection
+      if (!data.selectedPoints && !isCustomPoints) {
+        toast.error("Please select points or enter custom points");
+        return;
+      }
+      if (isCustomPoints && (!data.customPoints || data.customPoints <= 0)) {
+        toast.error("Please enter valid custom points");
+        return;
+      }
     }
-    
 
-    const finalPoints = !data.choseCustom
-      ? Number(data.selectedPoints) * (data.multiplier || 1)
-      : Number(data.customPoints || 0);
+    // Calculate final points based on task selection or custom points
+    let finalPoints = 0;
+    if (isCustomTask) {
+      // Custom task - use custom points directly
+      finalPoints = data.customPoints;
+    } else if (selectedTask) {
+      // Selected task - use task points with multiplier
+      finalPoints =
+        parseInt(data.selectedPoints || "0") * (data.multiplier || 1);
+    } else {
+      // Fallback to department points (for backward compatibility)
+      finalPoints = isCustomPoints
+        ? data.customPoints
+        : Number(data.selectedPoints) * (data.multiplier || 1);
+    }
 
-    const payload = {
-      user_id: currentUser,
+    const contributionData = {
+      user_id: session?.user?.id || "",
       title: data.title,
       points: finalPoints,
       description: data.description,
-      proof_files: (data.links || [])
-        .map((l) => l?.url?.trim())
-        .filter(Boolean),
-      target: (data.selectedLeads || []).map((l) => l.user_id),
-      sec_targets: (data.selectedLeads || []).map((l) => l.user_id).slice(1) || [],
-      club_id: data.clubId,
+      proof_files: data.links.map((link) => link.url.trim()).filter(Boolean),
+      target: data.selectedLeads[0].user_id, // Primary lead
+      sec_targets: data.selectedLeads.slice(1).map((lead) => lead.user_id),
+      club_id: clubId,
       department: data.department,
-      status: "pending",
-      created_at: new Date().toISOString(),
     };
 
-    await toast.promise(
-      (async () => {
-        const response = await fetch(`${baseURL}/contribution/add`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        });
-        if (!response.ok) throw new Error("Failed to submit the request");
-        return response.json();
-      })(),
-      {
-        loading: "Submitting request...",
-        success: "Request submitted successfully!",
-        error: "Failed to submit the request",
-      }
-    );
-
-    reset({
-      department: "",
-      lead: "",
-      title: "",
-      description: "",
-      links: [{ url: "" }],
-      selectedPoints: "",
-      customPoints: 0,
-      multiplier: 1,
-      isELopen: false,
-      choseCustom: false,
-      clubId: getValues("clubId"),
-      clubName: getValues("clubName"),
-      departments: getValues("departments"),
-      leadsList: [],
-      selectedLeads: [],
-      availablePoints: [],
-    });
-    router.refresh();
+    try {
+      await addContribution(contributionData).unwrap();
+      toast.success("Request submitted successfully!");
+      reset();
+      setSelectedDepartmentId("");
+      setIsCustomPoints(false);
+      setIsCustomTask(false);
+      setSelectedLead("");
+      router.push("/dashboard/requests");
+    } catch (error) {
+      toast.error("Failed to submit request");
+      console.error("Submit error:", error);
+    }
   };
 
-  return (
-    <SidebarWrapper pageTitle="New Request">
-    <FormProvider {...methods}>
-      <div className="min-h-screen p-5">
-        <Toaster richColors position="top-right" />
-        <div className="bg-[#E9F1FE] min-h-screen pt-4">
-          <h1 className="text-center text-2xl py-4">SUBMIT A REQUEST</h1>
-          <div className="mx-4 md:mx-auto max-w-4xl">
-            <div className="bg-white rounded-3xl p-6 shadow-md">
-              <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="mb-4">
-                  Club: <b>{watch("clubName") || "Loading..."}</b>
-                </div>
-
-                {/* Department */}
-                <div className="mb-4">
-                  <label className="block mb-2">Department:</label>
-                  <select
-                    {...register("department")}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setValue("department", val, { shouldDirty: true });
-                      if (val) getDepartmentLeads(val);
-                    }}
-                    className="w-full p-2 rounded border"
-                  >
-                    <option value="">Select Department</option>
-                    {(watch("departments") || []).map((d) => (
-                      <option key={d.id} value={d.id}>
-                        {d.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Lead selection */}
-                <div className="mb-4">
-                  <label className="block mb-2">Assign Lead(s):</label>
-                  <div className="flex gap-2">
-                    <select
-                      {...register("lead")}
-                      className="w-full p-2 rounded border"
-                      disabled={!depChosen || leadsList.length === 0}
-                    >
-                      <option value="">Select lead</option>
-                      {leadsList.map((l) => (
-                        <option key={l.user_id} value={l.user_id}>
-                          {l.name}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      type="button"
-                      onClick={addSelectedLead}
-                      className="px-3 py-2 bg-blue-500 text-white rounded"
-                      disabled={!depChosen}
-                    >
-                      Add
-                    </button>
-                  </div>
-
-                  {/* Selected leads list */}
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {selectedLeads.map((l) => (
-                      <span
-                        key={l.user_id}
-                        className="inline-flex items-center gap-2 px-2 py-1 bg-blue-50 text-blue-700 rounded"
-                      >
-                        {l.name}
-                        <button
-                          type="button"
-                          onClick={() => removeSelectedLead(l.user_id)}
-                          className="text-red-500"
-                          aria-label={`Remove ${l.name}`}
-                        >
-                          ✕
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Title */}
-                <div className="mb-4">
-                  <label>Title:</label>
-                  <input
-                    {...register("title")}
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
-
-                {/* Description */}
-                <div className="mb-4">
-                  <label>Description:</label>
-                  <textarea
-                    {...register("description")}
-                    rows={4}
-                    className="w-full p-2 border rounded"
-                  />
-                </div>
-
-                {/* Links */}
-                <div className="mb-4">
-                  <label>Proof Links:</label>
-                  <input
-                    {...register(`links.0.url` as const)}
-                    className="w-full p-2 border rounded"
-                    placeholder="https://drive.google.com/..."
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setValue("isELopen", true)}
-                    className="text-blue-500 text-sm mt-1"
-                  >
-                    Edit Links
-                  </button>
-                </div>
-
-                {/* Points */}
-                <div className="mb-4">
-                  <label>Points Requested:</label>
-                  <select
-                    {...register("selectedPoints")}
-                    onChange={(e) => {
-                      if (e.target.value === "-1") {
-                        setValue("choseCustom", true);
-                        setValue("selectedPoints", "");
-                      } else {
-                        setValue("choseCustom", false);
-                        setValue("selectedPoints", e.target.value);
-                        setValue("customPoints", 0);
-                      }
-                    }}
-                    className="w-full p-2 border rounded"
-                    disabled={!depChosen}
-                  >
-                    <option value="">Select Points</option>
-                    {availablePoints.map((p, idx) => (
-                      <option key={idx} value={p.value}>
-                        {p.label}
-                      </option>
-                    ))}
-                    <option value="-1">Custom Points</option>
-                  </select>
-                </div>
-
-                {choseCustom && (
-                  <div className="mb-4">
-                    <label>Custom Points:</label>
-                    <input
-                      type="number"
-                      {...register("customPoints", {
-                        valueAsNumber: true,
-                        min: 1,
-                      })}
-                      className="w-full p-2 border rounded"
-                      min={1}
-                    />
-                  </div>
-                )}
-
-                {!choseCustom && selectedPoints && (
-                  <div className="mb-4">
-                    <label>How many times did you complete this task?</label>
-                    <input
-                      type="number"
-                      {...register("multiplier", {
-                        valueAsNumber: true,
-                        min: 1,
-                      })}
-                      className="w-full p-2 border rounded"
-                      min={1}
-                    />
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  className="w-full bg-blue-500 text-white py-3 rounded-lg"
-                >
-                  SUBMIT REQUEST
-                </button>
-              </form>
-            </div>
+  if (isClubLoading || isDepartmentsLoading) {
+    return (
+      <SidebarWrapper pageTitle="Submit a Request">
+        <div className="flex items-center justify-center min-h-96">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p>Loading...</p>
           </div>
         </div>
+      </SidebarWrapper>
+    );
+  }
 
-        {/* Links modal controlled via form state (no useState) */}
-        <EditLinks
-          isOpen={isELopen}
-          onClose={() => methods.setValue("isELopen", false)}
-        />
+  return (
+    <SidebarWrapper pageTitle="Submit a Request">
+      <div className="container mx-auto px-4 pb-6 max-w-4xl">
+        {/* Club Info */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Building2 className="h-5 w-5" />
+              Club Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-lg font-medium">
+              {clubInfo?.club?.name || "CodeChef VITC Student Chapter"}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Main Form */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <FileText className="h-5 w-5" />
+              Request Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              {/* Department Selection */}
+              <div className="space-y-2 w-full">
+                <Label htmlFor="department">
+                  <Group className="size-5" />
+                  Department *
+                </Label>
+                <Select onValueChange={handleDepartmentChange}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a department" />
+                  </SelectTrigger>
+                  <SelectContent className="w-full">
+                    {departmentsData?.departments?.map((dept) => (
+                      <SelectItem key={dept.id} value={dept.id}>
+                        {dept.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {selectedDepartmentId && (
+                <div className="space-y-4">
+                  <Label className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    Assign Leads *
+                  </Label>
+
+                  <div className="flex gap-2">
+                    <Select
+                      value={selectedLead}
+                      onValueChange={setSelectedLead}
+                    >
+                      <SelectTrigger className="flex-1">
+                        <SelectValue placeholder="Select a lead to add" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {isLeadsLoading ? (
+                          <SelectItem value="loading" disabled>
+                            Loading leads...
+                          </SelectItem>
+                        ) : (
+                          availableLeads.map((lead) => (
+                            <SelectItem key={lead.user_id} value={lead.user_id}>
+                              {lead.name}
+                            </SelectItem>
+                          ))
+                        )}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      type="button"
+                      onClick={addLead}
+                      disabled={!selectedLead || isLeadsLoading}
+                      size="icon"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+
+                  {/* Selected Leads */}
+                  {selectedLeads.length > 0 && (
+                    <div className="space-y-2">
+                      <Label>Selected Leads:</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedLeads.map((lead) => (
+                          <Badge
+                            key={lead.user_id}
+                            variant="secondary"
+                            className="px-3 py-1"
+                          >
+                            {lead.name}
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="ml-2 h-auto p-0 text-gray-500 hover:text-red-500"
+                              onClick={() => removeLead(lead.user_id)}
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Task Selection */}
+              {selectedDepartmentId && (
+                <div className="space-y-4">
+                  <Label className="flex items-center gap-2">
+                    <Target className="h-4 w-4" />
+                    Select Task or Create Custom *
+                  </Label>
+
+                  <Select onValueChange={handleTaskChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a task or create custom" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {isTasksLoading ? (
+                        <SelectItem value="loading" disabled>
+                          Loading tasks...
+                        </SelectItem>
+                      ) : (
+                        <>
+                          {tasksData?.tasks
+                            ?.filter((t) => t.task.is_active)
+                            .map((task) => (
+                              <SelectItem
+                                key={task.task.id}
+                                value={task.task.id}
+                              >
+                                {task.task.title} - {task.task.points} points
+                              </SelectItem>
+                            ))}
+                          <SelectItem value="custom">
+                            Create Custom Task
+                          </SelectItem>
+                        </>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              <Separator />
+
+              {/* Title */}
+              <div className="space-y-2">
+                <Label htmlFor="title">
+                  Title *{" "}
+                  {!isCustomTask && selectedTask && "(Auto-filled from task)"}
+                </Label>
+                <Input
+                  id="title"
+                  placeholder="Enter contribution title"
+                  {...register("title", { required: true })}
+                  readOnly={!isCustomTask && !!selectedTask}
+                  className={
+                    !isCustomTask && !!selectedTask ? "bg-gray-50" : ""
+                  }
+                />
+              </div>
+              {/* Task Points Display */}
+              {selectedTask && !isCustomTask && (
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Target className="h-4 w-4" />
+                    Points (From Selected Task)
+                  </Label>
+                  <div className="flex flex-col sm:flex-row items-center gap-4 p-3 bg-green-50 border border-green-200 rounded-md">
+                    <span className="text-green-800 font-medium">
+                      Points: {watch("selectedPoints")}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="multiplier" className="text-green-700">
+                        No.of times you did:
+                      </Label>
+                      <Input
+                        id="multiplier"
+                        type="number"
+                        min={1}
+                        defaultValue={1}
+                        className="w-20"
+                        {...register("multiplier", {
+                          valueAsNumber: true,
+                          min: 1,
+                        })}
+                      />
+                    </div>
+                    <span className="text-green-800 font-bold">
+                      Total:{" "}
+                      {parseInt(watch("selectedPoints") || "0") *
+                        (watch("multiplier") || 1)}{" "}
+                      points
+                    </span>
+                  </div>
+                </div>
+              )}
+              {/* Points Section */}
+              {selectedDepartmentId && isCustomTask && (
+                <div className="space-y-4">
+                  <Label className="flex items-center gap-2">
+                    <Target className="h-4 w-4" />
+                    Custom Points (Max 100) *
+                  </Label>
+                  <Input
+                    id="customPoints"
+                    type="number"
+                    min={1}
+                    max={100}
+                    placeholder="Enter points (1-100)"
+                    {...register("customPoints", {
+                      valueAsNumber: true,
+                      min: 1,
+                      max: 100,
+                      required: "Please enter custom points",
+                    })}
+                  />
+                  <p className="text-sm text-gray-600">
+                    Enter the points you believe this contribution deserves
+                    (maximum 100 points)
+                  </p>
+                </div>
+              )}
+
+              {/* Description */}
+              <div className="space-y-2">
+                <Label htmlFor="description">Description *</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Describe your contribution in detail"
+                  rows={4}
+                  {...register("description", { required: true })}
+                />
+              </div>
+
+              {/* Proof Links */}
+              <div className="space-y-4">
+                <Label className="flex items-center gap-2">
+                  <Link className="h-4 w-4" />
+                  Proof Links
+                </Label>
+
+                <div className="space-y-2">
+                  {linkFields.map((field, index) => (
+                    <div key={field.id} className="flex gap-2">
+                      <Input
+                        placeholder="https://drive.google.com/..."
+                        {...register(`links.${index}.url` as const)}
+                        className="flex-1"
+                      />
+                      {linkFields.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => removeLink(index)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => appendLink({ url: "" })}
+                  className="w-full"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Another Link
+                </Button>
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-6">
+                <Button
+                  type="submit"
+                  className="w-full"
+                  size="lg"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-4 w-4 mr-2" />
+                      Submit Request
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
-    </FormProvider>
     </SidebarWrapper>
   );
 };

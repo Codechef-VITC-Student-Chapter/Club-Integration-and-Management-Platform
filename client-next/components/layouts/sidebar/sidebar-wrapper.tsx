@@ -11,10 +11,7 @@ interface SidebarWrapperProps {
   pageTitle: string;
 }
 
-export default function SidebarWrapper({
-  children,
-  pageTitle,
-}: SidebarWrapperProps) {
+export function SidebarWrapper({ children, pageTitle }: SidebarWrapperProps) {
   return (
     <SidebarProvider>
       <AppSidebar />

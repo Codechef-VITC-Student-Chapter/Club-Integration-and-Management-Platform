@@ -32,7 +32,7 @@ type EditLinksProps = {
   onClose: () => void;
 };
 
-const EditLinks: React.FC<EditLinksProps> = ({ isOpen, onClose }) => {
+export const EditLinks: React.FC<EditLinksProps> = ({ isOpen, onClose }) => {
   const { control, register } = useFormContext<FormValues>();
   const { fields, append, remove } = useFieldArray<FormValues, "links">({
     control,
@@ -128,5 +128,3 @@ const EditLinks: React.FC<EditLinksProps> = ({ isOpen, onClose }) => {
     </div>
   );
 };
-
-export default EditLinks;

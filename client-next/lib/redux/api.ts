@@ -32,6 +32,13 @@ import {
   AddContributionResponse,
   MessageResponse,
 } from "../../types/api";
+import {
+  AddTaskResponse,
+  FullTask,
+  TaskInfo,
+  TasksResponse,
+  TaskUpdateInfo,
+} from "@/types/api/task";
 
 export const api = createApi({
   reducerPath: "api",
@@ -48,7 +55,7 @@ export const api = createApi({
       return headers;
     },
   }),
-  tagTypes: ["User", "Club", "Department", "Contribution"],
+  tagTypes: ["User", "Club", "Department", "Contribution", "Task"],
   endpoints: (builder) => ({
     // Auth Routes
     signup: builder.mutation<AuthResponse, UserSignUpInfo>({
@@ -96,6 +103,13 @@ export const api = createApi({
     getLeadUserRequests: builder.query<GetLeadUserRequestsResponse, string>({
       query: (userId) => `/user/lead/requests/${userId}`,
       providesTags: [{ type: "Contribution", id: "REQUESTS" }],
+    }),
+
+    getLeadUserDepartmentInfo: builder.query<DepartmentInfoResponse, string>({
+      query: (leadId) => `/user/lead/dept/${leadId}`,
+      providesTags: (result, error, leadId) => [
+        { type: "Department", id: leadId },
+      ],
     }),
 
     uploadClubMembersHandles: builder.mutation<
@@ -221,6 +235,64 @@ export const api = createApi({
         { type: "Contribution", id: "LIST" },
       ],
     }),
+
+    // Task Routes
+    getTasksByClubID: builder.query<TasksResponse, string>({
+      query: (clubId) => `/task/club/${clubId}`,
+      providesTags: (result) =>
+        result && result.tasks
+          ? [
+              ...result.tasks.map((t) => ({
+                type: "Task" as const,
+                id: t.task.id,
+              })),
+              { type: "Task", id: "LIST" },
+            ]
+          : [{ type: "Task", id: "LIST" }],
+    }),
+
+    getTasksByDepartmentID: builder.query<TasksResponse, string>({
+      query: (deptId) => `/task/dept/${deptId}`,
+      providesTags: (result) =>
+        result && result.tasks
+          ? [
+              ...result.tasks.map((t) => ({
+                type: "Task" as const,
+                id: t.task.id,
+              })),
+              { type: "Task", id: "LIST" },
+            ]
+          : [{ type: "Task", id: "LIST" }],
+    }),
+
+    addTask: builder.mutation<AddTaskResponse, TaskInfo>({
+      query: (taskData) => ({
+        url: "/task/add",
+        method: "POST",
+        body: taskData,
+      }),
+      invalidatesTags: [{ type: "Task", id: "LIST" }],
+    }),
+
+    updateTask: builder.mutation<
+      FullTask,
+      { id: string; data: TaskUpdateInfo }
+    >({
+      query: ({ id, data }) => ({
+        url: `/task/update/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: (result, error, { id }) => [{ type: "Task", id }],
+    }),
+
+    deleteTask: builder.mutation<MessageResponse, string>({
+      query: (id) => ({
+        url: `/task/delete/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (result, error, id) => [{ type: "Task", id }],
+    }),
   }),
 });
 
@@ -236,6 +308,7 @@ export const {
   useGetUserInfoQuery,
   useGetUserContributionsQuery,
   useGetLeadUserRequestsQuery,
+  useGetLeadUserDepartmentInfoQuery,
   useUploadClubMembersHandlesMutation,
 
   // Club hooks
@@ -253,4 +326,11 @@ export const {
   useUpdateContributionDetailsMutation,
   useUpdateContributionStatusMutation,
   useAddContributionToUserMutation,
+
+  // Task hooks
+  useGetTasksByClubIDQuery,
+  useGetTasksByDepartmentIDQuery,
+  useAddTaskMutation,
+  useUpdateTaskMutation,
+  useDeleteTaskMutation,
 } = api;

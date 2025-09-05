@@ -1,22 +1,37 @@
-'use client';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+"use client";
 
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
-const COLORS = ['#e5e7eb', '#3b82f6']; // Gray for pending, Blue for filled
+const COLORS = ["#4079DA", "#E5E7EB"]; // acc-primary for completed, gray for pending
+
 interface PointsBreakDownProps {
-  pointsData:number;
+  pointsData: number;
 }
-const PointsBreakDown: React.FC<PointsBreakDownProps> = ({ pointsData})  => {
-    const pointsObj=[{ name: 'Pending', value: 100-pointsData },
-  { name: 'Available', value: pointsData },]
+
+export const PointsBreakDown: React.FC<PointsBreakDownProps> = ({
+  pointsData,
+}) => {
+  const data = [
+    { name: "Completed", value: pointsData },
+    { name: "Pending", value: 100 - pointsData },
+  ];
+
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm">
-      <h3 className="font-bold text-gray-800 mb-4">Points Breakdown</h3>
-      <div className="relative w-full h-32">
+    <div className="bg-white p-6 rounded-xl shadow-sm w-full max-w-sm mx-auto">
+      <h3 className="font-bold text-secondary mb-4 text-center">
+        Points Breakdown
+      </h3>
+
+      <div className="relative w-full h-36">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
-              data={pointsObj}
+              data={data}
               cx="50%"
               cy="50%"
               innerRadius={40}
@@ -24,21 +39,51 @@ const PointsBreakDown: React.FC<PointsBreakDownProps> = ({ pointsData})  => {
               startAngle={90}
               endAngle={450}
               dataKey="value"
-              stroke="none"
             >
-              {pointsObj.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              {data.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  cursor="pointer"
+                  fill={COLORS[index]}
+                />
               ))}
             </Pie>
           </PieChart>
         </ResponsiveContainer>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-xl font-bold text-gray-800">{100-pointsData}</span>
-            <span className="text-[0.7rem] text-gray-500 max-w-[2rem]">Pending Points</span>
+
+        {/* Center Label */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+          <span className="text-xl font-bold text-secondary">{pointsData}</span>
+          <span className="text-sm text-black">Points</span>
         </div>
+      </div>
+
+      {/* Legend with Tooltips */}
+      <div className="flex justify-around mt-4 text-sm font-medium text-black">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="flex items-center gap-2 cursor-pointer">
+              <div className="w-3 h-3 rounded-full bg-primary" />
+              <span>Completed</span>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{pointsData} points completed</p>
+          </TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="flex items-center gap-2 cursor-pointer">
+              <div className="w-3 h-3 rounded-full bg-gray-300" />
+              <span>Pending</span>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{100 - pointsData} points remaining</p>
+          </TooltipContent>
+        </Tooltip>
       </div>
     </div>
   );
 };
-
-export default PointsBreakDown;
