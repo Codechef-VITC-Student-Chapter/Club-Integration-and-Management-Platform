@@ -16,7 +16,7 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.Default()
 	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found, continuing without it (probably in production)")
+		log.Printf("Error while loading env: %v", err)
 	}
 	log.Printf("ENV Loaded")
 
@@ -26,14 +26,19 @@ func main() {
 	controllers.ConnectDepartmentCollection()
 	controllers.ConnectContributionCollection()
 	controllers.ConnectUserCollection()
+	controllers.ConnectTaskCollection()
 
-	clientURL := "http://localhost:5173" // default fallback
-	if envURL := os.Getenv("CLIENT_URL"); envURL != "" {
-		clientURL = envURL
+	clientURL := os.Getenv("CLIENT_URL")
+	allowOrigins := []string{
+		"http://localhost:5173",
+		"http://localhost:3001",
 	}
 
+	if clientURL != "" {
+		allowOrigins = append(allowOrigins, clientURL)
+	}
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{clientURL},
+		AllowOrigins:     allowOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		AllowCredentials: true,
@@ -44,12 +49,14 @@ func main() {
 	contApi := r.Group("/api/contribution")
 	clubApi := r.Group("/api/club")
 	deptApi := r.Group("/api/department")
+	taskApi := r.Group("/api/task")
 
 	routes.SetupUserRoutes(userApi)
 	routes.SetupAuthRoutes(authApi)
 	routes.SetupContributionRoutes(contApi)
 	routes.SetupClubRoutes(clubApi)
 	routes.SetupDepartmentRoutes(deptApi)
+	routes.SetupTaskRoutes(taskApi)
 
 	if err := r.Run(":3000"); err != nil {
 		log.Fatal("Failed to start the server", err)

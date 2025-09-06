@@ -2,7 +2,7 @@ package types
 
 import "github.com/Sasank-V/CIMP-Golang-Backend/database/schemas"
 
-type DepartmetInfoResponse struct {
+type DepartmentInfoResponse struct {
 	Message    string             `json:"message"`
 	Department schemas.Department `json:"department"`
 }
