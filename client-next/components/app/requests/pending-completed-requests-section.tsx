@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge, Button, Card, CardContent, Input } from "@/components/ui";
-import { Contribution } from "@/types";
+import { Contribution, ContributionStatusInfo, Status } from "@/types";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     Calendar,
@@ -14,12 +14,12 @@ import { RequestDialog } from "@/components/app/requests";
 
 export const PendingCompletedRequestsSection = ({
     requests,
-    onApprove,
-    onReject,
+    onStatusChange,
+    isRequestPage = true,
 }: {
     requests: Contribution[];
-    onApprove?: (id: string) => void;
-    onReject?: (id: string) => void;
+    onStatusChange?: (selectedRequest: Contribution, newStatus: string) => void;
+    isRequestPage?: boolean;
 }) => {
     const [selectedStatus, setSelectedStatus] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
@@ -69,19 +69,14 @@ export const PendingCompletedRequestsSection = ({
 
         return matchesStatus && matchesSearch;
     });
-
-    const handleApprove = (id: string) => {
-        if (onApprove) onApprove(id);
-    };
-
-    const handleReject = (id: string) => {
-        if (onReject) onReject(id);
-    };
-
-    const handleStatusChange = (id: string, newStatus: string) => {
+    
+    const handleStatusChange = async (id: string, newStatus: Status) => {
         if (!selectedRequest) return;
         setSelectedRequest({ ...selectedRequest, status: newStatus });
+
+        if (onStatusChange) onStatusChange(selectedRequest, newStatus);
     };
+
 
     return (
         <div className="w-full h-[75vh]">
@@ -145,52 +140,27 @@ export const PendingCompletedRequestsSection = ({
                                             <div className="flex gap-4 items-start justify-between">
                                                 <div className="flex flex-col">
                                                     <h3 className="font-semibold text-gray-900 mb-1 flex gap-4">
-                                                        {request.title}
+                                                        {request.title.length < 30 ? request.title : request.title.substring(0, 30) + "..."}
                                                         <Badge className="bg-gray-200 text-gray-800 m-0">
                                                             {request.department}
                                                         </Badge>
                                                     </h3>
                                                     <p className="text-gray-600 text-sm mb-2">
-                                                        {request.description}
+                                                        {request.description.length < 30 ? request.description : request.description.substring(0, 30) + "..."}
                                                     </p>
                                                 </div>
-
-                                                {request.status ===
-                                                    "pending" && (
-                                                    <div className="flex items-center space-x-2">
-                                                        <Button
-                                                            size="sm"
-                                                            variant="ghost"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleReject(
-                                                                    request.id
-                                                                );
-                                                            }}
-                                                            className="p-2 text-red-600 hover:bg-red-50 rounded-full cursor-pointer"
-                                                        >
-                                                            <X size={16} />
-                                                        </Button>
-                                                        <Button
-                                                            size="sm"
-                                                            onClick={(e) => {
-                                                                e.stopPropagation();
-                                                                handleApprove(
-                                                                    request.id
-                                                                );
-                                                            }}
-                                                            className="p-2 bg-blue-600 text-white hover:bg-blue-700 rounded-full cursor-pointer"
-                                                        >
-                                                            <Check size={16} />
-                                                        </Button>
-                                                    </div>
-                                                )}
                                             </div>
 
                                             <div className="flex items-start justify-between space-x-4 text-sm">
-                                                <span className="text-gray-700">
-                                                    {request.user_id}
-                                                </span>
+                                                {
+                                                    isRequestPage ?
+                                                    <span className="text-gray-700">
+                                                        {request.user_id}
+                                                    </span> :
+                                                    <span className="text-gray-700">
+                                                        <span className="font-bold">Lead: </span>{request.target}
+                                                    </span>
+                                                }
                                                 <div className="flex items-center space-x-2">
                                                     <Calendar
                                                         size={14}
@@ -233,11 +203,10 @@ export const PendingCompletedRequestsSection = ({
                     isDialogOpen={isDialogOpen}
                     setIsDialogOpen={setIsDialogOpen}
                     selectedRequest={selectedRequest}
-                    handleApprove={handleApprove}
-                    handleReject={handleReject}
                     handleStatusChange={handleStatusChange}
                     getStatusColor={getStatusColor}
                     formatDate={formatDate}
+                    isRequestPage={isRequestPage}
                 />
             </Card>
         </div>

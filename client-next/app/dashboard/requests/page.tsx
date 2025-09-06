@@ -1,99 +1,83 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { SidebarWrapper } from "@/components/layouts";
-import { Search, Calendar, Plus, Eye, X, Check } from "lucide-react";
+import { SidebarWrapper } from "@/components/layouts/sidebar/sidebar-wrapper";
+import { Plus } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useGetLeadUserRequestsQuery } from "@/lib/redux/api";
+import { useGetLeadUserRequestsQuery, useUpdateContributionStatusMutation } from "@/lib/redux/api";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Contribution } from "@/types";
+import { Contribution, ContributionStatusInfo } from "@/types";
 import { PendingCompletedRequestsSection } from "@/components/app/requests";
 
 const RequestsPage = () => {
-  const [selectedFilter, setSelectedFilter] = useState("All");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("All");
-  const { data: session, status } = useSession();
+    const { data: session, status } = useSession();
+    const [updateStatus] = useUpdateContributionStatusMutation();
+    const [userId, setUserId] = useState("");
 
-  const [userId, setUserId] = useState("");
+    useEffect(() => {
+        if (status === "loading") return;
+        if (!session?.user) return;
+        setUserId(session?.user.id);
+    }, [session, status]);
 
-  useEffect(() => {
-    if (status === "loading") return;
-    if (!session?.user) return;
+    const { data } = useGetLeadUserRequestsQuery(userId);
+    const requests: Contribution[] =
+        data?.requests.map((row) => ({
+            ...row.contribution,
+            department: row.department_name,
+        })) || [];
 
-    setUserId(session?.user.id);
-  }, [session, status]);
+    const pendingRequests = requests.filter(
+        (request) => request.status === "pending"
+    );
+    const approvedRequests = requests.filter(
+        (request) => request.status === "approved"
+    );
+    const rejectedRequests = requests.filter(
+        (request) => request.status === "rejected"
+    );
 
-  const { data, isLoading } = useGetLeadUserRequestsQuery(userId);
-  const requests: Contribution[] =
-    data?.requests.map((row) => ({
-      ...row.contribution,
-      department: row.department_name,
-    })) || [];
+    const onStatusChange = async (
+        selectedRequest: Contribution,
+        newStatus: string
+    ) => {
+        const req: ContributionStatusInfo = {
+            cont_id: selectedRequest?.id!,
+            lead_user_id: session?.user.id!,
+            status: newStatus,
+            reason: "",
+        };
+        await updateStatus(req);
+    };
 
-  // Filter requests based on search term and filters
-  const filteredRequests = requests.filter((request) => {
-    const matchesSearch =
-      request.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.department.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesStatus =
-      selectedStatus === "All" ||
-      request.status.toLowerCase() === selectedStatus.toLowerCase();
-
-    return matchesSearch && matchesStatus;
-  });
-
-  const pendingRequests = filteredRequests.filter(
-    (request) => request.status === "pending"
-  );
-  const completedRequests = filteredRequests.filter(
-    (request) => request.status !== "pending"
-  );
-
-  const resetFilters = () => {
-    setSearchTerm("");
-    setSelectedStatus("All");
-    setSelectedFilter("All");
-  };
-
-  return (
-    <SidebarWrapper pageTitle="Requests">
-      <div>
-        <div className="px-6 py-8">
-          <div className="flex items-center justify-between mb-8">
+    return (
+        <SidebarWrapper pageTitle="Requests">
             <div>
-              <p className="text-gray-600">
-                PENDING {pendingRequests.length} · COMPLETED{" "}
-                {completedRequests.length}
-              </p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button className="flex items-center space-x-2 cursor-pointer">
-                <Plus size={20} />
-                <span>New request</span>
-              </Button>
-            </div>
-          </div>
+                <div className="px-6 py-8">
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <p className="text-gray-600">
+                                PENDING {pendingRequests.length} · COMPLETED {approvedRequests.length + rejectedRequests.length}
+                            </p>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                            <Button className="flex items-center space-x-2 cursor-pointer">
+                                <Plus size={20} />
+                                <span>New request</span>
+                            </Button>
+                        </div>
+                    </div>
 
-          <div className="grid grid-cols-1 gap-4">
-            <PendingCompletedRequestsSection requests={requests} />
-          </div>
-        </div>
-      </div>
-    </SidebarWrapper>
-  );
+                    <div className="grid grid-cols-1 gap-4">
+                        <PendingCompletedRequestsSection
+                            onStatusChange={onStatusChange}
+                            requests={requests}
+                        />
+                    </div>
+                </div>
+            </div>
+        </SidebarWrapper>
+    );
 };
 
 export default RequestsPage;

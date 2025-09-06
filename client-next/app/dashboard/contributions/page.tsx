@@ -5,10 +5,10 @@ import { SidebarWrapper } from "@/components/layouts";
 import {
   OverviewCard,
   PointsBreakdownCard,
-  ContributionsSection,
 } from "@/components/app/contributions";
 import { useGetUserContributionsQuery } from "@/lib/redux/api";
 import { useSession } from "next-auth/react";
+import { PendingCompletedRequestsSection } from "@/components/app";
 
 export default function ContributionsPage() {
   const { data: session, status } = useSession();
@@ -22,24 +22,9 @@ export default function ContributionsPage() {
     setUserId(session?.user.id);
     setPoints(session.user?.total_points);
   }, [session, status]);
-
+  
   const { data } = useGetUserContributionsQuery(userId);
-  const contributions =
-    data?.contributions.map((row) => ({
-      ...row.contribution,
-      department: row.department_name,
-    })) || [];
-
-  // Calculate status counts
-  const pendingContributions = contributions.filter(
-    (c) => c.status?.toLowerCase() === "pending"
-  ).length;
-  const approvedContributions = contributions.filter(
-    (c) => c.status?.toLowerCase() === "approved"
-  ).length;
-  const rejectedContributions = contributions.filter(
-    (c) => c.status?.toLowerCase() === "rejected"
-  ).length;
+  const contributions = data?.contributions?.map((row) => ({...row.contribution, department: row.department_name})) || [];
 
   return (
     <SidebarWrapper pageTitle="Contributions">
@@ -50,7 +35,7 @@ export default function ContributionsPage() {
             <PointsBreakdownCard contributions={contributions} />
           </div>
           <div className="overflow-hidden relative h-full w-full">
-            <ContributionsSection contributions={contributions} />
+            <PendingCompletedRequestsSection requests={contributions} isRequestPage={false} />
           </div>
         </div>
       </div>
