@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/Sasank-V/CIMP-Golang-Backend/api/controllers"
 	"github.com/Sasank-V/CIMP-Golang-Backend/api/routes"
@@ -14,7 +15,7 @@ import (
 func main() {
 	r := gin.Default()
 	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error while loading env: ", err)
+		log.Printf("Error while loading env: %v", err)
 	}
 	log.Printf("ENV Loaded")
 
@@ -26,8 +27,17 @@ func main() {
 	controllers.ConnectUserCollection()
 	controllers.ConnectTaskCollection()
 
+	clientURL := os.Getenv("CLIENT_URL")
+	allowOrigins := []string{
+		"http://localhost:5173",
+		"http://localhost:3001",
+	}
+
+	if clientURL != "" {
+		allowOrigins = append(allowOrigins, clientURL)
+	}
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:5173", "http://localhost:3001"},
+		AllowOrigins:     allowOrigins,
 		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		AllowCredentials: true,

@@ -1,0 +1,21 @@
+# Environment
+.env
+*.env
+
+# VCS
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+
+# OS/editor
+*.swp
+*.swo
+.DS_Store
+
+# Build artifacts
+bin/
+*.out
+*.exe
