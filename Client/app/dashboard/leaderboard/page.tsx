@@ -61,7 +61,6 @@ const LeaderBoardPage = () => {
 
   // Empty state - no members found
   if (!leaderboardData?.data || leaderboardData.data.length === 0) {
-    console.log(leaderboardData?.data);
     return (
       <SidebarWrapper pageTitle="Leaderboard">
         <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)] text-center">
