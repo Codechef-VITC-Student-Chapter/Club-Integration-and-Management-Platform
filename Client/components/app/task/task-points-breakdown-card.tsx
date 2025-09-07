@@ -1,6 +1,6 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import { RadialBarChart, RadialBar, ResponsiveContainer } from "recharts";
-import { FullTask } from "@/types/api/task";
+import { FullTask } from "@/types/api";
 
 interface ITaskPointsBreakdown {
   tasks: FullTask[];

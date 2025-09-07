@@ -7,9 +7,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { FullTask } from "@/types/api/task";
+  Progress,
+} from "@/components/ui";
+import { FullTask } from "@/types";
 
 interface TaskActivityOverviewProps {
   tasks: FullTask[];

@@ -130,10 +130,10 @@ export const authOptions: NextAuthOptions = {
             if (userData) {
               // Return user data with accessToken, excluding sensitive fields
               const {
-                password,
-                otp,
-                otp_retries,
-                locked_till,
+                password, // eslint-disable-line @typescript-eslint/no-unused-vars
+                otp, // eslint-disable-line @typescript-eslint/no-unused-vars
+                otp_retries, // eslint-disable-line @typescript-eslint/no-unused-vars
+                locked_till, // eslint-disable-line @typescript-eslint/no-unused-vars
                 ...safeUserData
               } = userData;
 
@@ -163,7 +163,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         // Clear any default NextAuth properties and copy user properties
-        const { name, email, picture, sub, ...cleanToken } = token;
+        const { name, email, picture, sub, ...cleanToken } = token; // eslint-disable-line @typescript-eslint/no-unused-vars
 
         // Copy all user properties to token
         return {

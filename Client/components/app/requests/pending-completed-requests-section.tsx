@@ -8,9 +8,11 @@ import {
   CardHeader,
   CardTitle,
   Input,
+  Tabs,
+  TabsList,
+  TabsTrigger,
 } from "@/components/ui";
 import { Contribution, Status } from "@/types";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar, Search, Plus } from "lucide-react";
 import { useState } from "react";
 import { RequestDialog } from "@/components/app/requests";

@@ -1,14 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
   TooltipProvider,
-} from "@/components/ui/tooltip";
+  Badge,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@/components/ui";
 import { KpiCardProps } from "@/types";
 
 interface ProfileCardProps {

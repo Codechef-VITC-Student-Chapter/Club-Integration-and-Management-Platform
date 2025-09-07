@@ -1,22 +1,11 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import {
-  Search,
-  Users,
-  TrendingUp,
-  BarChart3,
-  PieChart as PieChartIcon,
-} from "lucide-react";
-import { Bar, BarChart, CartesianGrid, XAxis, Pie, PieChart } from "recharts";
+import { Search, Users } from "lucide-react";
 import { SidebarWrapper } from "@/components/layouts";
 import { LoadingSpinner } from "@/components/fallbacks";
 import {
   Input,
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
   Badge,
   Avatar,
   AvatarFallback,
@@ -26,8 +15,6 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  CardDescription,
-  CardFooter,
   Select,
   SelectContent,
   SelectItem,
@@ -41,13 +28,11 @@ import {
   PaginationNext,
   PaginationPrevious,
   ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui";
 import { useGetAllClubMembersQuery } from "@/lib/redux/api";
 import { club_id } from "@/lib/keys";
 import { useRouter } from "next/navigation";
+import { PointsBarChart, PointsPieChart } from "@/components/app";
 
 const MembersPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -403,113 +388,15 @@ const MembersPage = () => {
 
           {/* Analytics Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Points Distribution Bar Chart */}
-            <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-              <Card className="border-0 shadow-none">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5" />
-                    Points Distribution Analytics
-                  </CardTitle>
-                  <CardDescription>
-                    Member distribution across different point ranges
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ChartContainer config={chartConfig}>
-                    <BarChart
-                      accessibilityLayer
-                      data={pointsAnalytics.chartData}
-                    >
-                      <CartesianGrid vertical={false} />
-                      <XAxis
-                        dataKey="range"
-                        tickLine={false}
-                        tickMargin={10}
-                        axisLine={false}
-                      />
-                      <ChartTooltip
-                        cursor={false}
-                        content={
-                          <ChartTooltipContent
-                            formatter={(value) => [value, " Members"]}
-                          />
-                        }
-                      />
-                      <Bar
-                        dataKey="count"
-                        fill="var(--primary)"
-                        radius={[4, 4, 0, 0]}
-                      />
-                    </BarChart>
-                  </ChartContainer>
-                </CardContent>
-                <CardFooter className="flex-col items-start gap-2 text-sm">
-                  <div className="flex gap-2 leading-none font-medium">
-                    {pointsAnalytics.performanceRate}% high performers (75+
-                    points) <TrendingUp className="h-4 w-4" />
-                  </div>
-                  <div className="text-muted-foreground leading-none">
-                    Average points: {pointsAnalytics.averagePoints} • High
-                    performers: {pointsAnalytics.highPerformers}/
-                    {pointsAnalytics.totalMembers} members
-                  </div>
-                </CardFooter>
-              </Card>
-            </div>
-
-            {/* Individual Member Points Pie Chart */}
-            <div className="bg-white rounded-lg shadow-sm border overflow-hidden">
-              <Card className="border-0 shadow-none">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <PieChartIcon className="h-5 w-5" />
-                    Top Members by Points
-                  </CardTitle>
-                  <CardDescription>
-                    Points distribution among top performing members
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ChartContainer
-                    config={pieChartConfig}
-                    className="mx-auto aspect-square max-h-[300px]"
-                  >
-                    <PieChart>
-                      <ChartTooltip
-                        cursor={false}
-                        content={
-                          <ChartTooltipContent
-                            formatter={(value, name) => [
-                              `${value} points `,
-                              name,
-                            ]}
-                            hideLabel
-                          />
-                        }
-                      />
-                      <Pie
-                        data={memberPointsData}
-                        dataKey="points"
-                        nameKey="name"
-                        innerRadius={60}
-                        strokeWidth={5}
-                      />
-                    </PieChart>
-                  </ChartContainer>
-                </CardContent>
-                <CardFooter className="flex-col items-start gap-2 text-sm">
-                  <div className="flex gap-2 leading-none font-medium">
-                    Top {Math.min(8, members.length)} contributors{" "}
-                    <TrendingUp className="h-4 w-4" />
-                  </div>
-                  <div className="text-muted-foreground leading-none">
-                    Showing individual points distribution among highest
-                    performers
-                  </div>
-                </CardFooter>
-              </Card>
-            </div>
+            <PointsBarChart
+              chartConfig={chartConfig}
+              pointsAnalytics={pointsAnalytics}
+            />
+            <PointsPieChart
+              chartConfig={pieChartConfig}
+              memberPointsData={memberPointsData}
+              membersLength={members.length}
+            />
           </div>
         </section>
       </div>

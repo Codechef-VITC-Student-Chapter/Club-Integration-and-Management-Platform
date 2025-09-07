@@ -1,7 +1,7 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { FullTask } from "@/types/api/task";
+import { Card, CardContent } from "@/components/ui";
+import { FullTask } from "@/types";
 
 interface TaskStatisticsCardsProps {
   tasks: FullTask[];

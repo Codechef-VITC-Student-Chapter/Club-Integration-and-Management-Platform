@@ -1,12 +1,13 @@
 "use client";
 
-import { Badge, Button } from "@/components/ui";
 import {
+  Badge,
+  Button,
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "@/components/ui";
 import {
   Calendar,
   Check,

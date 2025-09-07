@@ -1,6 +1,6 @@
 import { ListTodo, CheckCircle, Activity, Square } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { FullTask } from "@/types/api/task";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
+import { FullTask } from "@/types";
 
 interface ITaskOverview {
   tasks: FullTask[];
