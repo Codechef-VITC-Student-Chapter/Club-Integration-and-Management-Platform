@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { SidebarWrapper } from "@/components/layouts";
-import { Plus, FileText } from "lucide-react";
+import { Plus, FileText, AlertTriangle, RefreshCw } from "lucide-react";
 import { useSession } from "next-auth/react";
 import {
   useGetLeadUserRequestsQuery,
@@ -60,8 +60,11 @@ const RequestsPage = () => {
   if (isLoading) {
     return (
       <SidebarWrapper pageTitle="Requests">
-        <div className="flex items-center justify-center h-64">
-          <LoadingSpinner size="lg" />
+        <div className="flex items-center justify-center h-[calc(100vh-200px)]">
+          <div className="flex flex-col items-center gap-4">
+            <LoadingSpinner size="lg" />
+            <p className="text-sm text-muted-foreground">Loading requests...</p>
+          </div>
         </div>
       </SidebarWrapper>
     );
@@ -71,21 +74,35 @@ const RequestsPage = () => {
     if ("status" in error && error.status === 404) {
       return (
         <SidebarWrapper pageTitle="Requests">
-          <div className="flex flex-col items-center justify-center h-64 text-center">
-            <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-lg font-medium text-muted-foreground">
-              No requests found.
-            </p>
+          <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)] text-center">
+            <FileText className="h-16 w-16 text-muted-foreground mb-4" />
+            <div>
+              <p className="text-xl font-medium text-muted-foreground mb-2">
+                No requests found
+              </p>
+              <p className="text-sm text-muted-foreground">
+                No contribution requests have been submitted yet.
+              </p>
+            </div>
           </div>
         </SidebarWrapper>
       );
     }
+
+    // General error state
     return (
       <SidebarWrapper pageTitle="Requests">
-        <div className="flex items-center justify-center h-64">
-          <p className="text-destructive">
-            Error loading requests. Please try again.
-          </p>
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)] text-center">
+          <AlertTriangle className="h-16 w-16 text-destructive mb-4" />
+          <div className="max-w-md">
+            <p className="text-xl font-medium text-foreground mb-2">
+              Unable to load requests
+            </p>
+            <p className="text-sm text-muted-foreground mb-6">
+              There was an error loading the requests data. This could be due to
+              a network issue or server problem.
+            </p>
+          </div>
         </div>
       </SidebarWrapper>
     );
