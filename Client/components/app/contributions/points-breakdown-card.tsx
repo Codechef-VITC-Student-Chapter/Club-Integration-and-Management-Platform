@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { RadialBarChart, RadialBar, ResponsiveContainer } from "recharts"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
+import { RadialBarChart, RadialBar, ResponsiveContainer } from "recharts";
 import { Contribution } from "@/types";
 
 interface IPointsBreakdown {
@@ -7,30 +7,42 @@ interface IPointsBreakdown {
   maxPoints?: number;
 }
 
-export const PointsBreakdownCard = ({ contributions, maxPoints = 100 }: IPointsBreakdown) => {
-  const approvedContributions = contributions.filter(c => c.status.toLowerCase() === 'approved');
-  const pendingContributions = contributions.filter(c => c.status.toLowerCase() === 'pending');
-  const rejectedContributions = contributions.filter(c => c.status.toLowerCase() === 'rejected');
+export const PointsBreakdownCard = ({
+  contributions,
+  maxPoints = 100,
+}: IPointsBreakdown) => {
+  const approvedContributions = contributions.filter(
+    (c) => c.status.toLowerCase() === "approved"
+  );
+  const pendingContributions = contributions.filter(
+    (c) => c.status.toLowerCase() === "pending"
+  );
+  const rejectedContributions = contributions.filter(
+    (c) => c.status.toLowerCase() === "rejected"
+  );
 
   // Calculate points for each status
   const approvedPoints = contributions
-    .filter(c => c.status.toLowerCase() === 'approved')
+    .filter((c) => c.status.toLowerCase() === "approved")
     .reduce((sum, c) => sum + c.points, 0);
-    
+
   const pendingPoints = contributions
-    .filter(c => c.status.toLowerCase() === 'pending')
+    .filter((c) => c.status.toLowerCase() === "pending")
     .reduce((sum, c) => sum + c.points, 0);
-    
+
   const rejectedPoints = contributions
-    .filter(c => c.status.toLowerCase() === 'rejected')
+    .filter((c) => c.status.toLowerCase() === "rejected")
     .reduce((sum, c) => sum + c.points, 0);
-    
+
   const totalPoints = approvedPoints + pendingPoints + rejectedPoints;
 
   // Calculate percentages for the progress bar
-  const approvedPercentage = totalPoints > 0 ? (approvedPoints / totalPoints) * 100 : 0;
-  const pendingPercentage = totalPoints > 0 ? (pendingPoints / totalPoints) * 100 : 0;
-  const rejectedPercentage = totalPoints > 0 ? (rejectedPoints / totalPoints) * 100 : 0;
+  const approvedPercentage =
+    totalPoints > 0 ? (approvedPoints / totalPoints) * 100 : 0;
+  const pendingPercentage =
+    totalPoints > 0 ? (pendingPoints / totalPoints) * 100 : 0;
+  const rejectedPercentage =
+    totalPoints > 0 ? (rejectedPoints / totalPoints) * 100 : 0;
 
   // Calculate circular progress
   const overallPercentage = (approvedPoints / maxPoints) * 100;
@@ -40,8 +52,8 @@ export const PointsBreakdownCard = ({ contributions, maxPoints = 100 }: IPointsB
     {
       name: "points",
       value: overallPercentage,
-      fill: "#3b82f6"
-    }
+      fill: "#3b82f6",
+    },
   ];
 
   return (
@@ -59,69 +71,75 @@ export const PointsBreakdownCard = ({ contributions, maxPoints = 100 }: IPointsB
                 innerRadius="70%"
                 outerRadius="90%"
                 startAngle={0}
-                endAngle={approvedPoints / maxPoints * 360}
+                endAngle={(approvedPoints / maxPoints) * 360}
                 data={chartData}
               >
-                <RadialBar
-                  dataKey="value"
-                  cornerRadius={10}
-                  fill="#3b82f6"
-                />
+                <RadialBar dataKey="value" cornerRadius={10} fill="#3b82f6" />
               </RadialBarChart>
             </ResponsiveContainer>
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-xl font-bold text-blue-600">{approvedPoints}</span>
+              <span className="text-xl font-bold text-blue-600">
+                {approvedPoints}
+              </span>
             </div>
           </div>
           <p className="font-bold text-xl w-full">Points Earned</p>
         </div>
-        <div className="flex-1 w-full">          
+        <div className="flex-1 w-full">
           {/* Multi-colored Progress Bar */}
           <div className="mt-3">
             <div className="relative h-3 bg-gray-200 rounded-full overflow-hidden">
               {/* Approved section (Green) */}
-              <div 
+              <div
                 className="absolute left-0 top-0 h-full bg-green-600 transition-all duration-300"
                 style={{ width: `${approvedPercentage}%` }}
               />
               {/* Pending section (Yellow) */}
-              <div 
+              <div
                 className="absolute top-0 h-full bg-yellow-500 transition-all duration-300"
-                style={{ 
+                style={{
                   left: `${approvedPercentage}%`,
-                  width: `${pendingPercentage}%` 
+                  width: `${pendingPercentage}%`,
                 }}
               />
               {/* Rejected section (Red) */}
-              <div 
+              <div
                 className="absolute top-0 h-full bg-red-600 transition-all duration-300"
-                style={{ 
+                style={{
                   left: `${approvedPercentage + pendingPercentage}%`,
-                  width: `${rejectedPercentage}%` 
+                  width: `${rejectedPercentage}%`,
                 }}
               />
             </div>
-            
+
             {/* Legend */}
             <div className="flex justify-between items-center mt-2 text-sm">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-green-600 rounded-full"></div>
-                <span className="text-gray-600">Approved: {approvedContributions.length}</span>
+                <span className="text-gray-600">
+                  Approved: {approvedContributions.length}
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                <span className="text-gray-600">Pending: {pendingContributions.length}</span>
+                <span className="text-gray-600">
+                  Pending: {pendingContributions.length}
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-red-600 rounded-full"></div>
-                <span className="text-gray-600">Rejected: {rejectedContributions.length}</span>
+                <span className="text-gray-600">
+                  Rejected: {rejectedContributions.length}
+                </span>
               </div>
             </div>
-            
-            <p className="text-sm text-gray-500 mt-2">{overallPercentage.toFixed(1)}% of target reached</p>
+
+            <p className="text-sm text-gray-500 mt-2">
+              {overallPercentage.toFixed(1)}% of target reached
+            </p>
           </div>
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};

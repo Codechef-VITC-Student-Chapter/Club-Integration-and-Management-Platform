@@ -1,5 +1,5 @@
-import { Target, TrendingUp, CheckCircle, Clock, XCircle } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Target, CheckCircle, Clock, XCircle } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui";
 import { Contribution } from "@/types";
 
 interface IOverview {

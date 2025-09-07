@@ -9,29 +9,25 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import {
+  Button,
+  Switch,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+  Input,
+  Badge,
+} from "@/components/ui";
 import { useUpdateTaskMutation, useDeleteTaskMutation } from "@/lib/redux/api";
-import { FullTask, TaskUpdateInfo } from "@/types/api/task";
+import { FullTask, TaskUpdateInfo } from "@/types";
 import { toast } from "sonner";
 
 interface LeadsTaskComponentProps {

@@ -8,15 +8,13 @@ import {
   DialogTitle,
   DialogTrigger,
   Input,
-} from "@/components/ui";
-import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/ui";
 import { Plus } from "lucide-react";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";

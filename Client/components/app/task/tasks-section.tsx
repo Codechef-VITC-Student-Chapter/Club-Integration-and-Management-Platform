@@ -1,8 +1,8 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui";
 import { Loader2 } from "lucide-react";
-import { LeadsTaskComponent, AddTaskDialog } from "@/components/app/task";
+import { LeadsTaskComponent, AddTaskDialog } from "@/components/app";
 import { UseFormReturn } from "react-hook-form";
-import { FullTask } from "@/types/api/task";
+import { FullTask } from "@/types";
 
 interface TaskFormData {
   title: string;
