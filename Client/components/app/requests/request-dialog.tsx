@@ -18,6 +18,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { Contribution, Status } from "@/types";
+import { normalizeUrl } from "@/lib/utils";
 
 // Props type
 interface RequestDialogProps {
@@ -137,18 +138,23 @@ export const RequestDialog = ({
                       </span>
                     </div>
                     <div className="space-y-2">
-                      {selectedRequest.proof_files.map((file, idx) => (
-                        <a
-                          key={idx}
-                          href={file}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center space-x-2 text-primary hover:text-primary/80 text-sm"
-                        >
-                          <ExternalLink size={14} />
-                          <span>Proof File {idx + 1}</span>
-                        </a>
-                      ))}
+                      {selectedRequest.proof_files.map((file, idx) => {
+                        // Ensure the URL is absolute using the utility function
+                        const absoluteUrl = normalizeUrl(file);
+
+                        return (
+                          <a
+                            key={idx}
+                            href={absoluteUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center space-x-2 text-primary hover:text-primary/80 text-sm"
+                          >
+                            <ExternalLink size={14} />
+                            <span>Proof File {idx + 1}</span>
+                          </a>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
