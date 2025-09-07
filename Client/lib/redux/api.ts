@@ -48,7 +48,6 @@ export const api = createApi({
       const session = await getSession();
       if (session?.user?.accessToken) {
         headers.set("authorization", `Bearer ${session.user.accessToken}`);
-        console.log("Bearer", session.user.accessToken);
       }
 
       headers.set("Content-Type", "application/json");

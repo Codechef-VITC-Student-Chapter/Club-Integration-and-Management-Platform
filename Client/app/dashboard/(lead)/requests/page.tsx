@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { SidebarWrapper } from "@/components/layouts";
-import { Plus } from "lucide-react";
+import { Plus, FileText } from "lucide-react";
 import { useSession } from "next-auth/react";
 import {
   useGetLeadUserRequestsQuery,
@@ -11,6 +11,8 @@ import {
 import { Button } from "@/components/ui";
 import { Contribution, ContributionStatusInfo } from "@/types";
 import { PendingCompletedRequestsSection } from "@/components/app";
+import { LoadingSpinner } from "@/components/fallbacks";
+import Link from "next/link";
 
 const RequestsPage = () => {
   const { data: session, status } = useSession();
@@ -23,9 +25,11 @@ const RequestsPage = () => {
     setUserId(session?.user.id);
   }, [session, status]);
 
-  const { data } = useGetLeadUserRequestsQuery(userId);
+  const { data, isLoading, error } = useGetLeadUserRequestsQuery(userId, {
+    skip: !userId,
+  });
   const requests: Contribution[] =
-    data?.requests.map((row) => ({
+    data?.requests?.map((row) => ({
       ...row.contribution,
       department: row.department_name,
     })) || [];
@@ -53,6 +57,40 @@ const RequestsPage = () => {
     await updateStatus(req);
   };
 
+  if (isLoading) {
+    return (
+      <SidebarWrapper pageTitle="Requests">
+        <div className="flex items-center justify-center h-64">
+          <LoadingSpinner size="lg" />
+        </div>
+      </SidebarWrapper>
+    );
+  }
+
+  if (error) {
+    if ("status" in error && error.status === 404) {
+      return (
+        <SidebarWrapper pageTitle="Requests">
+          <div className="flex flex-col items-center justify-center h-64 text-center">
+            <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+            <p className="text-lg font-medium text-muted-foreground">
+              No requests found.
+            </p>
+          </div>
+        </SidebarWrapper>
+      );
+    }
+    return (
+      <SidebarWrapper pageTitle="Requests">
+        <div className="flex items-center justify-center h-64">
+          <p className="text-destructive">
+            Error loading requests. Please try again.
+          </p>
+        </div>
+      </SidebarWrapper>
+    );
+  }
+
   return (
     <SidebarWrapper pageTitle="Requests">
       <div>
@@ -65,10 +103,12 @@ const RequestsPage = () => {
               </p>
             </div>
             <div className="flex items-center space-x-4">
-              <Button className="flex items-center space-x-2 cursor-pointer">
-                <Plus size={20} />
-                <span>New request</span>
-              </Button>
+              <Link href={`/requests/new`}>
+                <Button className="flex items-center space-x-2 cursor-pointer">
+                  <Plus size={20} />
+                  <span>New request</span>
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -76,6 +116,7 @@ const RequestsPage = () => {
             <PendingCompletedRequestsSection
               onStatusChange={onStatusChange}
               requests={requests}
+              isRequestPage={true}
             />
           </div>
         </div>

@@ -92,14 +92,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     ? {
         name: `${session.user.first_name} ${session.user.last_name}`,
         role: session.user.is_lead ? "Lead" : "Member",
-        avatar: `https://avatar.iran.liara.run/username?username=${session.user.first_name}+${session.user.last_name}`,
+        avatar: `https://avatar.iran.liara.run/username?username=${encodeURIComponent(
+          `${session.user.first_name?.trim() || ""}+${
+            session.user.last_name?.trim() || ""
+          }`
+        )}`,
       }
     : null;
 
   const navItems = data.navMain.filter((item) => {
     if (
       !session?.user?.is_lead &&
-      (item.title === "Members" || item.title === "Tasks")
+      (item.title === "Members" ||
+        item.title === "Tasks" ||
+        item.title === "Requests")
     ) {
       return false;
     }
