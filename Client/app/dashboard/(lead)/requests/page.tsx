@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { SidebarWrapper } from "@/components/layouts";
-import { Plus, FileText, AlertTriangle, RefreshCw } from "lucide-react";
+import { Plus, FileText, AlertTriangle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import {
   useGetLeadUserRequestsQuery,

@@ -11,9 +11,26 @@ var dialer *gomail.Dialer
 var smtpSender gomail.SendCloser
 var err error
 
+// Dev
+// func SetUpEmailDialer() {
+// 	dialer = gomail.NewDialer("smtp.gmail.com", 465, os.Getenv("CLUB_EMAIL"), os.Getenv("CLUB_EMAIL_APP_PASSWORD"))
+// 	dialer.SSL = true
+// 	smtpSender, err = dialer.Dial()
+// 	if err != nil {
+// 		log.Printf("Error setting up email dialer: %v", err)
+// 		return
+// 	}
+// 	log.Printf("Email Dialer Set")
+// }
+
+// Prod
 func SetUpEmailDialer() {
-	dialer = gomail.NewDialer("smtp.gmail.com", 465, os.Getenv("CLUB_EMAIL"), os.Getenv("CLUB_EMAIL_APP_PASSWORD"))
-	dialer.SSL = true
+	dialer = gomail.NewDialer(
+		"smtp-relay.brevo.com",           // Brevo SMTP server
+		587,                              // Port (use STARTTLS)
+		os.Getenv("BREVO_SMTP_LOGIN"),    // Your Brevo SMTP login
+		os.Getenv("BREVO_SMTP_PASSWORD"), // Store password/API key in env
+	)
 	smtpSender, err = dialer.Dial()
 	if err != nil {
 		log.Printf("Error setting up email dialer: %v", err)

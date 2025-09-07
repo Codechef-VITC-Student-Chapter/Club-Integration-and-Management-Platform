@@ -44,6 +44,7 @@ func signupHandler(c *gin.Context) {
 		Password:  utils.HashSHA256(user.Password),
 		RegNumber: strings.ToUpper(user.RegNumber),
 		IsLead:    false,
+		Clubs:     []string{"codechefvitc"},
 	}
 	if err := controllers.AddUser(new_user); err != nil {
 		fmt.Printf("Error adding user: %v\n", err)

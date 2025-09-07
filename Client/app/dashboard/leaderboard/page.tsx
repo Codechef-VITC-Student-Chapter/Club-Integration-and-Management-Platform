@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useGetClubLeaderboardQuery } from "@/lib/redux";
 import { LeaderboardList, TopScore } from "@/components/app";
 import { useSession } from "next-auth/react";

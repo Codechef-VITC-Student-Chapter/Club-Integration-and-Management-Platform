@@ -156,7 +156,10 @@ function OTPPasswordStep({ regNumber }: { regNumber: string }) {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+    <form
+      onSubmit={form.handleSubmit(handleSubmit)}
+      className="space-y-4 h-full"
+    >
       <div className="space-y-1">
         <Label className="text-sm text-foreground font-medium">
           OTP (Check your email)
@@ -257,7 +260,7 @@ export default function ForgotPasswordPage() {
       </div>
       {/* Forgot Password Form Container */}
       <div className="min-h-screen flex items-center justify-center md:justify-end">
-        <div className="bg-card rounded-[40px] md:rounded-[67px] w-[90%] shadow-lg p-6 md:p-12 md:max-w-md md:w-[561px] md:h-[400px] mx-4 md:relative absolute md:bottom-auto flex flex-col justify-center border md:mr-16 px-8">
+        <div className="bg-card rounded-[40px] md:rounded-[67px] w-[90%] shadow-lg p-6 md:p-12 md:max-w-md md:w-[561px] md:h-fit mx-4 md:relative absolute md:bottom-auto flex flex-col justify-center border md:mr-16 px-8">
           <div className="w-full md:max-w-96 m-auto">
             {/* Logo */}
             <div className="flex justify-center mb-1 md:mb-2">
