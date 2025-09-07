@@ -13,20 +13,23 @@ import {
   TabsTrigger,
 } from "@/components/ui";
 import { Contribution, Status } from "@/types";
-import { Calendar, Search, Plus } from "lucide-react";
+import { Calendar, Search, Plus, FileText } from "lucide-react";
 import { useState } from "react";
 import { RequestDialog } from "@/components/app/requests";
+import Link from "next/link";
 
 export const PendingCompletedRequestsSection = ({
   requests,
   onStatusChange,
   isRequestPage = true,
   showAddPoints = false,
+  showNewRequest = false,
 }: {
   requests: Contribution[];
   onStatusChange?: (selectedRequest: Contribution, newStatus: string) => void;
   isRequestPage?: boolean;
   showAddPoints?: boolean;
+  showNewRequest?: boolean;
 }) => {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
@@ -88,6 +91,14 @@ export const PendingCompletedRequestsSection = ({
               <Plus className="h-4 w-4 mr-2" />
               Add Points
             </Button>
+          )}
+          {showNewRequest && (
+            <Link href={"/dashboard/contributions/new"}>
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                New Request
+              </Button>
+            </Link>
           )}
         </CardHeader>
 
@@ -184,8 +195,18 @@ export const PendingCompletedRequestsSection = ({
                 </Card>
               ))
             ) : (
-              <div className="flex justify-center w-full pt-8 text-gray-500">
-                <p>No contributions found...</p>
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+                <div>
+                  <p className="text-lg font-medium text-muted-foreground">
+                    No {isRequestPage ? "Requests" : "Contributions"} found
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {searchTerm || selectedStatus !== "all"
+                      ? "Try adjusting your search or filter criteria"
+                      : "No contribution requests have been submitted yet"}
+                  </p>
+                </div>
               </div>
             )}
           </div>

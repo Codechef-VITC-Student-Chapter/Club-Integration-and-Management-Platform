@@ -19,10 +19,19 @@ export default function IndividualMemberContributionsPage() {
   const params = useParams();
   const userId = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
-  const { data: userInfo, isLoading: isLoadingUser } = useGetUserInfoQuery(
-    userId || ""
+  const {
+    data: userInfo,
+    isLoading: isLoadingUser,
+    error: userError,
+  } = useGetUserInfoQuery(userId || "", {
+    skip: !userId,
+  });
+  const { data, isLoading, error } = useGetUserContributionsQuery(
+    userId || "",
+    {
+      skip: !userId,
+    }
   );
-  const { data, isLoading, error } = useGetUserContributionsQuery(userId || "");
 
   const contributions = useMemo(
     () =>
@@ -42,6 +51,30 @@ export default function IndividualMemberContributionsPage() {
       <SidebarWrapper pageTitle={`${memberName} Contributions`}>
         <div className="flex items-center justify-center h-64">
           <LoadingSpinner size="lg" />
+        </div>
+      </SidebarWrapper>
+    );
+  }
+
+  if (userError) {
+    if ("status" in userError && userError.status === 404) {
+      return (
+        <SidebarWrapper pageTitle="Member Not Found">
+          <div className="flex flex-col items-center justify-center h-64 text-center">
+            <FileText className="h-12 w-12 text-muted-foreground mb-4" />
+            <p className="text-lg font-medium text-muted-foreground">
+              Member not found.
+            </p>
+          </div>
+        </SidebarWrapper>
+      );
+    }
+    return (
+      <SidebarWrapper pageTitle="Error">
+        <div className="flex items-center justify-center h-64">
+          <p className="text-destructive">
+            Error loading member information. Please try again.
+          </p>
         </div>
       </SidebarWrapper>
     );

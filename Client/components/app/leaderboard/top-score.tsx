@@ -12,8 +12,12 @@ import {
 
 const getAvatarUrl = (firstname?: string, lastname?: string) => {
   if (!firstname && !lastname) return "";
-  const fullName = `${firstname || ""}+${lastname || ""}`.trim();
-  return `https://avatar.iran.liara.run/username?username=${fullName}`;
+  const fullName = `${firstname?.trim() || ""}+${
+    lastname?.trim() || ""
+  }`.trim();
+  return `https://avatar.iran.liara.run/username?username=${encodeURIComponent(
+    fullName
+  )}`;
 };
 
 const truncateName = (

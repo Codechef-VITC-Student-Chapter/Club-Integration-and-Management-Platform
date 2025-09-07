@@ -42,6 +42,7 @@ export default function ContributionsPage() {
             <PendingCompletedRequestsSection
               requests={contributions}
               isRequestPage={false}
+              showNewRequest={true}
             />
           </div>
         </div>

@@ -209,7 +209,11 @@ export default function DashboardPage() {
               }
               isLead={user?.is_lead || false}
               Regno={user?.reg_number || "N/A"}
-              avatarUrl={`https://avatar.iran.liara.run/username?username=${user?.first_name}+${user?.last_name}`}
+              avatarUrl={`https://avatar.iran.liara.run/username?username=${encodeURIComponent(
+                `${user?.first_name?.trim() || ""}+${
+                  user?.last_name?.trim() || ""
+                }`
+              )}`}
               kpis={[
                 {
                   title: "TOTAL POINTS",
