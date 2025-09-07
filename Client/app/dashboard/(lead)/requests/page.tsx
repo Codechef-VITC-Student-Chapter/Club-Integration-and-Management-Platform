@@ -119,14 +119,6 @@ const RequestsPage = () => {
                 {approvedRequests.length + rejectedRequests.length}
               </p>
             </div>
-            <div className="flex items-center space-x-4">
-              <Link href={`/requests/new`}>
-                <Button className="flex items-center space-x-2 cursor-pointer">
-                  <Plus size={20} />
-                  <span>New request</span>
-                </Button>
-              </Link>
-            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-4">

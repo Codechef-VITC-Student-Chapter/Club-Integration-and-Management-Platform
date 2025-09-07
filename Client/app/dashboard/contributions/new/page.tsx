@@ -41,6 +41,7 @@ import { useForm, SubmitHandler, useFieldArray } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { SidebarWrapper } from "@/components/layouts";
+import { normalizeUrl } from "@/lib/utils";
 
 type Lead = { user_id: string; name: string };
 
@@ -251,7 +252,14 @@ const RequestScreen = () => {
       title: data.title,
       points: finalPoints,
       description: data.description,
-      proof_files: data.links.map((link) => link.url.trim()).filter(Boolean),
+      proof_files: data.links
+        .map((link) => {
+          const url = link.url.trim();
+          if (!url) return "";
+          // Ensure URL is absolute using the utility function
+          return normalizeUrl(url);
+        })
+        .filter(Boolean),
       target: data.selectedLeads[0].user_id, // Primary lead
       sec_targets: data.selectedLeads.slice(1).map((lead) => lead.user_id),
       club_id: clubId,
@@ -534,16 +542,22 @@ const RequestScreen = () => {
 
               {/* Proof Links */}
               <div className="space-y-4">
-                <Label className="flex items-center gap-2">
-                  <Link className="h-4 w-4" />
-                  Proof Links
-                </Label>
+                <div>
+                  <Label className="flex items-center gap-2">
+                    <Link className="h-4 w-4" />
+                    Proof Links
+                  </Label>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Add links to your work proof (Google Drive, GitHub, etc.).
+                    Links will open in a new tab.
+                  </p>
+                </div>
 
                 <div className="space-y-2">
                   {linkFields.map((field, index) => (
                     <div key={field.id} className="flex gap-2">
                       <Input
-                        placeholder="https://drive.google.com/..."
+                        placeholder="https://drive.google.com/... or drive.google.com/..."
                         {...register(`links.${index}.url` as const)}
                         className="flex-1"
                       />

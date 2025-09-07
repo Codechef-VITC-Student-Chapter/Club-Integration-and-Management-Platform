@@ -6,7 +6,6 @@ export const departmentMap = {
   mands: "Marketing & Sponsorship",
   design: "Design",
   smandc: "Social Media & Content",
-  finance: "Finance",
 };
 
 export const club_id = "codechefvitc";
