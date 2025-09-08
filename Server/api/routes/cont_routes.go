@@ -246,7 +246,7 @@ func updateContributionStatus(c *gin.Context) {
 		updatePoints = -int(cont.Contribution.Points)
 	}
 
-	if updatePoints > 0 {
+	if updatePoints != 0 {
 		err = controllers.UpdateUserTotalPoints(cont.Contribution.UserID, updatePoints)
 		if err != nil {
 			controllers.UpdateContributionStatus(updateInfo.ContributionID, string(prevStatus), updateInfo.Reason)
