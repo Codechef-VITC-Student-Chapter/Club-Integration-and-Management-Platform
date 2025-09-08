@@ -26,10 +26,10 @@ var err error
 // Prod
 func SetUpEmailDialer() {
 	dialer = gomail.NewDialer(
-		"smtp-relay.brevo.com",           // Brevo SMTP server
-		587,                              // Port (use STARTTLS)
-		os.Getenv("BREVO_SMTP_LOGIN"),    // Your Brevo SMTP login
-		os.Getenv("BREVO_SMTP_PASSWORD"), // Store password/API key in env
+		os.Getenv("SMTP_HOST"),
+		587, // Port (use STARTTLS)
+		os.Getenv("SMTP_LOGIN"),
+		os.Getenv("SMTP_PASSWORD"),
 	)
 	smtpSender, err = dialer.Dial()
 	if err != nil {
