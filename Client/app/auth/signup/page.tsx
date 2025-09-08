@@ -3,7 +3,6 @@
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -14,29 +13,8 @@ import { User, Lock, Mail } from "lucide-react";
 import { LoadingSpinner } from "@/components/fallbacks";
 import { useSignupMutation } from "@/lib/redux/api";
 import { hashPassword } from "@/lib/auth";
+import { SignupFormData, signupSchema } from "@/lib/schemas";
 
-// Signup form validation schema
-const signupSchema = z
-  .object({
-    first_name: z
-      .string()
-      .min(1, "First name is required")
-      .max(50, "First name too long"),
-    last_name: z
-      .string()
-      .min(1, "Last name is required")
-      .max(50, "Last name too long"),
-    email: z.string().email("Invalid email address"),
-    reg_number: z.string().min(1, "Registration number is required"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-    confirmPassword: z.string().min(1, "Please confirm your password"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
-
-type SignupFormData = z.infer<typeof signupSchema>;
 export default function SignUpPage() {
   const router = useRouter();
 
