@@ -217,6 +217,8 @@ export const api = createApi({
       invalidatesTags: [
         { type: "Contribution", id: "LIST" },
         { type: "Contribution", id: "REQUESTS" },
+        { type: "User", id: "LIST" },
+        "User",
       ],
     }),
 

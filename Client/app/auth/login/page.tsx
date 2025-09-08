@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { User, Lock } from "lucide-react";
 import { LoadingScreen, LoadingSpinner } from "@/components/fallbacks";
 import { Button, Input, Label } from "@/components/ui";
-import { loginSchema, type LoginFormData } from "@/lib/schemas/auth";
+import { loginSchema, type LoginFormData } from "@/lib/schemas";
 
 function LoginPageContent() {
   const router = useRouter();
