@@ -7,9 +7,9 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-var dialer *gomail.Dialer
-var smtpSender gomail.SendCloser
-var err error
+// var dialer *gomail.Dialer
+// var smtpSender gomail.SendCloser
+// var err error
 
 // Dev
 // func SetUpEmailDialer() {
@@ -23,33 +23,58 @@ var err error
 // 	log.Printf("Email Dialer Set")
 // }
 
+// func SetUpEmailDialer() {
+// 	dialer = gomail.NewDialer(
+// 		os.Getenv("SMTP_HOST"),
+// 		587, // Port (use STARTTLS)
+// 		os.Getenv("SMTP_LOGIN"),
+// 		os.Getenv("SMTP_PASSWORD"),
+// 	)
+// 	smtpSender, err = dialer.Dial()
+// 	if err != nil {
+// 		log.Printf("Error setting up email dialer: %v", err)
+// 		return
+// 	}
+// 	log.Printf("Email Dialer Set")
+// }
+
+// func SendEmailFromClub(to string, subject string, body string) error {
+// 	m := gomail.NewMessage()
+
+// 	m.SetHeader("From", os.Getenv("CLUB_EMAIL"))
+// 	m.SetHeader("To", to)
+// 	m.SetHeader("Subject", subject)
+// 	m.SetBody("text/html", body)
+
+// 	if err := gomail.Send(smtpSender, m); err != nil {
+// 		log.Printf("Error sending email: %v", err)
+// 		return err
+// 	}
+// 	return nil
+// }
+
 // Prod
-func SetUpEmailDialer() {
-	dialer = gomail.NewDialer(
+func SendEmailFromClub(to string, subject string, body string) error {
+	// Create fresh dialer for each email
+	dialer := gomail.NewDialer(
 		os.Getenv("SMTP_HOST"),
-		587, // Port (use STARTTLS)
+		587,
 		os.Getenv("SMTP_LOGIN"),
 		os.Getenv("SMTP_PASSWORD"),
 	)
-	smtpSender, err = dialer.Dial()
-	if err != nil {
-		log.Printf("Error setting up email dialer: %v", err)
-		return
-	}
-	log.Printf("Email Dialer Set")
-}
 
-func SendEmailFromClub(to string, subject string, body string) error {
 	m := gomail.NewMessage()
-
 	m.SetHeader("From", os.Getenv("CLUB_EMAIL"))
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", body)
 
-	if err := gomail.Send(smtpSender, m); err != nil {
+	// Use DialAndSend - creates fresh connection and closes it automatically
+	if err := dialer.DialAndSend(m); err != nil {
 		log.Printf("Error sending email: %v", err)
 		return err
 	}
+
+	log.Printf("Email sent successfully to %s", to)
 	return nil
 }
