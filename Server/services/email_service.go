@@ -1,10 +1,9 @@
 package services
 
 import (
-	"log"
 	"os"
 
-	"gopkg.in/gomail.v2"
+	"github.com/resend/resend-go/v3"
 )
 
 // var dialer *gomail.Dialer
@@ -54,27 +53,44 @@ import (
 // }
 
 // Prod
+// func SendEmailFromClub(to string, subject string, body string) error {
+// 	// Create fresh dialer for each email
+// 	dialer := gomail.NewDialer(
+// 		os.Getenv("SMTP_HOST"),
+// 		587,
+// 		os.Getenv("SMTP_LOGIN"),
+// 		os.Getenv("SMTP_PASSWORD"),
+// 	)
+
+// 	m := gomail.NewMessage()
+// 	m.SetHeader("From", os.Getenv("CLUB_EMAIL"))
+// 	m.SetHeader("To", to)
+// 	m.SetHeader("Subject", subject)
+// 	m.SetBody("text/html", body)
+
+// 	// Use DialAndSend - creates fresh connection and closes it automatically
+// 	if err := dialer.DialAndSend(m); err != nil {
+// 		log.Printf("Error sending email: %v", err)
+// 		return err
+// 	}
+
+//		log.Printf("Email sent successfully to %s", to)
+//		return nil
+//	}
 func SendEmailFromClub(to string, subject string, body string) error {
-	// Create fresh dialer for each email
-	dialer := gomail.NewDialer(
-		os.Getenv("SMTP_HOST"),
-		587,
-		os.Getenv("SMTP_LOGIN"),
-		os.Getenv("SMTP_PASSWORD"),
-	)
+	client := resend.NewClient(os.Getenv("RESEND_API_KEY"))
 
-	m := gomail.NewMessage()
-	m.SetHeader("From", os.Getenv("CLUB_EMAIL"))
-	m.SetHeader("To", to)
-	m.SetHeader("Subject", subject)
-	m.SetBody("text/html", body)
+	params := &resend.SendEmailRequest{
+		From:    os.Getenv("CLUB_EMAIL"), // must be a verified domain/sender in Resend
+		To:      []string{to},
+		Subject: subject,
+		Html:    body,
+	}
 
-	// Use DialAndSend - creates fresh connection and closes it automatically
-	if err := dialer.DialAndSend(m); err != nil {
-		log.Printf("Error sending email: %v", err)
+	_, err := client.Emails.Send(params)
+	if err != nil {
 		return err
 	}
 
-	log.Printf("Email sent successfully to %s", to)
 	return nil
 }
