@@ -9,6 +9,7 @@ import {
 } from "@/components/app";
 import { useGetUserContributionsQuery } from "@/lib/redux";
 import { useSession } from "next-auth/react";
+import { FullContribution } from "@/types";
 
 export default function ContributionsPage() {
   const { data: session, status } = useSession();
@@ -24,11 +25,11 @@ export default function ContributionsPage() {
   }, [session, status]);
 
   const { data } = useGetUserContributionsQuery(userId);
-  const contributions =
-    data?.contributions?.map((row) => ({
-      ...row.contribution,
-      department: row.department_name,
-    })) || [];
+  // The backend now returns FullContribution objects directly
+  const fullContributions: FullContribution[] = data?.contributions || [];
+
+  // Extract contribution data for components that still expect Contribution[]
+  const contributions = fullContributions.map((fc) => fc.contribution);
 
   return (
     <SidebarWrapper pageTitle="Contributions">
@@ -40,7 +41,7 @@ export default function ContributionsPage() {
           </div>
           <div className="overflow-hidden relative h-full w-full">
             <PendingCompletedRequestsSection
-              requests={contributions}
+              requests={fullContributions}
               isRequestPage={false}
               showNewRequest={true}
             />

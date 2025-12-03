@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  Textarea,
 } from "@/components/ui";
 import {
   Calendar,
@@ -16,16 +17,17 @@ import {
   Building,
   FileText,
   ExternalLink,
+  AlertCircle,
 } from "lucide-react";
-import { Contribution, Status } from "@/types";
+import { Contribution, FullContribution, Status } from "@/types";
 import { normalizeUrl } from "@/lib/utils";
+import { useState } from "react";
 
-// Props type
 interface RequestDialogProps {
   isDialogOpen: boolean;
   setIsDialogOpen: (open: boolean) => void;
-  selectedRequest: Contribution | null;
-  handleStatusChange: (id: string, status: Status) => void;
+  selectedRequest: Contribution | FullContribution | null;
+  handleStatusChange: (id: string, status: Status, reason?: string) => void;
   getStatusColor: (status: string) => string;
   formatDate: (date: string) => string;
   isRequestPage?: boolean;
@@ -40,6 +42,47 @@ export const RequestDialog = ({
   formatDate,
   isRequestPage = true,
 }: RequestDialogProps) => {
+  const [showReasonInput, setShowReasonInput] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState("");
+
+  const getContribution = (
+    request: Contribution | FullContribution
+  ): Contribution =>
+    "contribution" in request ? request.contribution : request;
+
+  const getDepartmentName = (
+    request: Contribution | FullContribution
+  ): string =>
+    "department_name" in request ? request.department_name : request.department;
+
+  const getUserName = (request: Contribution | FullContribution): string =>
+    "user_name" in request ? request.user_name : request.user_id;
+
+  const handleReject = () => setShowReasonInput(true);
+
+  const handleStatusChangeAndClose = (status: Status) => {
+    if (selectedRequest) {
+      const contribution = getContribution(selectedRequest);
+      handleStatusChange(contribution.id, status);
+      setIsDialogOpen(false);
+    }
+  };
+
+  const confirmReject = () => {
+    if (selectedRequest && rejectionReason.trim()) {
+      const contribution = getContribution(selectedRequest);
+      handleStatusChange(contribution.id, "rejected", rejectionReason);
+      setShowReasonInput(false);
+      setRejectionReason("");
+      setIsDialogOpen(false);
+    }
+  };
+
+  const cancelReject = () => {
+    setShowReasonInput(false);
+    setRejectionReason("");
+  };
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -52,61 +95,72 @@ export const RequestDialog = ({
             </DialogHeader>
 
             <div className="space-y-6">
-              {/* Title and Status */}
+              {/* Title & Status */}
               <div className="flex justify-between items-start">
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-foreground mb-2">
-                    {selectedRequest.title}
+                  <h2 className="text-2xl font-semibold mb-2">
+                    {getContribution(selectedRequest).title}
                   </h2>
-                  <Badge className={getStatusColor(selectedRequest.status)}>
-                    {selectedRequest.status}
+                  <Badge
+                    className={getStatusColor(
+                      getContribution(selectedRequest).status
+                    )}
+                  >
+                    {getContribution(selectedRequest).status}
                   </Badge>
                 </div>
-                <Badge className="bg-accent text-accent-foreground text-lg px-3 py-1">
-                  {selectedRequest.points} pts
+                <Badge
+                  variant="outline"
+                  className="text-sm px-3 py-1 bg-primary text-white"
+                >
+                  {getContribution(selectedRequest).points} pts
                 </Badge>
               </div>
 
               {/* Basic Info */}
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 w-full">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div className="flex items-center space-x-2">
                   <User size={16} className="text-muted-foreground" />
                   {isRequestPage ? (
-                    <div>
+                    <span>
                       <span className="text-sm text-muted-foreground">
-                        Submitted by:{" "}
+                        Submitted by: <br />{" "}
                       </span>
                       <span className="font-medium">
-                        {selectedRequest.user_id}
+                        {getUserName(selectedRequest)}
                       </span>
-                    </div>
+                    </span>
                   ) : (
-                    <div>
+                    <span>
                       <span className="text-sm text-muted-foreground">
                         Lead:{" "}
                       </span>
                       <span className="font-medium">
-                        {selectedRequest.target}
+                        {getContribution(selectedRequest).target}
                       </span>
-                    </div>
+                    </span>
                   )}
                 </div>
-                <div className="flex items-center space-x-2">
+
+                <div className="flex items-center gap-2">
                   <Building size={16} className="text-muted-foreground" />
-                  <span className="text-sm text-muted-foreground">
-                    Department:
-                  </span>
-                  <span className="font-medium">
-                    {selectedRequest.department}
-                  </span>
+                  <div className="flex flex-col gap-1">
+                    <div className="text-sm text-muted-foreground">
+                      Department:
+                    </div>
+                    <div className="font-medium">
+                      {getDepartmentName(selectedRequest)}
+                    </div>
+                  </div>
                 </div>
+
                 <div className="flex items-center space-x-2">
                   <Calendar size={16} className="text-muted-foreground" />
                   <span className="text-sm text-muted-foreground">
-                    Created:
+                    Created At:{" "}
                   </span>
                   <span className="font-medium">
-                    {formatDate(selectedRequest.created_at)}
+                    {formatDate(getContribution(selectedRequest).created_at)}
                   </span>
                 </div>
               </div>
@@ -115,127 +169,145 @@ export const RequestDialog = ({
               <div>
                 <div className="flex items-center space-x-2 mb-2">
                   <FileText size={16} className="text-muted-foreground" />
-                  <span className="font-semibold text-foreground">
-                    Description
-                  </span>
+                  <span>Description</span>
                 </div>
-                <p className="text-foreground bg-muted p-3 rounded-md">
-                  {selectedRequest.description}
+                <p className="text-sm leading-relaxed bg-muted p-3 rounded-md font-semibold">
+                  {getContribution(selectedRequest).description}
                 </p>
               </div>
 
-              {/* Proof Files */}
-              {selectedRequest.proof_files &&
-                selectedRequest.proof_files.length > 0 && (
+              {/* Rejection Reason (Display) */}
+              {getContribution(selectedRequest).status === "rejected" &&
+                getContribution(selectedRequest).reason && (
                   <div>
                     <div className="flex items-center space-x-2 mb-2">
-                      <ExternalLink
-                        size={16}
-                        className="text-muted-foreground"
-                      />
-                      <span className="font-semibold text-foreground">
-                        Proof Files
+                      <AlertCircle size={16} className="text-destructive" />
+                      <span className="font-semibold text-destructive">
+                        Rejection Reason
                       </span>
                     </div>
-                    <div className="space-y-2">
-                      {selectedRequest.proof_files.map((file, idx) => {
-                        // Ensure the URL is absolute using the utility function
-                        const absoluteUrl = normalizeUrl(file);
+                    <p className="text-sm text-destructive bg-destructive/10 p-3 rounded-md border border-destructive/20">
+                      {getContribution(selectedRequest).reason}
+                    </p>
+                  </div>
+                )}
 
+              {/* Proof Files */}
+              {getContribution(selectedRequest).proof_files && (
+                <div>
+                  <div className="flex items-center space-x-2 mb-2">
+                    <ExternalLink size={16} className="text-muted-foreground" />
+                    <span className="font-semibold">Proof Files</span>
+                  </div>
+                  <div className="space-y-2">
+                    {getContribution(selectedRequest).proof_files!.map(
+                      (file, idx) => {
+                        const absoluteUrl = normalizeUrl(file);
                         return (
                           <a
                             key={idx}
                             href={absoluteUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center space-x-2 text-primary hover:text-primary/80 text-sm"
+                            className="flex items-center space-x-2 text-sm text-primary hover:underline"
                           >
                             <ExternalLink size={14} />
                             <span>Proof File {idx + 1}</span>
                           </a>
                         );
-                      })}
-                    </div>
+                      }
+                    )}
                   </div>
-                )}
+                </div>
+              )}
+
+              {/* Rejection Input */}
+              {showReasonInput && (
+                <div className="border-t border-border pt-4">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <AlertCircle size={16} className="text-destructive" />
+                    <span className="font-semibold text-destructive">
+                      Reason for Rejection
+                    </span>
+                  </div>
+                  <Textarea
+                    value={rejectionReason}
+                    onChange={(e) => setRejectionReason(e.target.value)}
+                    placeholder="Provide a reason..."
+                    className="min-h-[100px]"
+                  />
+                  <div className="flex justify-end gap-2 mt-3">
+                    <Button variant="outline" onClick={cancelReject}>
+                      Cancel
+                    </Button>
+                    <Button onClick={confirmReject} variant="destructive">
+                      Confirm Rejection
+                    </Button>
+                  </div>
+                </div>
+              )}
 
               {/* Action Buttons */}
-              {isRequestPage && (
-                <div className="flex justify-end space-x-3 pt-4 border-t border-border">
-                  {selectedRequest.status === "pending" && (
+              {isRequestPage && !showReasonInput && (
+                <div className="flex justify-end gap-2 pt-4 border-t border-border">
+                  {getContribution(selectedRequest).status === "pending" && (
                     <>
                       <Button
                         variant="outline"
-                        onClick={() =>
-                          handleStatusChange(selectedRequest.id, "rejected")
-                        }
-                        className="text-destructive border-destructive hover:bg-destructive/10"
+                        onClick={handleReject}
+                        className="bg-destructive text-white hover:bg-destructive"
                       >
                         <X size={16} className="mr-2" />
                         Reject
                       </Button>
                       <Button
-                        onClick={() =>
-                          handleStatusChange(selectedRequest.id, "approved")
-                        }
-                        className="bg-chart-4 hover:bg-chart-4/90 text-white"
+                        onClick={() => handleStatusChangeAndClose("approved")}
+                        className="bg-green-600"
                       >
                         <Check size={16} className="mr-2" />
                         Approve
                       </Button>
                     </>
-                  )}
-
-                  {selectedRequest.status === "approved" && (
+                  )}{" "}
+                  {getContribution(selectedRequest).status === "approved" && (
                     <>
                       <Button
                         variant="outline"
-                        onClick={() =>
-                          handleStatusChange(selectedRequest.id, "pending")
-                        }
-                        className="text-chart-5 border-chart-5 hover:bg-chart-5/10"
+                        onClick={() => handleStatusChangeAndClose("pending")}
+                        className="bg-accent"
                       >
                         Move to Pending
                       </Button>
                       <Button
                         variant="outline"
-                        onClick={() =>
-                          handleStatusChange(selectedRequest.id, "rejected")
-                        }
-                        className="text-destructive border-destructive hover:bg-destructive/10"
+                        onClick={handleReject}
+                        className="bg-destructive text-white hover:bg-destructive"
                       >
                         <X size={16} className="mr-2" />
                         Reject
                       </Button>
                     </>
                   )}
-
-                  {selectedRequest.status === "rejected" && (
+                  {getContribution(selectedRequest).status === "rejected" && (
                     <>
                       <Button
                         variant="outline"
-                        onClick={() =>
-                          handleStatusChange(selectedRequest.id, "pending")
-                        }
-                        className="text-chart-5 border-chart-5 hover:bg-chart-5/10"
+                        onClick={() => handleStatusChangeAndClose("pending")}
+                        className="bg-accent"
                       >
                         Move to Pending
                       </Button>
                       <Button
-                        onClick={() =>
-                          handleStatusChange(selectedRequest.id, "approved")
-                        }
-                        className="bg-chart-4 hover:bg-chart-4/90 text-white"
+                        onClick={() => handleStatusChangeAndClose("approved")}
+                        className="bg-green-600"
                       >
                         <Check size={16} className="mr-2" />
                         Approve
                       </Button>
                     </>
                   )}
-
                   <Button
-                    variant="outline"
-                    className="border border-transparent bg-secondary text-secondary-foreground shadow-xs hover:bg-primary hover:text-primary-foreground dark:hover:bg-primary/90 dark:hover:text-primary-foreground"
+                    variant="secondary"
                     onClick={() => setIsDialogOpen(false)}
                   >
                     Close

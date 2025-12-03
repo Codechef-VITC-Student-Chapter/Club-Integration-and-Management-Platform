@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"mime/multipart"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -41,12 +42,10 @@ func UserExist(id string) bool {
 	return count > 0
 }
 
-//Get Functions
-
+// Get Functions
 func GetUserByID(id string) (schemas.User, error) {
 	ctx, cancel := database.GetContext()
 	defer cancel()
-
 	var user schemas.User
 	err := UserColl.FindOne(ctx, bson.D{{"id", id}}).Decode(&user)
 	if err != nil {
@@ -102,11 +101,9 @@ func GetAllUserContributions(id string) ([]types.FullContribution, error) {
 		}(contID)
 	}
 
-	go func() {
-		wg.Wait()
-		close(contChan)
-		close(errChan)
-	}()
+	wg.Wait()
+	close(contChan)
+	close(errChan)
 
 	var contributions []types.FullContribution
 	for cont := range contChan {
@@ -118,6 +115,12 @@ func GetAllUserContributions(id string) ([]types.FullContribution, error) {
 		log.Printf("Error fetching Contribution :", err)
 		return []types.FullContribution{}, err
 	}
+
+	// Sort contributions by created_at in descending order (newest first)
+	sort.Slice(contributions, func(i, j int) bool {
+		return contributions[i].Contribution.CreatedAt.After(contributions[j].Contribution.CreatedAt)
+	})
+
 	return contributions, nil
 }
 
@@ -278,10 +281,9 @@ func UploadMemberHandles(file *multipart.FileHeader, lead_user_id string) error 
 			}
 		}(userID, handles)
 	}
-	go func() {
-		wg.Wait()
-		close(errChan)
-	}()
+
+	wg.Wait()
+	close(errChan)
 
 	var finalErr error
 	for err := range errChan {

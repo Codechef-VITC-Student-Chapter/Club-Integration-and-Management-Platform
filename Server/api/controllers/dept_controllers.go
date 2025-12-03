@@ -85,11 +85,9 @@ func GetDepartmentLeadsByID(id string) ([]types.LeadsInfo, error) {
 		}(leadUserID)
 	}
 
-	go func() {
-		wg.Wait()
-		close(leadChan)
-		close(errChan)
-	}()
+	wg.Wait()
+	close(leadChan)
+	close(errChan)
 
 	var leadsData []types.LeadsInfo
 	for lead := range leadChan {
