@@ -136,8 +136,9 @@ func GetContributionsWithTarget(id string) ([]types.FullContribution, error) {
 	defer cursor.Close(ctx)
 
 	var wg sync.WaitGroup
-	reqChan := make(chan types.FullContribution, 10)
-	errChan := make(chan error, 10)
+	var mu sync.Mutex
+	var requests []types.FullContribution
+	var firstErr error
 
 	for cursor.Next(ctx) {
 		var cont schemas.Contribution
@@ -190,25 +191,29 @@ func GetContributionsWithTarget(id string) ([]types.FullContribution, error) {
 
 			wg1.Wait()
 
-			if clubErr != nil {
-				errChan <- clubErr
-				return
-			}
-
-			if deptErr != nil {
-				errChan <- deptErr
-				return
-			}
-
-			if userErr != nil {
-				errChan <- userErr
+			if clubErr != nil || deptErr != nil || userErr != nil {
+				mu.Lock()
+				if firstErr == nil {
+					if clubErr != nil {
+						firstErr = clubErr
+					} else if deptErr != nil {
+						firstErr = deptErr
+					} else {
+						firstErr = userErr
+					}
+				}
+				mu.Unlock()
 				return
 			}
 
 			// Check for lead user errors
 			for _, leadErr := range leadUserErrors {
 				if leadErr != nil {
-					errChan <- leadErr
+					mu.Lock()
+					if firstErr == nil {
+						firstErr = leadErr
+					}
+					mu.Unlock()
 					return
 				}
 			}
@@ -219,38 +224,23 @@ func GetContributionsWithTarget(id string) ([]types.FullContribution, error) {
 				leadUserNames[i] = leadUser.FirstName + " " + leadUser.LastName
 			}
 
-			reqChan <- types.FullContribution{
+			mu.Lock()
+			requests = append(requests, types.FullContribution{
 				Contribution:   cont,
 				ClubName:       club.Name,
 				DepartmentName: dept.Name,
 				UserName:       user.FirstName + " " + user.LastName,
 				LeadUserNames:  leadUserNames,
-			}
+			})
+			mu.Unlock()
 		}(cont)
 	}
 
 	wg.Wait()
-	close(reqChan)
-	close(errChan)
-
-	// Drain error channel safely after close; avoid reading zero-value nil
-	var firstErr error
-	for err := range errChan {
-		if err != nil {
-			firstErr = err
-			break
-		}
-	}
 	if firstErr != nil {
 		log.Printf("Error fetching contributions with target: %v", firstErr)
 		return []types.FullContribution{}, fmt.Errorf("error fetching contributions with targets: %w", firstErr)
 	}
-
-	var requests []types.FullContribution
-	for req := range reqChan {
-		requests = append(requests, req)
-	}
-
 	return requests, nil
 }
 
