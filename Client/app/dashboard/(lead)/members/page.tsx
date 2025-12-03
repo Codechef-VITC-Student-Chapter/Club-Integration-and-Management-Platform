@@ -126,30 +126,15 @@ const MembersPage = () => {
     };
   }, [members]);
 
-  // Prepare pie chart data for individual member points
+  // Prepare pie chart data for all individual member points
   const memberPointsData = useMemo(() => {
-    // Get top 8 members by points, group the rest as "Others"
     const sortedMembers = [...members].sort((a, b) => b.points - a.points);
-    const topMembers = sortedMembers.slice(0, 8);
-    const otherMembers = sortedMembers.slice(8);
 
-    const pieData = topMembers.map((member, index) => ({
+    return sortedMembers.map((member, index) => ({
       name: member.name,
       points: member.points,
       fill: `var(--chart-${(index % 6) + 1})`,
     }));
-
-    // Add "Others" category if there are more than 8 members
-    if (otherMembers.length > 0) {
-      const othersPoints = otherMembers.reduce((sum, m) => sum + m.points, 0);
-      pieData.push({
-        name: `Others (${otherMembers.length})`,
-        points: othersPoints,
-        fill: "var(--chart-6)",
-      });
-    }
-
-    return pieData;
   }, [members]);
 
   const filteredMembers = useMemo(() => {

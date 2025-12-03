@@ -67,4 +67,6 @@ export interface FullContribution {
   contribution: Contribution;
   club_name: string;
   department_name: string;
+  user_name: string; // Submitted user name
+  lead_user_names: string[]; // Array of all lead user names (target + secTargets)
 }

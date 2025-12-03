@@ -5,6 +5,7 @@ import {
   Button,
   Card,
   CardContent,
+  CardFooter,
   CardHeader,
   CardTitle,
   Input,
@@ -12,7 +13,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui";
-import { Contribution, Status } from "@/types";
+import { Contribution, Status, FullContribution } from "@/types";
 import { Calendar, Search, Plus, FileText } from "lucide-react";
 import { useState } from "react";
 import { RequestDialog } from "@/components/app/requests";
@@ -25,8 +26,8 @@ export const PendingCompletedRequestsSection = ({
   showAddPoints = false,
   showNewRequest = false,
 }: {
-  requests: Contribution[];
-  onStatusChange?: (selectedRequest: Contribution, newStatus: string) => void;
+  requests: (Contribution | FullContribution)[];
+  onStatusChange?: (id: string, newStatus: string, reason?: string) => void;
   isRequestPage?: boolean;
   showAddPoints?: boolean;
   showNewRequest?: boolean;
@@ -34,9 +35,38 @@ export const PendingCompletedRequestsSection = ({
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedRequest, setSelectedRequest] = useState<Contribution | null>(
-    null
-  );
+  const [selectedRequest, setSelectedRequest] = useState<
+    Contribution | FullContribution | null
+  >(null);
+
+  // Helper functions to normalize data access
+  const getContribution = (
+    request: Contribution | FullContribution
+  ): Contribution => {
+    return "contribution" in request ? request.contribution : request;
+  };
+
+  const getDepartmentName = (
+    request: Contribution | FullContribution
+  ): string => {
+    return "department_name" in request
+      ? request.department_name
+      : request.department;
+  };
+
+  const getUserName = (request: Contribution | FullContribution): string => {
+    return "user_name" in request ? request.user_name : request.user_id;
+  };
+
+  const getLeadUserNames = (
+    request: Contribution | FullContribution
+  ): string[] => {
+    if ("lead_user_names" in request) {
+      return request.lead_user_names;
+    }
+    // Fallback for Contribution type - return target as single lead
+    return [getContribution(request).target];
+  };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -60,25 +90,42 @@ export const PendingCompletedRequestsSection = ({
   };
 
   const filteredRequests = requests.filter((request) => {
+    const contribution = getContribution(request);
     const matchesStatus =
       selectedStatus === "all" ||
-      request.status?.toLowerCase() === selectedStatus.toLowerCase();
+      contribution.status?.toLowerCase() === selectedStatus.toLowerCase();
 
     const matchesSearch =
-      request.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.department.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.user_id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.points.toString().includes(searchTerm.toLowerCase());
+      contribution.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contribution.description
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      getDepartmentName(request)
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      contribution.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      getUserName(request).toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contribution.points.toString().includes(searchTerm.toLowerCase());
 
     return matchesStatus && matchesSearch;
   });
 
-  const handleStatusChange = async (id: string, newStatus: Status) => {
-    if (!selectedRequest) return;
-    setSelectedRequest({ ...selectedRequest, status: newStatus });
-    if (onStatusChange) onStatusChange(selectedRequest, newStatus);
+  const handleStatusChange = async (
+    id: string,
+    newStatus: Status,
+    reason?: string
+  ) => {
+    if (onStatusChange) {
+      await onStatusChange(id, newStatus, reason);
+    }
+  };
+
+  const handleDialogClose = (open: boolean) => {
+    setIsDialogOpen(open);
+    if (!open) {
+      // Reset selected request when dialog closes
+      setSelectedRequest(null);
+    }
   };
 
   return (
@@ -132,68 +179,86 @@ export const PendingCompletedRequestsSection = ({
           {/* Contributions List */}
           <div className="space-y-4 overflow-auto h-full">
             {filteredRequests.length > 0 ? (
-              filteredRequests.map((request) => (
-                <Card
-                  key={request.id}
-                  className="border border-gray-200 hover:bg-gray-50 cursor-pointer"
-                  onClick={() => {
-                    setSelectedRequest(request);
-                    setIsDialogOpen(true);
-                  }}
-                >
-                  <CardContent className="p-4">
-                    <div className="flex justify-between">
-                      <div className="flex-1 w-full">
-                        <div className="flex gap-4 items-start justify-between">
-                          <div className="flex flex-col">
-                            <h3 className="font-semibold text-gray-900 mb-1 flex gap-4">
-                              {request.title.length < 30
-                                ? request.title
-                                : request.title.substring(0, 30) + "..."}
-                              <Badge className="bg-gray-200 text-gray-800 m-0">
-                                {request.department}
-                              </Badge>
-                            </h3>
-                            <p className="text-gray-600 text-sm mb-2">
-                              {request.description.length < 30
-                                ? request.description
-                                : request.description.substring(0, 30) + "..."}
-                            </p>
-                          </div>
-                        </div>
+              filteredRequests.map((request) => {
+                const contribution = getContribution(request);
+                const leadNames = getLeadUserNames(request);
 
-                        <div className="flex items-start justify-between space-x-4 text-sm">
-                          {isRequestPage ? (
-                            <span className="text-gray-700">
-                              {request.user_id}
-                            </span>
-                          ) : (
-                            <span className="text-gray-700">
-                              <span className="font-bold">Lead: </span>
-                              {request.target}
-                            </span>
-                          )}
-                          <div className="flex items-center space-x-2">
-                            <Calendar size={14} className="text-gray-400" />
-                            <span className="text-gray-600">
-                              {formatDate(request.created_at)}
-                            </span>
+                return (
+                  <Card
+                    key={contribution.id}
+                    className="border border-gray-200 hover:bg-gray-50 cursor-pointer"
+                    onClick={() => {
+                      setSelectedRequest(request);
+                      setIsDialogOpen(true);
+                    }}
+                  >
+                    <CardHeader>
+                      <CardTitle className="flex items-start justify-between gap-2 flex-wrap">
+                        <div className="flex items-center gap-2 text-lg">
+                          {contribution.title.length < 30
+                            ? contribution.title
+                            : contribution.title.substring(0, 30) + "..."}
+                        </div>
+                        <Badge className="bg-gray-200 text-gray-800">
+                          {getDepartmentName(request)}
+                        </Badge>
+                        <div className="flex items-center space-x-2">
+                          <Calendar size={14} className="text-gray-400" />
+                          <span className="text-gray-600">
+                            {formatDate(contribution.created_at)}
+                          </span>
+                        </div>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardFooter className="px-6 pb-4 flex items-center justify-between gap-2 text-sm flex-wrap">
+                      <div className="flex w-full justify-between flex-wrap">
+                        {isRequestPage && (
+                          <span className="text-gray-700">
+                            <span className="font-bold">Submitted by: </span>
+                            {getUserName(request)}
+                          </span>
+                        )}
+
+                        {leadNames.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            <span className="text-gray-600">Leads: </span>
+                            {leadNames.slice(0, 2).map((leadName, index) => (
+                              <Badge
+                                key={index}
+                                variant="outline"
+                                className="text-xs bg-blue-50 text-blue-700 border-blue-200"
+                              >
+                                {leadName}
+                              </Badge>
+                            ))}
+                            {leadNames.length > 2 && (
+                              <Badge
+                                variant="outline"
+                                className="text-xs bg-gray-50 text-gray-600"
+                              >
+                                +{leadNames.length - 2} more
+                              </Badge>
+                            )}
                           </div>
-                          <Badge className={getStatusColor(request.status)}>
-                            {request.status}
+                        )}
+                        <div className="flex gap-2">
+                          <Badge
+                            className={getStatusColor(contribution.status)}
+                          >
+                            {contribution.status}
                           </Badge>
                           <Badge
                             variant="outline"
                             className="bg-orange-50 text-orange-700"
                           >
-                            {request.points} pts
+                            {contribution.points} pts
                           </Badge>
                         </div>
                       </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
+                    </CardFooter>
+                  </Card>
+                );
+              })
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <FileText className="h-12 w-12 text-muted-foreground mb-4" />
@@ -215,7 +280,7 @@ export const PendingCompletedRequestsSection = ({
         {/* Request Details Dialog */}
         <RequestDialog
           isDialogOpen={isDialogOpen}
-          setIsDialogOpen={setIsDialogOpen}
+          setIsDialogOpen={handleDialogClose}
           selectedRequest={selectedRequest}
           handleStatusChange={handleStatusChange}
           getStatusColor={getStatusColor}

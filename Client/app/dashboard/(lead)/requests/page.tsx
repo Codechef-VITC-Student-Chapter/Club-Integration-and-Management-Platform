@@ -2,17 +2,20 @@
 
 import React, { useEffect, useState } from "react";
 import { SidebarWrapper } from "@/components/layouts";
-import { Plus, FileText, AlertTriangle } from "lucide-react";
+import { FileText, AlertTriangle } from "lucide-react";
 import { useSession } from "next-auth/react";
 import {
   useGetLeadUserRequestsQuery,
   useUpdateContributionStatusMutation,
 } from "@/lib/redux";
-import { Button } from "@/components/ui";
-import { Contribution, ContributionStatusInfo } from "@/types";
+import {
+  Contribution,
+  ContributionStatusInfo,
+  FullContribution,
+} from "@/types";
 import { PendingCompletedRequestsSection } from "@/components/app";
 import { LoadingSpinner } from "@/components/fallbacks";
-import Link from "next/link";
+import { toast } from "sonner";
 
 const RequestsPage = () => {
   const { data: session, status } = useSession();
@@ -25,34 +28,43 @@ const RequestsPage = () => {
     setUserId(session?.user.id);
   }, [session, status]);
 
-  const { data, isLoading, error } = useGetLeadUserRequestsQuery(userId, {
-    skip: !userId,
-  });
-  const requests: Contribution[] =
-    data?.requests?.map((row) => ({
-      ...row.contribution,
-      department: row.department_name,
-    })) || [];
+  const { data, isLoading, error, refetch } = useGetLeadUserRequestsQuery(
+    userId,
+    {
+      skip: !userId,
+    }
+  );
+
+  // The backend now returns FullContribution objects directly
+  const requests: FullContribution[] = data?.requests || [];
+
+  const getContribution = (fullContrib: FullContribution): Contribution =>
+    fullContrib.contribution;
 
   const pendingRequests = requests.filter(
-    (request) => request.status === "pending"
+    (request) => getContribution(request).status === "pending"
   );
   const approvedRequests = requests.filter(
-    (request) => request.status === "approved"
+    (request) => getContribution(request).status === "approved"
   );
   const rejectedRequests = requests.filter(
-    (request) => request.status === "rejected"
+    (request) => getContribution(request).status === "rejected"
   );
 
   const onStatusChange = async (
-    selectedRequest: Contribution,
-    newStatus: string
+    id: string,
+    newStatus: string,
+    reason?: string
   ) => {
+    if (!session || !session.user.id) {
+      toast.error("No User found login again");
+      return;
+    }
     const req: ContributionStatusInfo = {
-      cont_id: selectedRequest?.id ?? "",
-      lead_user_id: session?.user.id ?? "",
+      cont_id: id,
+      lead_user_id: session.user.id,
       status: newStatus,
-      reason: "",
+      reason: reason || "",
     };
     await updateStatus(req);
   };
