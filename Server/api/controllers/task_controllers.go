@@ -43,18 +43,18 @@ func GetTaskByID(id string) (types.FullTask, error) {
 	var user schemas.User
 	var clubErr, deptErr, userErr error
 
-	go func() {
+	go func(clubID string) {
 		defer wg.Done()
-		club, clubErr = GetClubByID(task.ClubID)
-	}()
-	go func() {
+		club, clubErr = GetClubByID(clubID)
+	}(task.ClubID)
+	go func(deptID string) {
 		defer wg.Done()
-		dept, deptErr = GetDepartmentByID(task.DepartmentID)
-	}()
-	go func() {
+		dept, deptErr = GetDepartmentByID(deptID)
+	}(task.DepartmentID)
+	go func(userID string) {
 		defer wg.Done()
-		user, userErr = GetUserByID(task.CreatedBy)
-	}()
+		user, userErr = GetUserByID(userID)
+	}(task.CreatedBy)
 
 	wg.Wait()
 
@@ -104,18 +104,18 @@ func GetAllTasksByClubID(clubID string) ([]types.FullTask, error) {
 		var user schemas.User
 		var clubErr, deptErr, userErr error
 
-		go func() {
+		go func(clubID string) {
 			defer wg.Done()
-			club, clubErr = GetClubByID(task.ClubID)
-		}()
-		go func() {
+			club, clubErr = GetClubByID(clubID)
+		}(task.ClubID)
+		go func(deptID string) {
 			defer wg.Done()
-			dept, deptErr = GetDepartmentByID(task.DepartmentID)
-		}()
-		go func() {
+			dept, deptErr = GetDepartmentByID(deptID)
+		}(task.DepartmentID)
+		go func(userID string) {
 			defer wg.Done()
-			user, userErr = GetUserByID(task.CreatedBy)
-		}()
+			user, userErr = GetUserByID(userID)
+		}(task.CreatedBy)
 
 		wg.Wait()
 
@@ -168,18 +168,18 @@ func GetAllTasksByDepartmentID(deptID string) ([]types.FullTask, error) {
 		var user schemas.User
 		var clubErr, deptErr, userErr error
 
-		go func() {
+		go func(clubID string) {
 			defer wg.Done()
-			club, clubErr = GetClubByID(task.ClubID)
-		}()
-		go func() {
+			club, clubErr = GetClubByID(clubID)
+		}(task.ClubID)
+		go func(deptID string) {
 			defer wg.Done()
-			dept, deptErr = GetDepartmentByID(task.DepartmentID)
-		}()
-		go func() {
+			dept, deptErr = GetDepartmentByID(deptID)
+		}(task.DepartmentID)
+		go func(userID string) {
 			defer wg.Done()
-			user, userErr = GetUserByID(task.CreatedBy)
-		}()
+			user, userErr = GetUserByID(userID)
+		}(task.CreatedBy)
 
 		wg.Wait()
 

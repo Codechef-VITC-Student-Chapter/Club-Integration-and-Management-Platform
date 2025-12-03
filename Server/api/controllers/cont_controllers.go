@@ -12,6 +12,7 @@ import (
 	"github.com/Sasank-V/CIMP-Golang-Backend/lib"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 var ContColl *mongo.Collection
@@ -31,42 +32,85 @@ func GetContributionByID(id string) (types.FullContribution, error) {
 	ctx, cancel := database.GetContext()
 	defer cancel()
 	var cont schemas.Contribution
-	err := ContColl.FindOne(ctx, bson.D{{"id", id}}).Decode(&cont)
+	err := ContColl.FindOne(ctx, bson.M{"id": id}).Decode(&cont)
 	if err != nil {
 		log.Printf("error getting contribution data: %v", err)
 		return types.FullContribution{}, err
 	}
 
+	// Collect all lead user IDs (target + secTargets)
+	leadUserIDs := []string{cont.Target}
+	leadUserIDs = append(leadUserIDs, cont.SecTargets...)
+
 	var wg sync.WaitGroup
-	wg.Add(2)
+	wg.Add(3 + len(leadUserIDs)) // club, dept, user + all lead users
 
 	var club schemas.Club
 	var dept schemas.Department
-	var clubErr, deptErr error
+	var user schemas.User
+	var clubErr, deptErr, userErr error
 
-	go func() {
-		club, clubErr = GetClubByID(cont.ClubID)
+	// Fetch club, department, and submitted user
+	go func(clubID string) {
 		defer wg.Done()
-	}()
+		club, clubErr = GetClubByID(clubID)
+	}(cont.ClubID)
 
-	go func() {
-		dept, deptErr = GetDepartmentByID(cont.Department)
+	go func(deptID string) {
 		defer wg.Done()
-	}()
+		dept, deptErr = GetDepartmentByID(deptID)
+	}(cont.Department)
+
+	go func(userID string) {
+		defer wg.Done()
+		user, userErr = GetUserByID(userID)
+		if userErr != nil {
+			log.Print("User error here 2", cont.UserID)
+		}
+	}(cont.UserID)
+
+	// Fetch all lead users
+	leadUsers := make([]schemas.User, len(leadUserIDs))
+	leadUserErrors := make([]error, len(leadUserIDs))
+
+	for i, leadUserID := range leadUserIDs {
+		go func(index int, userID string) {
+			defer wg.Done()
+			leadUsers[index], leadUserErrors[index] = GetUserByID(userID)
+		}(i, leadUserID)
+	}
 
 	wg.Wait()
 
 	if clubErr != nil {
-		return types.FullContribution{}, err
+		return types.FullContribution{}, clubErr
 	}
 	if deptErr != nil {
-		return types.FullContribution{}, err
+		return types.FullContribution{}, deptErr
+	}
+	if userErr != nil {
+		return types.FullContribution{}, userErr
+	}
+
+	// Check for lead user errors
+	for _, leadErr := range leadUserErrors {
+		if leadErr != nil {
+			return types.FullContribution{}, leadErr
+		}
+	}
+
+	// Build lead user names array
+	leadUserNames := make([]string, len(leadUsers))
+	for i, leadUser := range leadUsers {
+		leadUserNames[i] = leadUser.FirstName + " " + leadUser.LastName
 	}
 
 	return types.FullContribution{
 		Contribution:   cont,
 		ClubName:       club.Name,
 		DepartmentName: dept.Name,
+		UserName:       user.FirstName + " " + user.LastName,
+		LeadUserNames:  leadUserNames,
 	}, nil
 }
 
@@ -74,14 +118,17 @@ func GetContributionsWithTarget(id string) ([]types.FullContribution, error) {
 	ctx, cancel := database.GetContext()
 	defer cancel()
 
-	filter := bson.D{
-		{"$or", bson.A{
-			bson.D{{"target", id}},
-			bson.D{{"secTargets", bson.M{"$in": bson.A{id}}}},
-		}},
+	filter := bson.M{
+		"$or": []bson.M{
+			{"target": id},
+			{"secTargets": bson.M{"$in": []string{id}}},
+		},
 	}
 
-	cursor, err := ContColl.Find(ctx, filter)
+	// Add sorting by created_at in descending order (newest first)
+	opts := options.Find().SetSort(bson.D{{Key: "created_at", Value: -1}})
+
+	cursor, err := ContColl.Find(ctx, filter, opts)
 	if err != nil {
 		log.Printf("error getting lead requests: %v", err)
 		return []types.FullContribution{}, err
@@ -101,22 +148,45 @@ func GetContributionsWithTarget(id string) ([]types.FullContribution, error) {
 		wg.Add(1)
 		go func(cont schemas.Contribution) {
 			defer wg.Done()
+
+			// Collect all lead user IDs (target + secTargets)
+			leadUserIDs := []string{cont.Target}
+			leadUserIDs = append(leadUserIDs, cont.SecTargets...)
+
 			var wg1 sync.WaitGroup
-			wg1.Add(2)
+			wg1.Add(3 + len(leadUserIDs)) // club, dept, user + all lead users
 
 			var club schemas.Club
 			var dept schemas.Department
-			var clubErr, deptErr error
+			var user schemas.User
+			var clubErr, deptErr, userErr error
 
-			go func() {
+			// Fetch club, department, and submitted user
+			go func(clubID string) {
 				defer wg1.Done()
-				club, clubErr = GetClubByID(cont.ClubID)
-			}()
+				club, clubErr = GetClubByID(clubID)
+			}(cont.ClubID)
 
-			go func() {
+			go func(deptID string) {
 				defer wg1.Done()
-				dept, deptErr = GetDepartmentByID(cont.Department)
-			}()
+				dept, deptErr = GetDepartmentByID(deptID)
+			}(cont.Department)
+
+			go func(userID string) {
+				defer wg1.Done()
+				user, userErr = GetUserByID(userID)
+			}(cont.UserID)
+
+			// Fetch all lead users
+			leadUsers := make([]schemas.User, len(leadUserIDs))
+			leadUserErrors := make([]error, len(leadUserIDs))
+
+			for i, leadUserID := range leadUserIDs {
+				go func(index int, userID string) {
+					defer wg1.Done()
+					leadUsers[index], leadUserErrors[index] = GetUserByID(userID)
+				}(i, leadUserID)
+			}
 
 			wg1.Wait()
 
@@ -130,26 +200,50 @@ func GetContributionsWithTarget(id string) ([]types.FullContribution, error) {
 				return
 			}
 
+			if userErr != nil {
+				errChan <- userErr
+				return
+			}
+
+			// Check for lead user errors
+			for _, leadErr := range leadUserErrors {
+				if leadErr != nil {
+					errChan <- leadErr
+					return
+				}
+			}
+
+			// Build lead user names array
+			leadUserNames := make([]string, len(leadUsers))
+			for i, leadUser := range leadUsers {
+				leadUserNames[i] = leadUser.FirstName + " " + leadUser.LastName
+			}
+
 			reqChan <- types.FullContribution{
 				Contribution:   cont,
 				ClubName:       club.Name,
 				DepartmentName: dept.Name,
+				UserName:       user.FirstName + " " + user.LastName,
+				LeadUserNames:  leadUserNames,
 			}
-
 		}(cont)
 	}
 
-	go func() {
-		wg.Wait()
-		close(reqChan)
-		close(errChan)
-	}()
+	wg.Wait()
+	close(reqChan)
+	close(errChan)
 
-	select {
-	case err := <-errChan:
-		log.Printf("Error fetching contributions with target: %v", err)
-		return []types.FullContribution{}, fmt.Errorf("error fetching contributions with targets: %w", err)
-	default:
+	// Drain error channel safely after close; avoid reading zero-value nil
+	var firstErr error
+	for err := range errChan {
+		if err != nil {
+			firstErr = err
+			break
+		}
+	}
+	if firstErr != nil {
+		log.Printf("Error fetching contributions with target: %v", firstErr)
+		return []types.FullContribution{}, fmt.Errorf("error fetching contributions with targets: %w", firstErr)
 	}
 
 	var requests []types.FullContribution
@@ -172,7 +266,7 @@ func AddContribution(cont schemas.Contribution) (string, error) {
 		return "", err
 	}
 	var newCont schemas.Contribution
-	err = ContColl.FindOne(ctx, bson.D{{"_id", res.InsertedID}}).Decode(&newCont)
+	err = ContColl.FindOne(ctx, bson.M{"_id": res.InsertedID}).Decode(&newCont)
 	if err != nil {
 		log.Printf("Error fetching the newly added contribution: %v", err)
 		return "", err

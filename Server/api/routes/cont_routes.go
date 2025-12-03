@@ -207,12 +207,27 @@ func updateContributionStatus(c *gin.Context) {
 		return
 	}
 
-	if cont.Contribution.Target != updateInfo.LeadUserID && !slices.Contains(cont.Contribution.SecTargets, updateInfo.LeadUserID) {
+	dept, err := controllers.GetDepartmentByID(cont.Contribution.Department)
+	if !slices.Contains(dept.Leads, updateInfo.LeadUserID) {
 		c.JSON(http.StatusUnauthorized, types.MessageResponse{
-			Message: "You are not the Targeted Lead",
+			Message: "You are not the lead of this departement",
 		})
 		return
 	}
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.MessageResponse{
+			Message: "Error fetching department lead details",
+		})
+		return
+	}
+
+	// if cont.Contribution.Target != updateInfo.LeadUserID && !slices.Contains(cont.Contribution.SecTargets, updateInfo.LeadUserID) {
+	// 	c.JSON(http.StatusUnauthorized, types.MessageResponse{
+	// 		Message: "You are not the Targeted Lead",
+	// 	})
+	// 	return
+	// }
 
 	if cont.Contribution.Status == schemas.Status(updateInfo.Status) {
 		c.JSON(http.StatusBadRequest, types.MessageResponse{
@@ -222,7 +237,7 @@ func updateContributionStatus(c *gin.Context) {
 	}
 
 	var prevStatus = cont.Contribution.Status
-	err := controllers.UpdateContributionStatus(updateInfo.ContributionID, updateInfo.Status, updateInfo.Reason)
+	err = controllers.UpdateContributionStatus(updateInfo.ContributionID, updateInfo.Status, updateInfo.Reason)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			c.JSON(http.StatusNotFound, types.MessageResponse{

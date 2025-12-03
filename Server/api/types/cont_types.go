@@ -6,6 +6,8 @@ type FullContribution struct {
 	Contribution   schemas.Contribution `json:"contribution"`
 	ClubName       string               `json:"club_name"`
 	DepartmentName string               `json:"department_name"`
+	UserName       string               `json:"user_name"`       // Submitted user name
+	LeadUserNames  []string             `json:"lead_user_names"` // Array of all lead user names (target + secTargets)
 }
 
 type ContributionUpdateInfo struct {
