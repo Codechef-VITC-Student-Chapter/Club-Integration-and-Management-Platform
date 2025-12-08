@@ -69,7 +69,6 @@ func GetDepartmentLeadsByID(id string) ([]types.LeadsInfo, error) {
 	if len(dept.Leads) == 0 {
 		return []types.LeadsInfo{}, nil
 	}
-
 	var leadChan = make(chan types.LeadsInfo, len(dept.Leads))
 	var errChan = make(chan error, len(dept.Leads))
 	var wg sync.WaitGroup
