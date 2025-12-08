@@ -65,6 +65,10 @@ func GetDepartmentLeadsByID(id string) ([]types.LeadsInfo, error) {
 		return []types.LeadsInfo{}, err
 	}
 
+	// If no leads, return empty array
+	if len(dept.Leads) == 0 {
+		return []types.LeadsInfo{}, nil
+	}
 	var leadChan = make(chan types.LeadsInfo, len(dept.Leads))
 	var errChan = make(chan error, len(dept.Leads))
 	var wg sync.WaitGroup
@@ -94,9 +98,13 @@ func GetDepartmentLeadsByID(id string) ([]types.LeadsInfo, error) {
 		leadsData = append(leadsData, lead)
 	}
 
+	// Check for errors after collecting successful results
 	if len(errChan) > 0 {
 		err := <-errChan
 		log.Printf("error fetching lead user data: %v", err)
+		if len(leadsData) > 0 {
+			return leadsData, nil
+		}
 		return []types.LeadsInfo{}, err
 	}
 	return leadsData, nil
