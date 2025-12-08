@@ -74,10 +74,14 @@ const RequestScreen = () => {
     useGetClubInfoQuery(clubId);
   const { data: departmentsData, isLoading: isDepartmentsLoading } =
     useGetAllClubDepartmentsQuery(clubId);
-  const { data: leadsData, isLoading: isLeadsLoading } =
-    useGetDepartmentLeadsQuery(selectedDepartmentId, {
-      skip: !selectedDepartmentId,
-    });
+  const {
+    data: leadsData,
+    isLoading: isLeadsLoading,
+    isError: isLeadsError,
+    error: leadsError,
+  } = useGetDepartmentLeadsQuery(selectedDepartmentId, {
+    skip: !selectedDepartmentId,
+  });
   const { data: tasksData, isLoading: isTasksLoading } =
     useGetTasksByDepartmentIDQuery(selectedDepartmentId, {
       skip: !selectedDepartmentId,
@@ -119,14 +123,17 @@ const RequestScreen = () => {
 
   // Update available leads when department or leads data changes
   useEffect(() => {
-    if (leadsData?.leads) {
-      const filteredLeads = leadsData.leads.filter(
+    if (leadsData) {
+      const leads = leadsData.leads || [];
+      const filteredLeads = leads.filter(
         (lead) =>
           !selectedLeads.some((selected) => selected.user_id === lead.user_id)
       );
       setAvailableLeads(filteredLeads);
+    } else {
+      setAvailableLeads([]);
     }
-  }, [leadsData?.leads, selectedLeads]);
+  }, [leadsData, selectedLeads]);
 
   const addLead = () => {
     if (!selectedLead) {
@@ -360,6 +367,14 @@ const RequestScreen = () => {
                         {isLeadsLoading ? (
                           <SelectItem value="loading" disabled>
                             Loading leads...
+                          </SelectItem>
+                        ) : isLeadsError ? (
+                          <SelectItem value="error" disabled>
+                            Error loading leads
+                          </SelectItem>
+                        ) : availableLeads.length === 0 ? (
+                          <SelectItem value="empty" disabled>
+                            No leads available
                           </SelectItem>
                         ) : (
                           availableLeads.map((lead) => (
