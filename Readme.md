@@ -1,4 +1,4 @@
-Club Integration and Management Platform
+# Club Integration and Management Platform
 
 Overview
 - Full‑stack monorepo for a club management platform.
