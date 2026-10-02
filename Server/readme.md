@@ -81,8 +81,8 @@ CIMP-Golang-Backend/
   )
 
   func SetupAuthRoutes(r *gin.RouterGroup) {
-	r.POST("/signup", signupHandler)
 	r.POST("/login", loginHandler)
+	r.POST("/login/verify-otp", verifyLoginOTPHandler)
 	r.GET("/send/otp/:reg", sendOTPHandler)
 	r.PATCH("/set/pass", setNewPasswordHandler)
     }
@@ -190,4 +190,3 @@ air
 
 ## 📬 Contact & Contribution
 If you're part of the **CodeChef VIT-Chennai Chapter**, feel free to contribute! Follow the best practices mentioned here and keep the codebase clean. Happy coding! 🚀
-

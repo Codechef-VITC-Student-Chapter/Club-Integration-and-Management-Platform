@@ -6,13 +6,12 @@ import { useEffect, useState, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { User, Lock } from "lucide-react";
 import { LoadingScreen, LoadingSpinner } from "@/components/fallbacks";
 import { Button, Input, Label } from "@/components/ui";
 import { useLoginMutation } from "@/lib/redux/api";
-import { hashPassword } from "@/lib/auth";
 import {
   loginSchema,
   type LoginFormData,
@@ -37,10 +36,9 @@ function CredentialsStep({
 
   const onSubmit = async (data: LoginFormData) => {
     try {
-      const hashedPassword = hashPassword(data.password);
       const result = await login({
         reg_number: data.reg_number,
-        password: hashedPassword,
+        password: data.password,
       }).unwrap();
 
       toast.success(result.message || "OTP sent to your registered email!");
@@ -156,10 +154,8 @@ function CredentialsStep({
 
 function OTPStep({
   regNumber,
-  callbackUrl,
 }: {
   regNumber: string;
-  callbackUrl: string;
 }) {
   const router = useRouter();
   const [verifying, setVerifying] = useState(false);
@@ -185,7 +181,7 @@ function OTPStep({
         toast.error("Incorrect or expired OTP. Please try again.");
       } else if (result?.ok) {
         toast.success("Login successful!");
-        router.push(callbackUrl);
+        router.replace("/dashboard");
       }
     } catch (err) {
       console.error("OTP verification error:", err);
@@ -244,16 +240,14 @@ function OTPStep({
 
 function LoginPageContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const { data: session, status } = useSession();
   const [step, setStep] = useState<"credentials" | "otp">("credentials");
   const [regNumber, setRegNumber] = useState("");
-  const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
 
   useEffect(() => {
     if (status === "loading") return;
-    if (session) router.push(callbackUrl);
-  }, [session, status, router, callbackUrl]);
+    if (session) router.replace("/dashboard");
+  }, [session, status, router]);
 
   if (status === "loading") return <LoadingScreen />;
   if (session) return null;
@@ -308,7 +302,7 @@ function LoginPageContent() {
                 }}
               />
             ) : (
-              <OTPStep regNumber={regNumber} callbackUrl={callbackUrl} />
+              <OTPStep regNumber={regNumber} />
             )}
           </div>
         </div>

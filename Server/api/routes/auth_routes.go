@@ -38,12 +38,17 @@ func signupHandler(c *gin.Context) {
 		return
 	}
 
+	passwordHash, err := utils.HashPassword(user.Password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, types.AuthResponse{Message: "Invalid password", Token: ""})
+		return
+	}
 	new_user := schemas.User{
 		ID:        utils.GetUserIDFromRegNumber(user.RegNumber),
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Email:     user.Email,
-		Password:  utils.HashSHA256(user.Password),
+		Password:  passwordHash,
 		RegNumber: strings.ToUpper(user.RegNumber),
 		IsLead:    false,
 		Clubs:     []string{"codechefvitc"},
@@ -106,22 +111,42 @@ func loginHandler(c *gin.Context) {
 		return
 	}
 
-	pass_hash := utils.HashSHA256(login.Password)
-	if user.Password != pass_hash {
+	passwordValid, legacyPassword := utils.VerifyPassword(login.Password, user.Password)
+	if !passwordValid {
 		c.JSON(http.StatusBadRequest, types.AuthResponse{
 			Message: "Incorrect Password",
 			Token:   "",
 		})
 		return
 	}
+	if legacyPassword {
+		upgradedHash, err := utils.HashPassword(login.Password)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, types.AuthResponse{Message: "Error securing password", Token: ""})
+			return
+		}
+		if err := controllers.SetNewPasswordToUser(user.ID, upgradedHash); err != nil {
+			c.JSON(http.StatusInternalServerError, types.AuthResponse{Message: "Error securing password", Token: ""})
+			return
+		}
+	}
 
 	// Credentials are valid, but the user is not fully authenticated yet.
 	// Generate a short-lived OTP and email it via the existing Resend setup;
 	// a token is only issued once verifyLoginOTPHandler confirms the OTP.
-	otp := utils.GenerateOTP()
+	otp, err := utils.GenerateOTP()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.AuthResponse{Message: "Error generating login OTP", Token: ""})
+		return
+	}
 	expiry := time.Now().Add(lib.LoginOTPExpiry)
 
-	if err := controllers.SetLoginOTPToUser(user.ID, utils.HashSHA256(otp), expiry); err != nil {
+	otpHash, err := utils.HashOTP(otp)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.AuthResponse{Message: "Error securing login OTP", Token: ""})
+		return
+	}
+	if err := controllers.SetLoginOTPToUser(user.ID, otpHash, expiry); err != nil {
 		fmt.Printf("Error setting login OTP: %v\n", err)
 		c.JSON(http.StatusInternalServerError, types.AuthResponse{
 			Message: "Error while starting login, Try Again Later",
@@ -192,7 +217,7 @@ func verifyLoginOTPHandler(c *gin.Context) {
 		return
 	}
 
-	if user.LoginOTP != utils.HashSHA256(verify.OTP) {
+	if !utils.VerifyOTP(verify.OTP, user.LoginOTP) {
 		c.JSON(http.StatusBadRequest, types.AuthResponse{
 			Message: "Incorrect OTP",
 			Token:   "",
@@ -200,13 +225,18 @@ func verifyLoginOTPHandler(c *gin.Context) {
 		return
 	}
 
-	// OTP is single-use: clear it immediately so it cannot be replayed.
-	if err := controllers.ClearLoginOTP(userID); err != nil {
+	// Consume the OTP atomically so concurrent requests cannot both use it.
+	consumed, err := controllers.ConsumeLoginOTP(userID, user.LoginOTP)
+	if err != nil {
 		fmt.Printf("Error clearing login OTP: %v\n", err)
 		c.JSON(http.StatusInternalServerError, types.AuthResponse{
 			Message: "Server Error while verifying OTP , Try again later",
 			Token:   "",
 		})
+		return
+	}
+	if !consumed {
+		c.JSON(http.StatusBadRequest, types.AuthResponse{Message: "OTP expired or already used", Token: ""})
 		return
 	}
 
@@ -249,8 +279,17 @@ func sendOTPHandler(c *gin.Context) {
 		return
 	}
 
-	otp := utils.GenerateOTP()
+	otp, err := utils.GenerateOTP()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.MessageResponse{Message: "Error generating OTP"})
+		return
+	}
 	emailBody := lib.GetOTPTemplate(otp)
+	otpHash, err := utils.HashOTP(otp)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.MessageResponse{Message: "Error securing OTP"})
+		return
+	}
 
 	var wg sync.WaitGroup
 	var emailErr, userErr error
@@ -263,7 +302,7 @@ func sendOTPHandler(c *gin.Context) {
 
 	go func(id string, otp string) {
 		defer wg.Done()
-		userErr = controllers.SetResetOTPToUser(userID, utils.HashSHA256(otp))
+		userErr = controllers.SetResetOTPToUser(userID, otpHash)
 	}(userID, otp)
 
 	wg.Wait()
@@ -299,7 +338,6 @@ func setNewPasswordHandler(c *gin.Context) {
 		})
 		return
 	}
-	fmt.Printf("%v", SetPassInfo)
 	userID := utils.GetUserIDFromRegNumber(SetPassInfo.RegNo)
 	user, err := controllers.GetUserByID(userID)
 	if err != nil {
@@ -322,7 +360,7 @@ func setNewPasswordHandler(c *gin.Context) {
 		return
 	}
 
-	if strings.Compare(user.OTP, utils.HashSHA256(SetPassInfo.OTP)) != 0 {
+	if !utils.VerifyOTP(SetPassInfo.OTP, user.OTP) {
 		if user.OTPRetries == lib.MAX_OTP_RETRIES {
 			c.JSON(http.StatusForbidden, types.MessageResponse{
 				Message: "Max Retries Reached , Try again after some time",
@@ -349,7 +387,12 @@ func setNewPasswordHandler(c *gin.Context) {
 		}
 	}
 
-	err = controllers.SetNewPasswordToUser(userID, utils.HashSHA256(SetPassInfo.Password))
+	passwordHash, err := utils.HashPassword(SetPassInfo.Password)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, types.MessageResponse{Message: "Invalid password"})
+		return
+	}
+	err = controllers.SetNewPasswordToUser(userID, passwordHash)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			c.JSON(http.StatusNotFound, types.MessageResponse{

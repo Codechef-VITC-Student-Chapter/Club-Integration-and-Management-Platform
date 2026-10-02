@@ -17,12 +17,12 @@ type User struct {
 	FirstName      string    `bson:"first_name" json:"first_name"`
 	LastName       string    `bson:"last_name" json:"last_name"`
 	Email          string    `bson:"email" json:"email"`
-	OTP            string    `bson:"otp,omitempty" json:"otp,omitempty"`
-	OTPRetries     int       `bson:"otp_retries,omitempty" json:"otp_retries,omitempty"`
-	LockedTill     time.Time `bson:"locked_till" json:"locked_till"`
+	OTP            string    `bson:"otp,omitempty" json:"-"`
+	OTPRetries     int       `bson:"otp_retries,omitempty" json:"-"`
+	LockedTill     time.Time `bson:"locked_till" json:"-"`
 	LoginOTP       string    `bson:"login_otp,omitempty" json:"-"`
 	LoginOTPExpiry time.Time `bson:"login_otp_expiry,omitempty" json:"-"`
-	Password       string    `bson:"password" json:"password"`
+	Password       string    `bson:"password" json:"-"`
 	IsLead         bool      `bson:"is_lead" json:"is_lead"`
 	Departments    []string  `bson:"departments,omitempty" json:"departments,omitempty"`
 	Clubs          []string  `bson:"clubs,omitempty" json:"clubs,omitempty"`
