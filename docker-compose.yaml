@@ -1,0 +1,25 @@
+services:
+  server:
+    build:
+      context: ./Server
+      dockerfile: Dockerfile
+    container_name: cimp_server
+    ports:
+      - "8090:8090"
+    env_file:
+      - ./Server/.env
+    restart: unless-stopped
+
+
+  client:
+    build:
+      context: ./Client
+      dockerfile: Dockerfile
+    container_name: cimp_client
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./Client/.env.local
+    depends_on:
+      - server
+    restart: unless-stopped

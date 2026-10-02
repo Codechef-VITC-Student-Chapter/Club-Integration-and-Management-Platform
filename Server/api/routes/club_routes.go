@@ -27,7 +27,7 @@ func SetupClubRoutes(r *gin.RouterGroup) {
 
 func getClubLeaderboardData(c *gin.Context) {
 	clubID := c.Param("id")
-	members, err := controllers.GetAllUserInClub(clubID)
+	members, err := controllers.GetAllMembersInClub(clubID)
 	if err != nil {
 		fmt.Printf("Here")
 		c.JSON(http.StatusInternalServerError, types.AllClubMemebersResponse{

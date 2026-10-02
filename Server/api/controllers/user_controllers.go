@@ -109,6 +109,29 @@ func GetAllUserInClub(id string) ([]schemas.User, error) {
 	return members, nil
 }
 
+func GetAllMembersInClub(id string) ([]schemas.User, error) {
+	ctx, cancel := database.GetContext()
+	defer cancel()
+
+	filter := bson.M{
+		"clubs":   bson.M{"$in": []string{id}},
+		"is_lead": false,
+	}
+
+	cursor, err := UserColl.Find(ctx, filter)
+	if err != nil {
+		log.Printf("error fetching club members: %v", err)
+		return []schemas.User{}, err
+	}
+
+	var members []schemas.User
+	if err = cursor.All(ctx, &members); err != nil {
+		log.Printf("cursor error: %v", err)
+		return []schemas.User{}, err
+	}
+	return members, nil
+}
+
 func GetAllUserContributions(id string) ([]types.FullContribution, error) {
 	user, err := GetUserByID(id)
 	if err != nil {
