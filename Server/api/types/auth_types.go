@@ -15,6 +15,11 @@ type UserLoginInfo struct {
 	Password  string `json:"password"`
 }
 
+type LoginOTPVerifyInfo struct {
+	RegNumber string `json:"reg_number"`
+	OTP       string `json:"otp"`
+}
+
 type TokenPayload struct {
 	ID     string `json:"id"`
 	Name   string `json:"name"`

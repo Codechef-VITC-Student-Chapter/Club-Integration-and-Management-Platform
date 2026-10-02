@@ -1,7 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import {
-  UserLoginInfo,
+  LoginOTPVerifyInfo,
   AuthResponse,
   GetUserResponse,
   User,
@@ -88,32 +88,33 @@ export const authOptions: NextAuthOptions = {
           type: "text",
           placeholder: "Enter your registration number",
         },
-        password: {
-          label: "Password",
-          type: "password",
+        otp: {
+          label: "OTP",
+          type: "text",
         },
       },
+      // Credentials are validated and the OTP is emailed to the user by a
+      // separate step (see the login page) before this ever runs. This
+      // callback only verifies the OTP and, on success, creates the session.
       async authorize(credentials) {
-        if (!credentials?.reg_number || !credentials?.password) {
+        if (!credentials?.reg_number || !credentials?.otp) {
           return null;
         }
 
         try {
-          const hashedPassword = hashPassword(credentials.password);
-
-          const loginData: UserLoginInfo = {
+          const verifyData: LoginOTPVerifyInfo = {
             reg_number: credentials.reg_number,
-            password: hashedPassword,
+            otp: credentials.otp,
           };
 
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+            `${process.env.NEXT_PUBLIC_API_URL}/auth/login/verify-otp`,
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify(loginData),
+              body: JSON.stringify(verifyData),
             }
           );
 

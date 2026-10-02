@@ -2,7 +2,6 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { getSession } from "next-auth/react";
 import {
   // Auth types
-  UserSignUpInfo,
   UserLoginInfo,
   AuthResponse,
   SetNewPassInfo,
@@ -57,14 +56,6 @@ export const api = createApi({
   tagTypes: ["User", "Club", "Department", "Contribution", "Task"],
   endpoints: (builder) => ({
     // Auth Routes
-    signup: builder.mutation<AuthResponse, UserSignUpInfo>({
-      query: (userData) => ({
-        url: "/auth/signup",
-        method: "POST",
-        body: userData,
-      }),
-    }),
-
     login: builder.mutation<AuthResponse, UserLoginInfo>({
       query: (credentials) => ({
         url: "/auth/login",
@@ -300,7 +291,6 @@ export const api = createApi({
 // Export hooks for usage in functional components
 export const {
   // Auth hooks
-  useSignupMutation,
   useLoginMutation,
   useLazySendOTPQuery,
   useSetNewPasswordMutation,

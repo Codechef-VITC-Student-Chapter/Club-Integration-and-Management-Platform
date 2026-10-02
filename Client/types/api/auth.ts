@@ -11,6 +11,11 @@ export interface UserLoginInfo {
   password: string;
 }
 
+export interface LoginOTPVerifyInfo {
+  reg_number: string;
+  otp: string;
+}
+
 export interface TokenPayload {
   id: string;
   name: string;

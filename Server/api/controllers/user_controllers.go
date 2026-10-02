@@ -332,6 +332,56 @@ func SetResetOTPToUser(user_id string, otp string) error {
 	return nil
 }
 
+func SetLoginOTPToUser(user_id string, otp string, expiry time.Time) error {
+	ctx, cancel := database.GetContext()
+	defer cancel()
+
+	filter := bson.M{
+		"id": user_id,
+	}
+	update := bson.M{
+		"$set": bson.M{
+			"login_otp":        otp,
+			"login_otp_expiry": expiry,
+		},
+	}
+	res, err := UserColl.UpdateOne(ctx, filter, update)
+	if err != nil {
+		log.Printf("Error setting up user Login OTP: %v", err)
+		return err
+	}
+	if res.ModifiedCount == 0 {
+		log.Printf("No User found to set Login OTP")
+		return mongo.ErrNoDocuments
+	}
+	return nil
+}
+
+func ClearLoginOTP(user_id string) error {
+	ctx, cancel := database.GetContext()
+	defer cancel()
+
+	filter := bson.M{
+		"id": user_id,
+	}
+	update := bson.M{
+		"$unset": bson.M{
+			"login_otp":        "",
+			"login_otp_expiry": "",
+		},
+	}
+	res, err := UserColl.UpdateOne(ctx, filter, update)
+	if err != nil {
+		log.Printf("Error clearing Login OTP: %v", err)
+		return err
+	}
+	if res.MatchedCount == 0 {
+		log.Printf("No User found to clear Login OTP")
+		return mongo.ErrNoDocuments
+	}
+	return nil
+}
+
 func IncreaseUserOTPRetries(user_id string) error {
 	ctx, cancel := database.GetContext()
 	defer cancel()

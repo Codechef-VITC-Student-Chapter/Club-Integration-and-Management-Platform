@@ -18,8 +18,10 @@ import (
 )
 
 func SetupAuthRoutes(r *gin.RouterGroup) {
-	r.POST("/signup", signupHandler)
+	// Signup is disabled - handler kept in place but not routed.
+	// r.POST("/signup", signupHandler)
 	r.POST("/login", loginHandler)
+	r.POST("/login/verify-otp", verifyLoginOTPHandler)
 	r.GET("/send/otp/:reg", sendOTPHandler)
 	r.PATCH("/set/pass", setNewPasswordHandler)
 }
@@ -113,6 +115,101 @@ func loginHandler(c *gin.Context) {
 		return
 	}
 
+	// Credentials are valid, but the user is not fully authenticated yet.
+	// Generate a short-lived OTP and email it via the existing Resend setup;
+	// a token is only issued once verifyLoginOTPHandler confirms the OTP.
+	otp := utils.GenerateOTP()
+	expiry := time.Now().Add(lib.LoginOTPExpiry)
+
+	if err := controllers.SetLoginOTPToUser(user.ID, utils.HashSHA256(otp), expiry); err != nil {
+		fmt.Printf("Error setting login OTP: %v\n", err)
+		c.JSON(http.StatusInternalServerError, types.AuthResponse{
+			Message: "Error while starting login, Try Again Later",
+			Token:   "",
+		})
+		return
+	}
+
+	emailBody := lib.GetLoginOTPTemplate(otp)
+	if err := services.SendEmailFromClub(user.Email, "Your CIMP Login OTP", emailBody); err != nil {
+		fmt.Printf("Error sending login OTP email: %v\n", err)
+		c.JSON(http.StatusInternalServerError, types.AuthResponse{
+			Message: "Error sending OTP to your mail, Try Again Later",
+			Token:   "",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, types.AuthResponse{
+		Message: fmt.Sprintf("OTP sent to your registered email : %v", user.Email),
+		Token:   "",
+	})
+}
+
+func verifyLoginOTPHandler(c *gin.Context) {
+	var verify types.LoginOTPVerifyInfo
+
+	if err := c.ShouldBindBodyWithJSON(&verify); err != nil {
+		fmt.Printf("Error in login OTP verification: %v", err)
+		c.JSON(http.StatusBadRequest, types.AuthResponse{
+			Message: "Error in the data sent , Not a JSON Object",
+			Token:   "",
+		})
+		return
+	}
+
+	userID := utils.GetUserIDFromRegNumber(verify.RegNumber)
+	user, uerr := controllers.GetUserByID(userID)
+	if uerr != nil {
+		if uerr == mongo.ErrNoDocuments {
+			c.JSON(http.StatusNotFound, types.AuthResponse{
+				Message: "No User found with the given ID",
+				Token:   "",
+			})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, types.AuthResponse{
+			Message: "Some Error occured while verifying OTP , Try Again Later",
+			Token:   "",
+		})
+		return
+	}
+
+	if user.LoginOTP == "" || user.LoginOTPExpiry.IsZero() {
+		c.JSON(http.StatusBadRequest, types.AuthResponse{
+			Message: "No OTP requested , Please login again",
+			Token:   "",
+		})
+		return
+	}
+
+	if time.Now().After(user.LoginOTPExpiry) {
+		_ = controllers.ClearLoginOTP(userID)
+		c.JSON(http.StatusBadRequest, types.AuthResponse{
+			Message: "OTP expired , Please login again",
+			Token:   "",
+		})
+		return
+	}
+
+	if user.LoginOTP != utils.HashSHA256(verify.OTP) {
+		c.JSON(http.StatusBadRequest, types.AuthResponse{
+			Message: "Incorrect OTP",
+			Token:   "",
+		})
+		return
+	}
+
+	// OTP is single-use: clear it immediately so it cannot be replayed.
+	if err := controllers.ClearLoginOTP(userID); err != nil {
+		fmt.Printf("Error clearing login OTP: %v\n", err)
+		c.JSON(http.StatusInternalServerError, types.AuthResponse{
+			Message: "Server Error while verifying OTP , Try again later",
+			Token:   "",
+		})
+		return
+	}
+
 	payload := types.TokenPayload{
 		ID:     user.ID,
 		Name:   user.FirstName + " " + user.LastName,
@@ -132,7 +229,6 @@ func loginHandler(c *gin.Context) {
 		Message: "User Logged in Successfully",
 		Token:   token,
 	})
-
 }
 
 func sendOTPHandler(c *gin.Context) {
