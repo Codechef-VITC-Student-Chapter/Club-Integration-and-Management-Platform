@@ -8,6 +8,7 @@ import (
 	"github.com/Sasank-V/CIMP-Golang-Backend/api/controllers"
 	"github.com/Sasank-V/CIMP-Golang-Backend/api/types"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 func VerifyValidTokenPresence() gin.HandlerFunc {
@@ -70,5 +71,74 @@ func VerifyLeadUser() gin.HandlerFunc {
 			return
 		}
 		c.Next()
+	}
+}
+
+func VerifyLeadOwnID() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		claimsValue, exists := c.Get("Claims")
+		claims, ok := claimsValue.(types.CustomClaims)
+		if !exists || !ok || !claims.IsLead {
+			c.JSON(http.StatusForbidden, types.MessageResponse{Message: "Lead access required"})
+			c.Abort()
+			return
+		}
+		if c.Param("id") != claims.ID {
+			c.JSON(http.StatusForbidden, types.MessageResponse{Message: "You can only access your own lead data"})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
+
+func VerifyUserAccess() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		claimsValue, exists := c.Get("Claims")
+		claims, ok := claimsValue.(types.CustomClaims)
+		if !exists || !ok {
+			c.JSON(http.StatusUnauthorized, types.MessageResponse{Message: "Token not verified"})
+			c.Abort()
+			return
+		}
+
+		targetID := c.Param("id")
+		if targetID == claims.ID {
+			c.Next()
+			return
+		}
+		if !claims.IsLead {
+			c.JSON(http.StatusForbidden, types.MessageResponse{Message: "You can only access your own user data"})
+			c.Abort()
+			return
+		}
+
+		lead, err := controllers.GetUserByID(claims.ID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, types.MessageResponse{Message: "Error verifying access"})
+			c.Abort()
+			return
+		}
+		target, err := controllers.GetUserByID(targetID)
+		if err != nil {
+			if err == mongo.ErrNoDocuments {
+				c.JSON(http.StatusNotFound, types.MessageResponse{Message: "User not found"})
+			} else {
+				c.JSON(http.StatusInternalServerError, types.MessageResponse{Message: "Error verifying access"})
+			}
+			c.Abort()
+			return
+		}
+
+		for _, leadClub := range lead.Clubs {
+			for _, targetClub := range target.Clubs {
+				if leadClub == targetClub {
+					c.Next()
+					return
+				}
+			}
+		}
+		c.JSON(http.StatusForbidden, types.MessageResponse{Message: "You cannot access users outside your club"})
+		c.Abort()
 	}
 }

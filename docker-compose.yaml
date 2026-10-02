@@ -1,25 +1,59 @@
+# services:
+#   server:
+#     build:
+#       context: ./Server
+#       dockerfile: Dockerfile
+#     container_name: cimp_server
+#     ports:
+#       - "8090:8090"
+#     env_file:
+#       - ./Server/.env
+#     restart: unless-stopped
+
+
+#   client:
+#     build:
+#       context: ./Client
+#       dockerfile: Dockerfile
+#     container_name: cimp_client
+#     ports:
+#       - "3000:3000"
+#     env_file:
+#       - ./Client/.env.local
+#     depends_on:
+#       - server
+#     restart: unless-stopped
+
+
 services:
   server:
     build:
       context: ./Server
       dockerfile: Dockerfile
+    image: cimp-server:latest
     container_name: cimp_server
     ports:
-      - "8090:8090"
+      - "8090:3000"
     env_file:
       - ./Server/.env
+    environment:
+      CLIENT_URL: http://localhost:3000
     restart: unless-stopped
-
 
   client:
     build:
       context: ./Client
       dockerfile: Dockerfile
+    image: cimp-client:latest
     container_name: cimp_client
     ports:
       - "3000:3000"
     env_file:
       - ./Client/.env.local
+    environment:
+      NEXTAUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_API_URL: http://localhost:8090/api
+      API_INTERNAL_URL: http://server:3000/api
     depends_on:
       - server
     restart: unless-stopped

@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { hashPassword } from "@/lib/auth";
 import { User, Lock } from "lucide-react";
 import { useLazySendOTPQuery, useSetNewPasswordMutation } from "@/lib/redux";
 import {
@@ -118,14 +117,11 @@ function OTPPasswordStep({ regNumber }: { regNumber: string }) {
 
   const handleSubmit = async (data: ResetPasswordFormData) => {
     try {
-      // Hash the password before sending to API
-      const hashedPassword = hashPassword(data.password.trim());
-
       // Prepare data for API call
       const resetData = {
         reg_no: regNumber,
         otp: data.otp.trim(),
-        password: hashedPassword,
+        password: data.password.trim(),
       };
 
       // Call the setNewPassword mutation

@@ -6,15 +6,6 @@ import {
   GetUserResponse,
   User,
 } from "../types/api";
-import CryptoJS from "crypto-js";
-
-export function hashPassword(password: string): string {
-  if (!password || password.trim().length === 0) {
-    throw new Error("Password cannot be empty");
-  }
-  const hash = CryptoJS.SHA256(password);
-  return hash.toString(CryptoJS.enc.Hex);
-}
 
 // Create a type for the safe user data (excluding sensitive fields)
 type SafeUser = Omit<User, "password" | "otp" | "otp_retries" | "locked_till">;
@@ -44,6 +35,9 @@ const createUserId = (regNumber: string): string => {
   return `UID${regNumber}`;
 };
 
+const getServerApiUrl = (): string =>
+  process.env.API_INTERNAL_URL || process.env.NEXT_PUBLIC_API_URL || "";
+
 // Helper function to fetch user data
 const fetchUserData = async (
   userId: string,
@@ -51,7 +45,7 @@ const fetchUserData = async (
 ): Promise<User | null> => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/user/info/${userId}`,
+      `${getServerApiUrl()}/user/info/${userId}`,
       {
         method: "GET",
         headers: {
@@ -108,7 +102,7 @@ export const authOptions: NextAuthOptions = {
           };
 
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/auth/login/verify-otp`,
+            `${getServerApiUrl()}/auth/login/verify-otp`,
             {
               method: "POST",
               headers: {

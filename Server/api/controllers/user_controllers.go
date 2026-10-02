@@ -405,6 +405,29 @@ func ClearLoginOTP(user_id string) error {
 	return nil
 }
 
+func ConsumeLoginOTP(user_id string, otpHash string) (bool, error) {
+	ctx, cancel := database.GetContext()
+	defer cancel()
+
+	filter := bson.M{
+		"id":               user_id,
+		"login_otp":        otpHash,
+		"login_otp_expiry": bson.M{"$gt": time.Now()},
+	}
+	update := bson.M{
+		"$unset": bson.M{
+			"login_otp":        "",
+			"login_otp_expiry": "",
+		},
+	}
+	res, err := UserColl.UpdateOne(ctx, filter, update)
+	if err != nil {
+		log.Printf("Error consuming Login OTP: %v", err)
+		return false, err
+	}
+	return res.ModifiedCount == 1, nil
+}
+
 func IncreaseUserOTPRetries(user_id string) error {
 	ctx, cancel := database.GetContext()
 	defer cancel()
@@ -497,7 +520,7 @@ func SetNewPasswordToUser(user_id string, pass string) error {
 		log.Printf("Error setting up new password to user")
 		return err
 	}
-	if !res.Acknowledged {
+	if res.MatchedCount == 0 {
 		log.Printf("No User was set the new Password: %v", res)
 		return mongo.ErrNoDocuments
 	}

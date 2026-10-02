@@ -15,11 +15,11 @@ import (
 // Route : /api/user
 func SetupUserRoutes(r *gin.RouterGroup) {
 	r.Use(middlewares.VerifyValidTokenPresence())
-	r.GET("/info/:id", getUserInfo)
-	r.GET("/contributions/:id", getUserContributions)
+	r.GET("/info/:id", middlewares.VerifyUserAccess(), getUserInfo)
+	r.GET("/contributions/:id", middlewares.VerifyUserAccess(), getUserContributions)
 
-	r.GET("/lead/dept/:id", middlewares.VerifyLeadUser(), getLeadsDeparmentInfo)
-	r.GET("/lead/requests/:id", middlewares.VerifyLeadUser(), getLeadUserRequests)
+	r.GET("/lead/dept/:id", middlewares.VerifyLeadOwnID(), getLeadsDeparmentInfo)
+	r.GET("/lead/requests/:id", middlewares.VerifyLeadOwnID(), getLeadUserRequests)
 	r.POST("/lead/upload/handles", middlewares.VerifyLeadUser(), uploadClubMemebersHandles)
 	// r.POST("/lead/sync/contests/", middlewares.VerifyLeadUser(), syncContestPoints)
 }
